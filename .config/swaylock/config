@@ -1,0 +1,7 @@
+daemonize
+font-size=15
+indicator-radius=100
+indicator-thickness=15
+line-uses-ring
+image=/home/lgian/dotfiles/dotfiles/i3/wallpaper.jpg
+ignore-empty-password

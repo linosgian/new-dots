@@ -1,0 +1,398 @@
+## sway config file
+# Basic config {
+    set $mod Mod1
+    floating_modifier $mod
+
+    font pango: Fira Mono 9
+
+# }
+
+
+# Binds {
+    # Lock/Logout/Shutdown etc..
+    set $mode_system System (l) lock, (d) suspend, (h) hibernate, (r) reboot, (s) shutdown
+    mode "$mode_system" {
+	   # Lock mechanism
+        bindsym l exec --no-startup-id swaylock, mode "default"
+        bindsym d exec --no-startup-id $HOME/.config/sway/exit.sh suspend, mode "default"
+        bindsym h exec --no-startup-id $HOME/.config/sway/exit.sh hibernate, mode "default"
+        bindsym r exec --no-startup-id $HOME/.config/sway/exit.sh reboot, mode "default"
+        bindsym s exec --no-startup-id $HOME/.config/sway/exit.sh shutdown, mode "default"
+
+        # back to normal: Enter or Escape
+        bindsym Return mode "default"
+        bindsym Escape mode "default"
+    }
+    bindsym $mod+r mode "$mode_system"
+    # bindsym $mod+r exec --no-startup-id rofi -show menu -modi "menu:rofi-power-menu --choices=shutdown/reboot/lockscreen/suspend"
+    bindsym XF86AudioPlay exec --no-startup-id playerctl play-pause
+    bindsym XF86AudioPause exec --no-startup-id playerctl play-pause
+
+    # start a terminal
+    bindsym $mod+Return exec "kitty -o allow_remote_control=yes --single-instance --listen-on unix:@mykitty"
+
+    # Screenshot
+    # bindsym Delete exec grim -g --output ~/Pictures/Screenshots/%b%d::%H%M%S.png -e 'notify-send "Screenshot taken:" "$f"'
+    bindsym Delete exec bash $HOME/.config/sway/screenshot.sh
+    bindsym Control+Delete exec bash $HOME/.config/sway/screenshot.sh --screen
+
+    # kill focused window
+    bindsym $mod+q kill
+
+    # start rofi ( program launcher )
+    bindsym $mod+d exec --no-startup-id rofi -auto-select -dpi 120 -sorting-method fzf -sort -matching fuzzy -modi drun -show drun -show-icons -drun-match-fields name
+
+    # change focus
+    bindsym $mod+h focus left
+    bindsym $mod+j focus down
+    bindsym $mod+k focus up
+    bindsym $mod+l focus right
+
+    bindsym ctrl+space exec --no-startup-id swaync-client --close-latest
+    bindsym ctrl+Shift+space exec --no-startup-id swaync-client -C
+
+    # move focused window
+    bindsym $mod+Shift+h move left
+    bindsym $mod+Shift+j move down
+    bindsym $mod+Shift+k move up
+    bindsym $mod+Shift+l move right
+
+    # Screen brightness function keys
+    bindsym XF86MonBrightnessUp exec brightnessctl set +5% # increase screen brightness
+    bindsym XF86MonBrightnessDown exec brightnessctl set 5%- # decrease screen brightness
+
+    bindsym $mod+o exec --no-startup-id bash $HOME/.config/sway/switcher.sh
+
+    # split in vertical orientation toggle
+    bindsym $mod+v split toggle
+
+    # enter fullscreen mode for the focused container
+    bindsym $mod+f fullscreen toggle
+
+    # change container layout (stacked, tabbed, toggle split)
+    bindsym $mod+s layout stacking
+    bindsym $mod+w layout tabbed
+    bindsym $mod+e layout toggle split
+
+    # toggle tiling / floating
+    bindsym $mod+Shift+space floating toggle
+
+    # change focus between tiling / floating windows
+    bindsym $mod+space focus mode_toggle
+
+    # switch to workspace
+    bindsym $mod+1 workspace 1
+    bindsym $mod+2 workspace 2
+    bindsym $mod+3 workspace 3
+    bindsym $mod+4 workspace 4
+    bindsym $mod+5 workspace 5
+    bindsym $mod+6 workspace 6
+    bindsym $mod+7 workspace 7
+    bindsym $mod+8 workspace 8
+    bindsym $mod+9 workspace 9
+    bindsym $mod+0 workspace 10
+
+    # move focused container to workspace
+    bindsym $mod+Shift+1 move container to workspace 1
+    bindsym $mod+Shift+2 move container to workspace 2
+    bindsym $mod+Shift+3 move container to workspace 3
+    bindsym $mod+Shift+4 move container to workspace 4
+    bindsym $mod+Shift+5 move container to workspace 5
+    bindsym $mod+Shift+6 move container to workspace 6
+    bindsym $mod+Shift+7 move container to workspace 7
+    bindsym $mod+Shift+8 move container to workspace 8
+    bindsym $mod+Shift+9 move container to workspace 9
+    bindsym $mod+Shift+0 move container to workspace 10
+
+    # reload the configuration file
+    bindsym $mod+Shift+r exec swaymsg reload
+
+    bindsym $mod+u exec bash /home/lgian/.config/sway/scratch.sh
+
+
+    input "*" {
+      xkb_layout "us,gr"
+      xkb_options "grp:win_space_toggle"
+    }
+
+    # Pulse Audio controls
+    bindsym XF86AudioRaiseVolume exec --no-startup-id bash $HOME/.config/sway/volcontrol.sh up   #increase sound volume
+    bindsym XF86AudioLowerVolume exec --no-startup-id bash $HOME/.config/sway/volcontrol.sh down #decrease sound volume
+    bindsym XF86AudioMute exec --no-startup-id bash $HOME/.config/sway/volcontrol.sh mute # Toggle mute
+
+    # i3lock that works on multiple screens
+    bindsym Mod4+l exec swaylock
+# }
+
+# Workspaces {
+    # Per-monitor config {
+        set $built_in_monitor "DP-4"
+        set $external_monitor "DP-3"
+        workspace 1 output $built_in_monitor
+        workspace 2 output $built_in_monitor
+        workspace 3 output $external_monitor
+        workspace 4 output $built_in_monitor
+        workspace 5 output $external_monitor
+        workspace 6 output $built_in_monitor
+        workspace 7 output $built_in_monitor
+        workspace 8 output $built_in_monitor
+        workspace 9 output $built_in_monitor
+    # }
+
+    # Application assingments {
+        #assign [class="Chromium"] 5
+        assign [class="thunderbird"] 3
+        assign [class="Slack"] 4
+        assign [class="Riot"] 4
+        assign [class="Evince"] 5
+    # }
+# }
+
+# Execs {
+    exec --no-startup-id nm-applet
+    exec --no-startup-id blueman-applet
+    exec swaymsg 'exec kitty --class="scratchpad" -o allow_remote_control=yes --listen-on unix:/tmp/mykitty1'
+    exec --no-startup-id systemctl --user start ssh-agent.service
+    exec_always swaymsg -t get_inputs | jq -r '.[] | select(.type=="touchpad") | .identifier' | xargs -i swaymsg input "{}" natural_scroll enabled
+    exec_always swaymsg -t get_inputs | jq -r '.[] | select(.type=="touchpad") | .identifier' | xargs -i swaymsg input "{}" tap enabled
+
+    exec --no-startup-id slack
+    # On boot start a new tmux session on workspace 1
+    exec --no-startup-id swaymsg 'workspace 1; exec kitty -o allow_remote_control=yes --listen-on unix:/tmp/mykitty3'
+
+    # Fixes libinput-gestures where it won't work without a DISPLAY set. Probably fixes others as well.
+    exec systemctl --user import-environment DISPLAY WAYLAND_DISPLAY SWAYSOCK XDG_CURRENT_DESKTOP
+    exec --no-startup-id systemctl --user start libinput-gestures.service
+    bar swaybar_command waybar
+
+    exec_always swaync
+    exec_always pkill -9 shikane; shikane --skip-tests=true
+
+# }
+
+# SwayFX stuff {
+    blur true
+    blur_radius 5
+    blur_saturation 2
+    shadows enbale
+    corner_radius 20
+    shadow_blur_radius 5
+    shadow_offset 0 1
+    layer_effects "gtk-layer-shell" {
+        blur enable
+        corner_radius 20
+    }
+# }
+
+# Window-specific configs {
+    for_window [class="^.*"] border none
+
+    for_window [app_id="scratchpad"] floating enable
+    for_window [app_id="scratchpad"] move scratchpad
+    for_window [app_id="scratchpad"] move position center
+    for_window [app_id="scratchpad"] resize set 50 50
+    for_window [app_id="scratchpad"] border pixel 2
+    for_window [app_id="scratchpad"] sticky enable
+    for_window [app_id="pavucontrol"] floating enable, border normal
+    for_window [app_id="pavucontrol"] resize set 1200 800
+
+# } sway config file
+# Basic config {
+    set $mod Mod1
+    floating_modifier $mod
+
+    font pango: Fira Mono 9
+
+# }
+
+
+
+# Binds {
+    # Lock/Logout/Shutdown etc..
+    set $mode_system System (l) lock, (d) suspend, (h) hibernate, (r) reboot, (s) shutdown
+    mode "$mode_system" {
+	    # Lock mechanism
+        bindsym l exec --no-startup-id swaylock, mode "default"
+        bindsym d exec --no-startup-id $HOME/.config/sway/exit.sh suspend, mode "default"
+        bindsym h exec --no-startup-id $HOME/.config/sway/exit.sh hibernate, mode "default"
+        bindsym r exec --no-startup-id $HOME/.config/sway/exit.sh reboot, mode "default"
+        bindsym s exec --no-startup-id $HOME/.config/sway/exit.sh shutdown, mode "default"
+
+        # back to normal: Enter or Escape
+        bindsym Return mode "default"
+        bindsym Escape mode "default"
+    }
+    bindsym $mod+r mode "$mode_system"
+    # bindsym $mod+r exec --no-startup-id rofi -show menu -modi "menu:rofi-power-menu --choices=shutdown/reboot/lockscreen/suspend"
+    bindsym XF86AudioPlay exec --no-startup-id playerctl play-pause
+    bindsym XF86AudioPause exec --no-startup-id playerctl play-pause
+
+    # start a terminal
+    bindsym $mod+Return exec "kitty -o allow_remote_control=yes --single-instance --listen-on unix:@mykitty"
+
+    # Screenshot
+    # bindsym Delete exec grim -g --output ~/Pictures/Screenshots/%b%d::%H%M%S.png -e 'notify-send "Screenshot taken:" "$f"'
+    bindsym Delete exec bash $HOME/.config/sway/screenshot.sh
+    bindsym Control+Delete exec bash $HOME/.config/sway/screenshot.sh --screen
+
+    # kill focused window
+    bindsym $mod+q kill
+
+    # start rofi ( program launcher )
+    bindsym $mod+d exec --no-startup-id rofi -auto-select -dpi 120 -sorting-method fzf -sort -matching fuzzy -modi drun -show drun -show-icons -drun-match-fields name
+
+    # change focus
+    bindsym $mod+h focus left
+    bindsym $mod+j focus down
+    bindsym $mod+k focus up
+    bindsym $mod+l focus right
+
+    bindsym ctrl+space exec --no-startup-id swaync-client --close-latest
+    bindsym ctrl+Shift+space exec --no-startup-id swaync-client -C
+
+    # move focused window
+    bindsym $mod+Shift+h move left
+    bindsym $mod+Shift+j move down
+    bindsym $mod+Shift+k move up
+    bindsym $mod+Shift+l move right
+
+    # Screen brightness function keys
+    bindsym XF86MonBrightnessUp exec brightnessctl set +5% # increase screen brightness
+    bindsym XF86MonBrightnessDown exec brightnessctl set 5%- # decrease screen brightness
+
+    bindsym $mod+o exec --no-startup-id bash $HOME/.config/sway/switcher.sh
+
+    # split in vertical orientation toggle
+    bindsym $mod+v split toggle
+
+    # enter fullscreen mode for the focused container
+    bindsym $mod+f fullscreen toggle
+
+    # change container layout (stacked, tabbed, toggle split)
+    bindsym $mod+s layout stacking
+    bindsym $mod+w layout tabbed
+    bindsym $mod+e layout toggle split
+
+    # toggle tiling / floating
+    bindsym $mod+Shift+space floating toggle
+
+    # change focus between tiling / floating windows
+    bindsym $mod+space focus mode_toggle
+
+    # switch to workspace
+    bindsym $mod+1 workspace 1
+    bindsym $mod+2 workspace 2
+    bindsym $mod+3 workspace 3
+    bindsym $mod+4 workspace 4
+    bindsym $mod+5 workspace 5
+    bindsym $mod+6 workspace 6
+    bindsym $mod+7 workspace 7
+    bindsym $mod+8 workspace 8
+    bindsym $mod+9 workspace 9
+    bindsym $mod+0 workspace 10
+
+    # move focused container to workspace
+    bindsym $mod+Shift+1 move container to workspace 1
+    bindsym $mod+Shift+2 move container to workspace 2
+    bindsym $mod+Shift+3 move container to workspace 3
+    bindsym $mod+Shift+4 move container to workspace 4
+    bindsym $mod+Shift+5 move container to workspace 5
+    bindsym $mod+Shift+6 move container to workspace 6
+    bindsym $mod+Shift+7 move container to workspace 7
+    bindsym $mod+Shift+8 move container to workspace 8
+    bindsym $mod+Shift+9 move container to workspace 9
+    bindsym $mod+Shift+0 move container to workspace 10
+
+    # reload the configuration file
+    bindsym $mod+Shift+r exec swaymsg reload
+
+    bindsym $mod+u exec bash /home/lgian/.config/sway/scratch.sh
+
+
+    input "*" {
+      xkb_layout "us,gr"
+      xkb_options "grp:win_space_toggle"
+    }
+
+    # Pulse Audio controls
+    bindsym XF86AudioRaiseVolume exec --no-startup-id bash $HOME/.config/sway/volcontrol.sh up   #increase sound volume
+    bindsym XF86AudioLowerVolume exec --no-startup-id bash $HOME/.config/sway/volcontrol.sh down #decrease sound volume
+    bindsym XF86AudioMute exec --no-startup-id bash $HOME/.config/sway/volcontrol.sh mute # Toggle mute
+
+    # i3lock that works on multiple screens
+    bindsym Mod4+l exec swaylock
+# }
+
+# Workspaces {
+    # Per-monitor config {
+        set $built_in_monitor "DP-4"
+        set $external_monitor "DP-3"
+        workspace 1 output $built_in_monitor
+        workspace 2 output $built_in_monitor
+        workspace 3 output $external_monitor
+        workspace 4 output $built_in_monitor
+        workspace 5 output $external_monitor
+        workspace 6 output $built_in_monitor
+        workspace 7 output $built_in_monitor
+        workspace 8 output $built_in_monitor
+        workspace 9 output $built_in_monitor
+    # }
+
+    # Application assingments {
+        #assign [class="Chromium"] 5
+        assign [class="thunderbird"] 3
+        assign [class="Slack"] 4
+        assign [class="Riot"] 4
+        assign [class="Evince"] 5
+    # }
+# }
+
+# Execs {
+    exec --no-startup-id nm-applet
+    exec --no-startup-id blueman-applet
+    exec swaymsg 'exec kitty --class="scratchpad" -o allow_remote_control=yes --listen-on unix:/tmp/mykitty1'
+    exec --no-startup-id systemctl --user start ssh-agent.service
+    exec_always swaymsg -t get_inputs | jq -r '.[] | select(.type=="touchpad") | .identifier' | xargs -i swaymsg input "{}" natural_scroll enabled
+    exec_always swaymsg -t get_inputs | jq -r '.[] | select(.type=="touchpad") | .identifier' | xargs -i swaymsg input "{}" tap enabled
+
+    exec --no-startup-id slack
+    # On boot start a new tmux session on workspace 1
+    exec --no-startup-id swaymsg 'workspace 1; exec kitty -o allow_remote_control=yes --listen-on unix:/tmp/mykitty3'
+
+    # Fixes libinput-gestures where it won't work without a DISPLAY set. Probably fixes others as well.
+    exec systemctl --user import-environment DISPLAY WAYLAND_DISPLAY SWAYSOCK XDG_CURRENT_DESKTOP
+    exec --no-startup-id systemctl --user start libinput-gestures.service
+    bar swaybar_command waybar
+
+    exec_always swaync
+    exec_always pkill -9 shikane; shikane --skip-tests=true
+
+# }
+
+# SwayFX stuff {
+    blur true
+    blur_radius 5
+    blur_saturation 2
+    shadows enbale
+    corner_radius 20
+    shadow_blur_radius 5
+    shadow_offset 0 1
+    layer_effects "gtk-layer-shell" {
+        blur enable
+        corner_radius 20
+    }
+# }
+
+# Window-specific configs {
+    for_window [class="^.*"] border none
+
+    for_window [app_id="scratchpad"] floating enable
+    for_window [app_id="scratchpad"] move scratchpad
+    for_window [app_id="scratchpad"] move position center
+    for_window [app_id="scratchpad"] resize set 50 50
+    for_window [app_id="scratchpad"] border pixel 2
+    for_window [app_id="scratchpad"] sticky enable
+    for_window [app_id="pavucontrol"] floating enable, border normal
+    for_window [app_id="pavucontrol"] resize set 1200 800
+
+# }
