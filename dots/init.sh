@@ -4,7 +4,7 @@
 SCRIPT_NAME="$(basename "$0")"
 
 # Set dotfiles directory
-DOTFILES_DIR="$HOME/dotfiles"
+DOTFILES_DIR="$PWD"
 
 # Ensure the dotfiles directory exists
 if [[ ! -d "$DOTFILES_DIR" ]]; then
@@ -21,7 +21,6 @@ find "$DOTFILES_DIR/.config" -mindepth 1 -maxdepth 1 -type d | while read -r dir
     if [[ -e "$target" || -L "$target" ]]; then
         rm -rf "$target"
     fi
-
     # Create symlink
     ln -s "$dir" "$target"
     echo "Symlinked: $target -> $dir"
@@ -37,7 +36,7 @@ find "$DOTFILES_DIR" -mindepth 1 -maxdepth 1 -type f | while read -r file; do
         continue
     fi
 
-    # Remove existing file or symlink
+    # Remove existing directory or symlink
     if [[ -e "$target" || -L "$target" ]]; then
         rm -rf "$target"
     fi
