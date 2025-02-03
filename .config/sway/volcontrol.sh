@@ -13,12 +13,12 @@ case "$1" in
         # Unmute first then play sound
 
         pactl set-sink-mute @DEFAULT_SINK@ 0
-        paplay $HOME/.config/i3/audio-volume-change.oga
+        paplay $HOME/.config/sway/audio-volume-change.oga
         pactl set-sink-volume @DEFAULT_SINK@ +5%
         ;;
     down)
         pactl set-sink-mute @DEFAULT_SINK@ 0
-        paplay $HOME/.config/i3/audio-volume-change.oga
+        paplay $HOME/.config/sway/audio-volume-change.oga
         pactl set-sink-volume @DEFAULT_SINK@ -5%
         ;;
     mute)

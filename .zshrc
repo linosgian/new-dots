@@ -107,7 +107,7 @@ export LESS_TERMCAP_ue=$'\e[0m'        # reset underline
 export GROFF_NO_SGR=1                  # for konsole and gnome-terminal
 ##########################################
 
-source ~/.config/kube-ps1.sh
+source ~/kube_ps1.sh
 PROMPT='$(kube_ps1)'$PROMPT
 kubeoff
 

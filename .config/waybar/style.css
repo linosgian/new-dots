@@ -38,6 +38,12 @@ window#waybar {
   border-bottom: 2px solid #fba922;
 }
 
+#workspaces button.urgent {
+  color: #FFFFFF;
+  background-color: @red;
+  border-bottom: 2px solid @peach;
+}
+
 #workspaces button.active {
   border-radius: 1rem;
 }
@@ -69,7 +75,7 @@ window#waybar {
 }
 
 #network{
-  min-width: 300px;
+  min-width: 350px;
 }
 
 #language {
@@ -118,6 +124,12 @@ window#waybar {
 #custom-lock {
     border-radius: 1rem 0px 0px 1rem;
     color: @lavender;
+}
+
+#custom-media {
+    margin-right: 1rem;
+    margin-left: 1rem;
+    border-radius: 0px 1rem 1rem 0px;
 }
 
 #custom-power {

@@ -17,11 +17,6 @@ find "$DOTFILES_DIR/.config" -mindepth 1 -maxdepth 1 -type d | while read -r dir
     rel_path="${dir#$DOTFILES_DIR/}"
     target="$HOME/$rel_path"
 
-    # Skip the script itself
-    if [[ "$target" == "$HOME/$SCRIPT_NAME" ]]; then
-        continue
-    fi
-
     # Remove existing directory or symlink
     if [[ -e "$target" || -L "$target" ]]; then
         rm -rf "$target"
@@ -32,3 +27,22 @@ find "$DOTFILES_DIR/.config" -mindepth 1 -maxdepth 1 -type d | while read -r dir
     echo "Symlinked: $target -> $dir"
 done
 
+# Symlink files in the root of dotfiles directory
+find "$DOTFILES_DIR" -mindepth 1 -maxdepth 1 -type f | while read -r file; do
+    rel_path="${file#$DOTFILES_DIR/}"
+    target="$HOME/$rel_path"
+
+    # Skip the script itself
+    if [[ "$target" == "$HOME/$SCRIPT_NAME" ]]; then
+        continue
+    fi
+
+    # Remove existing file or symlink
+    if [[ -e "$target" || -L "$target" ]]; then
+        rm -rf "$target"
+    fi
+
+    # Create symlink
+    ln -s "$file" "$target"
+    echo "Symlinked: $target -> $file"
+done
