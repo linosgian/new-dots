@@ -1,5 +1,8 @@
 { config , lib , pkgs , ...  }:
 {
+  imports = [
+    ../modules/wayland.nix
+  ];
   environment.systemPackages = with pkgs; [
     brightnessctl
     libinput

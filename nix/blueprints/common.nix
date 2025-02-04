@@ -2,7 +2,7 @@
 {
 
   imports = [
-    ./user.nix
+    ../modules/user.nix
   ];
   environment.systemPackages = with pkgs; [
     nixVersions.stable

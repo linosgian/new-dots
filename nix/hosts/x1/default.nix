@@ -1,8 +1,8 @@
 {config, pkgs,...}:
 {
   imports = [
-    ../common/workstation
-    ../common/workstation/laptop.nix
+    ../../blueprints/workstation.nix
+    ../../blueprints/laptop.nix
     ./hardware-configuration.nix
   ];
   services.thinkfan.enable = true;

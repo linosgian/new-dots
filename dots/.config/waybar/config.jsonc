@@ -19,12 +19,23 @@
         "temperature",
         "sway/language",
         "battery",
-        "battery#bat2",
-        "tray",
+        "bluetooth",
+        "tray"
     ],
+    "bluetooth": {
+            "format": " {status}",
+            "format-connected": " {device_alias}",
+            "format-connected-battery": " {device_alias} {device_battery_percentage}% {icon} ",
+            "format-icons": ["", "", "", "", ""],
+            // "format-device-preference": [ "device1", "device2" ], // preference list deciding the displayed device
+            "tooltip-format": "{controller_alias}\t{controller_address}\n\n{num_connections} connected",
+            "tooltip-format-connected": "{controller_alias}\t{controller_address}\n\n{num_connections} connected\n\n{device_enumerate}",
+            "tooltip-format-enumerate-connected": "{device_alias}\t{device_address}",
+            "tooltip-format-enumerate-connected-battery": "{device_alias}\t{device_address}\t{device_battery_percentage}%"
+    },
     "sway/language": {
         "on-click": "swaymsg input type:keyboard xkb_switch_layout next",
-        "format": "{short} {flag}",
+        "format": "{short} {flag}"
     },
     // Modules configuration
      "sway/workspaces": {
@@ -104,8 +115,8 @@
     },
     "temperature": {
         "interval": 2,
-        // "thermal-zone": 2,
-        "hwmon-path": "/sys/devices/platform/coretemp.0/hwmon/hwmon6/temp1_input",
+        "thermal-zone": 6, // pkg temperature
+        // "hwmon-path": "/sys/devices/platform/coretemp.0/hwmon/hwmon6/temp1_input",
         "critical-threshold": 80,
         // "format-critical": "{temperatureC}°C {icon}",
         "format": "{temperatureC}°C {icon}",
@@ -130,9 +141,6 @@
         // "format-good": "", // An empty format will hide the module
         // "format-full": "",
         "format-icons": ["", "", "", "", ""]
-    },
-    "battery#bat2": {
-        "bat": "BAT2"
     },
     "network": {
         // "interface": "wlp2*", // (Optional) To force the use of this interface

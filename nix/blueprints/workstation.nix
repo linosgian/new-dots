@@ -1,9 +1,9 @@
 { config , lib , pkgs , ...  }:
 {
   imports = [
-    ./vim.nix
-    ./..
-    ./boot.nix
+    ../modules/vim.nix
+    ./common.nix
+    ../modules/boot.nix
   ];
   environment.systemPackages = with pkgs; [
     gnome-keyring

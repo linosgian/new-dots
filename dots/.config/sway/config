@@ -5,6 +5,8 @@
 
     font pango: Fira Mono 9
 
+    workspace_layout stacking
+    default_orientation vertical
 # }
 
 
@@ -172,6 +174,7 @@
 
     exec_always swaync
     exec_always pkill -9 shikane; shikane --skip-tests=true
+
 
 # }
 

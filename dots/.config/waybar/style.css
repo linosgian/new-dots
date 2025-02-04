@@ -57,6 +57,7 @@ window#waybar {
 #tray,
 #clock,
 #battery,
+#bluetooth,
 #pulseaudio,
 #custom-lock,
 #memory,
@@ -110,6 +111,11 @@ window#waybar {
 /* #backlight, #battery { */
 /*     border-radius: 0; */
 /* } */
+
+#bluetooth {
+  border-radius: 0rem 1rem 1rem 0rem;
+  margin-right: 1rem;
+}
 
 #pulseaudio {
   border-radius: 1rem 0px 0px 1rem;
