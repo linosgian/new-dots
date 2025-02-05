@@ -19,6 +19,13 @@
           hardware.nixosModules.lenovo-thinkpad-x1-7th-gen
         ];
       };
+      xps = nixpkgs.lib.nixosSystem {
+        system = "x86_64-linux";
+        modules = [
+          ./hosts/xps
+          hardware.nixosModules.dell-xps-15-9500
+        ];
+      };
     };
   };
 }

@@ -37,6 +37,7 @@ in
     configure-gtk
     polkit_gnome
     gnome-polkit-authentication-agent
+    glib
     dbus
     rofi-wayland
     shikane
