@@ -38,7 +38,7 @@
   ];
   services.udisks2.enable = true;
   services.avahi.enable = true;
-
+  virtualisation.docker.enable = true;
   security.rtkit.enable = true;
   programs.ssh = {
     startAgent = true;
