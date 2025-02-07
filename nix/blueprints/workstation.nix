@@ -35,6 +35,7 @@
     virt-manager
     qemu
     virt-viewer
+    ansible
   ];
   services.udisks2.enable = true;
   services.avahi.enable = true;
