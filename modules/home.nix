@@ -705,14 +705,14 @@ in
         signingkey = /home/lgian/.ssh/id_ed25519.pub
 
       [core]
-        sshCommand = "ssh -i ~/.ssh/id_ed25519.pub"
+        sshCommand = "ssh -i ~/.ssh/id_ed25519"
     '';
     programs.git = {
       enable = true;
       userName = "Linos Giannopoulos";
       userEmail = "linosgian00@gmail.com";
       signing = {
-        key = "/home/lgian/.ssh/deleteme.pub";
+        key = "/home/lgian/.ssh/pers.pub";
         signByDefault = true;
       };
 
@@ -743,6 +743,9 @@ in
       ];
 
       extraConfig = {
+        core = {
+          sshCommand = "ssh -i ~/.ssh/pers";
+        };
         push = {
           default = "current";
           autoSetupRemote = true;
