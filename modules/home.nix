@@ -712,7 +712,7 @@ in
       userName = "Linos Giannopoulos";
       userEmail = "linosgian00@gmail.com";
       signing = {
-        key = "/home/lgian/.ssh/old.pub";
+        key = "/home/lgian/.ssh/deleteme.pub";
         signByDefault = true;
       };
 
