@@ -756,6 +756,8 @@ in
     };
     programs.rofi = {
       enable = true;
+
+      package = pkgs.rofi-wayland;
       theme = let 
         inherit (config.home-manager.users.lgian.lib.formats.rasi) mkLiteral;
       in {
