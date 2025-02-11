@@ -66,7 +66,7 @@ compdef evinced=evince
 compdef _dexec dexec
 
 export HIST_STAMPS="dd.mm.yyyy"
-export FZF_DEFAULT_COMMAND='rg --files --hidden --follow --glob "!.git/*"'
+export FZF_DEFAULT_COMMAND='rg --files --hidden --follow --no-ignore-vcs'
 export EDITOR="vim"
 export VISUAL="vim"
 
