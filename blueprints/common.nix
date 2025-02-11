@@ -1,0 +1,55 @@
+{ config , lib , pkgs , ...  }:
+{
+
+  imports = [
+    ../modules/user.nix
+  ];
+  environment.systemPackages = with pkgs; [
+    nixVersions.stable
+    curl
+    git
+    wireguard-tools
+    fping
+    powertop
+    htop
+    tree
+    lm_sensors
+    tcpdump
+    cryptsetup
+    jq
+    jnv
+    yj
+    file
+    ncdu
+    usbutils
+    fwupd
+    dmidecode
+    pciutils #lspci
+    lshw
+    ripgrep
+    bashInteractive
+    nixpkgs-fmt
+    nix-output-monitor
+    nixd
+    screen
+  ];
+  nixpkgs.config.allowUnfree = true;
+  programs.zsh = {
+    enable = true;
+    #enableCompletion = false;
+    enableGlobalCompInit = false;
+    autosuggestions.enable = true;
+    syntaxHighlighting.enable = true;
+  };
+
+  i18n.defaultLocale = "en_US.UTF-8";
+  time.timeZone = "Europe/Athens";
+
+  services.fwupd.enable = true;
+  services.ntp.enable = true;
+  nix.settings = {
+    trusted-users = [ "root" "lgian" "@wheel" ];
+    experimental-features = [ "nix-command" "flakes" ];
+  };
+}
+
