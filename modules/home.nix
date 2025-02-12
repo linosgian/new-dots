@@ -5,17 +5,16 @@
   home-manager.users.lgian = { lib, ...}:{
     home.stateVersion = "24.11";
     imports = [
-      ./shikane.nix
       ./zsh
-      ./shikane
       ./kitty
       ./sway
       ./swaync
       ./rofi
+      ./kanshi
       ./git
       (import ./waybar {
         inherit config pkgs home-manager;
-        bigger-bar-screens = [ "DP-3" "DP-4" ];
+        bigger-bar-screens = [ "Dell Inc. DELL S2721DGF CTPGZ83" "BNQ BenQ EL2870U W4M06094SL0" ];
         smaller-bar-screens = [ "eDP-1" ];
       })
     ];

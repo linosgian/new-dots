@@ -125,49 +125,49 @@ in
         };
       };
 
-      ## TODO: make those configurable
-      workspaceOutputAssign = [
-        {
-          output = "DP-4";
-          workspace = "1";
-        }
-        {
-          output = "DP-4";
-          workspace = "2";
-        }
-        {
-          output = "DP-3";
-          workspace = "3";
-        }
-        {
-          output = "DP-4";
-          workspace = "4";
-        }
-        {
-          output = "DP-3";
-          workspace = "5";
-        }
-        {
-          output = "DP-4";
-          workspace = "6";
-        }
-        {
-          output = "DP-4";
-          workspace = "7";
-        }
-        {
-          output = "DP-4";
-          workspace = "8";
-        }
-        {
-          output = "DP-4";
-          workspace = "9";
-        }
-      ];
+      # ## TODO: make those configurable
+      # workspaceOutputAssign = [
+      #   {
+      #     output = "DP-4";
+      #     workspace = "1";
+      #   }
+      #   {
+      #     output = "DP-4";
+      #     workspace = "2";
+      #   }
+      #   {
+      #     output = "DP-3";
+      #     workspace = "3";
+      #   }
+      #   {
+      #     output = "DP-4";
+      #     workspace = "4";
+      #   }
+      #   {
+      #     output = "DP-3";
+      #     workspace = "5";
+      #   }
+      #   {
+      #     output = "DP-4";
+      #     workspace = "6";
+      #   }
+      #   {
+      #     output = "DP-4";
+      #     workspace = "7";
+      #   }
+      #   {
+      #     output = "DP-4";
+      #     workspace = "8";
+      #   }
+      #   {
+      #     output = "DP-4";
+      #     workspace = "9";
+      #   }
+      # ];
 
       assigns = {
-        "4" = [{class = "Slack";}];
-        "3" = [{class = "Spotify";}];
+        "4" = [{app_id = "slack";}];
+        "3" = [{app_id = "spotify";}];
         "5" = [{app_id = "evince";}];
       };
       window.commands = [
@@ -194,6 +194,8 @@ in
         { command = "swaybg -i ${wallpaperAbsPath} -m fill"; always = true; }
         { command = "source configure-gtk"; always = true; }
         { command = "gsettings set org.gnome.desktop.interface  gtk-theme 'Arc-Dark'"; always = true; }
+        { command = "systemctl --user restart kanshi"; always = true; }
+
       ];
 
       bars = [
