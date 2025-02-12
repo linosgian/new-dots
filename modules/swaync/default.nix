@@ -1,0 +1,71 @@
+{home-manager, config, pkgs, ...}:
+{
+  services.swaync = {
+    enable = true;
+    style = builtins.readFile ./style.css;
+    settings = {
+      positionX = "right";
+      positionY = "top";
+      control-center-margin-top = 10;
+      control-center-margin-bottom = 0;
+      control-center-margin-right = 10;
+      control-center-margin-left = 0;
+      notification-icon-size = 64;
+      notification-body-image-height = 100;
+      notification-body-image-width = 200;
+      timeout = 10;
+      timeout-low = 5;
+      timeout-critical = 0;
+      fit-to-screen = false;
+      control-center-width = 500;
+      control-center-height = 600;
+      notification-window-width = 500;
+      keyboard-shortcuts = true;
+      image-visibility = "when-available";
+      transition-time = 200;
+      hide-on-clear = false;
+      hide-on-action = true;
+      script-fail-notify = true;
+
+      notification-visibility = {
+        "example-name" = {
+          state = "muted";
+          urgency = "Low";
+          app-name = "Spotify";
+        };
+      };
+
+      widgets = [
+        "menubar#label"
+        "buttons-grid"
+        "volume"
+        "mpris"
+        "title"
+        "dnd"
+        "notifications"
+      ];
+
+      widget-config = {
+        title = {
+          text = "Notifications";
+          clear-all-button = true;
+          button-text = "Clear All";
+        };
+        dnd = {
+          text = "Do Not Disturb";
+        };
+        label = {
+          max-lines = 1;
+          text = "Control Center";
+        };
+        mpris = {
+          image-size = 96;
+          image-radius = 12;
+        };
+        volume = {
+          label = "";
+        };
+      };
+    };
+  };
+}

@@ -1,0 +1,218 @@
+{home-manager, config, pkgs, ...}:
+let
+  wallpaper_path = ".config/sway/wallpaper.jpg";
+in
+{
+  home.file.".config/sway/wallpaper.jpg".source = ./wallpaper.jpg;
+  services.blueman-applet = {
+    enable = true;
+  };
+
+  services.network-manager-applet = {
+    enable = true;
+  };
+
+  programs.swaylock = {
+    enable = true;
+    settings = {
+      daemonize = true;
+      font-size = 15;
+      indicator-radius = 100;
+      indicator-thickness = 15;
+      line-uses-ring = true;
+      image = "${config.home.homeDirectory}.config/sway/wallpaper.jpg";
+      ignore-empty-password = true;
+    };
+  };
+
+  wayland.windowManager.sway = {
+    enable = true;
+    package = pkgs.swayfx;
+
+    checkConfig = false;
+    config = {
+      modifier = "Mod1";
+      floating.modifier = "Mod1";
+      workspaceLayout = "stacking";
+
+      modes = {
+        "System  (l) lock, (d) suspend, (h) hibernate, (r) reboot, (s) shutdown" = {
+          "l" = "exec --no-startup-id swaylock, mode default";
+          "d" = "exec --no-startup-id exit.sh suspend, mode default";
+          "h" = "exec --no-startup-id exit.sh hibernate, mode default";
+          "r" = "exec --no-startup-id exit.sh reboot, mode default";
+          "s" = "exec --no-startup-id exit.sh shutdown, mode default";
+          "Return" = "mode default";
+          "Escape" = "mode default";
+        };
+      };
+      keybindings = {
+        "Mod1+r" = "mode \"System  (l) lock, (d) suspend, (h) hibernate, (r) reboot, (s) shutdown\"";
+
+        # Application Launchers
+        "Mod1+Return" = "exec kitty -o allow_remote_control=yes --single-instance --listen-on unix:@mykitty";
+        "Mod1+d" = "exec --no-startup-id rofi -auto-select -dpi 120 -sorting-method fzf -sort -matching fuzzy -modi drun -show drun -show-icons -drun-match-fields name";
+        "Mod1+o" = "exec --no-startup-id bash switcher.sh";
+
+        # Screenshots
+        "Insert" = "exec bash screenshot.sh";
+        "Control+Insert" = "exec bash screenshot.sh --screen";
+
+        # Window Management
+        "Mod1+q" = "kill";
+        "Mod1+h" = "focus left";
+        "Mod1+j" = "focus down";
+        "Mod1+k" = "focus up";
+        "Mod1+l" = "focus right";
+        "Mod1+Shift+h" = "move left";
+        "Mod1+Shift+j" = "move down";
+        "Mod1+Shift+k" = "move up";
+        "Mod1+Shift+l" = "move right";
+        "Mod1+f" = "fullscreen toggle";
+        "Mod1+Shift+space" = "floating toggle";
+        "Mod1+space" = "focus mode_toggle";
+
+        # Layouts
+        "Mod1+s" = "layout stacking";
+        "Mod1+w" = "layout tabbed";
+        "Mod1+e" = "layout toggle split";
+        "Mod1+v" = "split toggle";
+        "Mod1+u" = "exec bash scratch.sh";
+
+        # Workspaces
+        "Mod1+1" = "workspace 1";
+        "Mod1+2" = "workspace 2";
+        "Mod1+3" = "workspace 3";
+        "Mod1+4" = "workspace 4";
+        "Mod1+5" = "workspace 5";
+        "Mod1+6" = "workspace 6";
+        "Mod1+7" = "workspace 7";
+        "Mod1+8" = "workspace 8";
+        "Mod1+9" = "workspace 9";
+        "Mod1+0" = "workspace 10";
+
+        "Mod1+Shift+1" = "move container to workspace 1";
+        "Mod1+Shift+2" = "move container to workspace 2";
+        "Mod1+Shift+3" = "move container to workspace 3";
+        "Mod1+Shift+4" = "move container to workspace 4";
+        "Mod1+Shift+5" = "move container to workspace 5";
+        "Mod1+Shift+6" = "move container to workspace 6";
+        "Mod1+Shift+7" = "move container to workspace 7";
+        "Mod1+Shift+8" = "move container to workspace 8";
+        "Mod1+Shift+9" = "move container to workspace 9";
+        "Mod1+Shift+0" = "move container to workspace 10";
+
+        # Reload Configuration
+        "Mod1+Shift+r" = "exec swaymsg reload";
+
+        # Notifications
+        "ctrl+space" = "exec --no-startup-id swaync-client --close-latest";
+        "ctrl+Shift+space" = "exec --no-startup-id swaync-client -C";
+
+        # Volume and Brightness
+        "XF86AudioRaiseVolume" = "exec --no-startup-id bash volcontrol.sh up";
+        "XF86AudioLowerVolume" = "exec --no-startup-id bash volcontrol.sh down";
+        "XF86AudioMute" = "exec --no-startup-id bash volcontrol.sh mute";
+        "XF86MonBrightnessUp" = "exec brightnessctl set +5%";
+        "XF86MonBrightnessDown" = "exec brightnessctl set 5%-";
+      };
+
+      input = {
+        "*" = {
+          xkb_layout = "us,gr";
+          xkb_options = "grp:win_space_toggle";
+        };
+      };
+
+      ## TODO: make those configurable
+      workspaceOutputAssign = [
+        {
+          output = "DP-4";
+          workspace = "1";
+        }
+        {
+          output = "DP-4";
+          workspace = "2";
+        }
+        {
+          output = "DP-3";
+          workspace = "3";
+        }
+        {
+          output = "DP-4";
+          workspace = "4";
+        }
+        {
+          output = "DP-3";
+          workspace = "5";
+        }
+        {
+          output = "DP-4";
+          workspace = "6";
+        }
+        {
+          output = "DP-4";
+          workspace = "7";
+        }
+        {
+          output = "DP-4";
+          workspace = "8";
+        }
+        {
+          output = "DP-4";
+          workspace = "9";
+        }
+      ];
+
+      assigns = {
+        "4" = [{class = "Slack";}];
+        "3" = [{class = "Spotify";}];
+        "5" = [{app_id = "evince";}];
+      };
+      window.commands = [
+        { criteria = { class = "Slack"; }; command = "assign 4"; }
+        { criteria = { app_id = "evince"; }; command = "assign 5"; }
+        { criteria = { app_id = "scratchpad"; }; command = "floating enable"; }
+        { criteria = { app_id = "scratchpad"; }; command = "move scratchpad"; }
+        { criteria = { app_id = "scratchpad"; }; command = "move position center"; }
+        { criteria = { app_id = "scratchpad"; }; command = "resize set 50 50"; }
+        { criteria = { app_id = "scratchpad"; }; command = "border pixel 2"; }
+        { criteria = { app_id = "scratchpad"; }; command = "sticky enable"; }
+        { criteria = { app_id = "pavucontrol"; }; command = "floating enable, border normal"; }
+        { criteria = { app_id = "pavucontrol"; }; command = "resize set 1200 800"; }
+      ];
+      startup = [
+        { command = "swaymsg 'exec kitty --class=\"scratchpad\" -o allow_remote_control=yes --listen-on unix:/tmp/mykitty1'"; always = false; }
+        { command = "swaymsg -t get_inputs | jq -r '.[] | select(.type==\"touchpad\") | .identifier' | xargs -i swaymsg input \"{}\" natural_scroll enabled"; always = true; }
+        { command = "swaymsg -t get_inputs | jq -r '.[] | select(.type==\"touchpad\") | .identifier' | xargs -i swaymsg input \"{}\" tap enabled"; always = true; }
+        { command = "slack"; always = false; }
+        { command = "swaymsg 'workspace 1; exec kitty -o allow_remote_control=yes --listen-on unix:/tmp/mykitty3'"; always = false; }
+        { command = "systemctl --user import-environment DISPLAY WAYLAND_DISPLAY SWAYSOCK XDG_CURRENT_DESKTOP"; always = false; }
+        { command = "systemctl --user start libinput-gestures.service"; always = false; }
+        { command = "gnome-polkit-authentication-agent"; always = true; }
+        { command = "swaybg -i $HOME/.config/sway/wallpaper.jpg -m fill"; always = true; }
+        { command = "source configure-gtk"; always = true; }
+        { command = "gsettings set org.gnome.desktop.interface  gtk-theme 'Arc-Dark'"; always = true; }
+      ];
+
+      bars = [
+        {
+          command = "waybar";
+        }
+      ];
+    };
+    extraConfig = ''
+      blur true
+      blur_radius 5
+      blur_saturation 2
+      shadows enbale
+      corner_radius 20
+      shadow_blur_radius 5
+      shadow_offset 0 1
+      layer_effects "gtk-layer-shell" {
+          blur enable
+          corner_radius 20
+      }
+    '';
+  };
+}

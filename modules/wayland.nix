@@ -75,10 +75,6 @@ in
   programs.sway.enable = true;
   programs.sway.wrapperFeatures.gtk = true;
 
-  environment.variables = {
-    GTK_THEME = "Arc-Dark";  # Forces theme globally
-  };
-
   fonts = {
     fontDir.enable = true;
     enableGhostscriptFonts = true;

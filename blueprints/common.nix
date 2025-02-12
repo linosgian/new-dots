@@ -24,7 +24,7 @@
     usbutils
     fwupd
     dmidecode
-    pciutils #lspci
+    pciutils
     lshw
     ripgrep
     bashInteractive
@@ -52,4 +52,3 @@
     experimental-features = [ "nix-command" "flakes" ];
   };
 }
-
