@@ -1,9 +1,10 @@
 {home-manager, config, pkgs, ...}:
 let
-  wallpaper_path = ".config/sway/wallpaper.jpg";
+  wallpaperPath = ".config/sway/wallpaper.jpg";
+  wallpaperAbsPath = "${config.home.homeDirectory}/${wallpaperPath}";
 in
 {
-  home.file.".config/sway/wallpaper.jpg".source = ./wallpaper.jpg;
+  home.file."${wallpaperPath}".source = ./wallpaper.jpg;
   services.blueman-applet = {
     enable = true;
   };
@@ -20,7 +21,7 @@ in
       indicator-radius = 100;
       indicator-thickness = 15;
       line-uses-ring = true;
-      image = "${config.home.homeDirectory}.config/sway/wallpaper.jpg";
+      image = "${wallpaperAbsPath}";
       ignore-empty-password = true;
     };
   };
@@ -190,7 +191,7 @@ in
         { command = "systemctl --user import-environment DISPLAY WAYLAND_DISPLAY SWAYSOCK XDG_CURRENT_DESKTOP"; always = false; }
         { command = "systemctl --user start libinput-gestures.service"; always = false; }
         { command = "gnome-polkit-authentication-agent"; always = true; }
-        { command = "swaybg -i $HOME/.config/sway/wallpaper.jpg -m fill"; always = true; }
+        { command = "swaybg -i ${wallpaperAbsPath} -m fill"; always = true; }
         { command = "source configure-gtk"; always = true; }
         { command = "gsettings set org.gnome.desktop.interface  gtk-theme 'Arc-Dark'"; always = true; }
       ];
