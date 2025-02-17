@@ -71,76 +71,76 @@
         ];
       };
     };
-
-
-    packages.x86_64-linux.mainrouter =
-      let
-        pkgs = nixpkgs.legacyPackages.x86_64-linux;
-
-        profiles = openwrt-imagebuilder.lib.profiles { inherit pkgs; release="23.05.5";};
-        disabledServices = [ "dnsmasq" ];
-        config = profiles.identifyProfile "xiaomi_redmi-router-ax6s" // {
-          packages = [
-            "tcpdump"
-            "dnsmasq"
-            "bind-host"
-            "bind-dig"
-            "coreutils"
-            "curl"
-            "ddns-scripts-digitalocean"
-            "openssh-server"
-            "openssh-sftp-server"
-            "openssh-client"
-            "ethtool-full"
-            "htop"
-            "ip-full"
-            "iperf3"
-            "jq"
-            "python3"
-            "irqbalance"
-            "adblock"
-            "luci-ssl"
-            "acme-acmesh"
-            "acme-acmesh-dnsapi"
-            "zsh"
-            "vim-fuller"
-            "netcat"
-            "unbound-control"
-            "unbound-daemon"
-            "lm-sensors"
-            "prometheus-node-exporter-lua"
-            "prometheus-node-exporter-lua-openwrt"
-            "prometheus-node-exporter-lua-wifi"
-            "prometheus-node-exporter-lua-wifi_stations"
-            "qosify"
-            "ss"
-            "tc-full"
-          ];
-          hackExtraPackages = [
-            "smokeping_prober"
-            "unbound_exporter"
-            "prometheus-node-exporter-lua-sqm"
-          ];
-          files = pkgs.runCommand "image-files" {} ''
-          mkdir -p $out/etc/uci-defaults
-              cat > $out/etc/uci-defaults/99-custom <<EOF
-              sed -i '/\s*devices = {{ fw4\.set(flowtable_devices, true) }};/s/{{.*}}/{ "lan1", "lan2", "lan3" }/' /usr/share/firewall4/templates/ruleset.uc
-              EOF
-          '';
-        };
-      in
-        openwrt-imagebuilder.lib.build config;
-      packages.x86_64-linux.ap =
+    packages.x86_64-linux = {
+      mainrouter =
         let
           pkgs = nixpkgs.legacyPackages.x86_64-linux;
 
           profiles = openwrt-imagebuilder.lib.profiles { inherit pkgs; release="23.05.5";};
+          disabledServices = [ "dnsmasq" ];
+          config = profiles.identifyProfile "xiaomi_redmi-router-ax6s" // {
+            packages = [
+              "tcpdump"
+              "dnsmasq"
+              "bind-host"
+              "bind-dig"
+              "coreutils"
+              "curl"
+              "ddns-scripts-digitalocean"
+              "openssh-server"
+              "openssh-sftp-server"
+              "openssh-client"
+              "ethtool-full"
+              "htop"
+              "ip-full"
+              "iperf3"
+              "jq"
+              "python3"
+              "irqbalance"
+              "adblock"
+              "luci-ssl"
+              "acme-acmesh"
+              "acme-acmesh-dnsapi"
+              "zsh"
+              "vim-fuller"
+              "netcat"
+              "unbound-control"
+              "unbound-daemon"
+              "lm-sensors"
+              "prometheus-node-exporter-lua"
+              "prometheus-node-exporter-lua-openwrt"
+              "prometheus-node-exporter-lua-wifi"
+              "prometheus-node-exporter-lua-wifi_stations"
+              "qosify"
+              "ss"
+              "tc-full"
+            ];
+            hackExtraPackages = [
+              "smokeping_prober"
+              "unbound_exporter"
+              "prometheus-node-exporter-lua-sqm"
+            ];
+            files = pkgs.runCommand "image-files" {} ''
+              mkdir -p $out/etc/uci-defaults
+                cat > $out/etc/uci-defaults/99-custom <<EOF
+                sed -i '/\s*devices = {{ fw4\.set(flowtable_devices, true) }};/s/{{.*}}/{ "lan1", "lan2", "lan3" }/' /usr/share/firewall4/templates/ruleset.uc
+                EOF
+            '';
+          };
+        in
+        openwrt-imagebuilder.lib.build config;
+      ap =
+        let
+          pkgs = nixpkgs.legacyPackages.x86_64-linux;
+
+          profiles = openwrt-imagebuilder.lib.profiles { inherit pkgs; release="24.10.0";};
           config = profiles.identifyProfile "xiaomi_mi-router-4a-100m" // {
             packages = [
               "tcpdump"
               "dnsmasq"
               "openssh-server"
               "openssh-sftp-server"
+              "htop"
               "luci-ssl"
               "mosquitto-ssl"
               "acme-acmesh"
@@ -151,5 +151,6 @@
           };
         in
         openwrt-imagebuilder.lib.build config;
-      };
+    };
+  };
 }
