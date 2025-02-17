@@ -22,6 +22,9 @@
       "wireshark"
     ];
 
+    openssh.authorizedKeys.keys = [
+      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAILyy2ZIfzv+f9rGow37ljp9i78pJrSQ9zrDkz6QNgYWC lgian@nixos"
+    ];
     home = "/home/lgian";
   };
 }

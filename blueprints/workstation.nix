@@ -1,10 +1,11 @@
 { config , lib , pkgs ,  ...  }:
 {
   imports = [
-    ../modules/vim.nix
+    ../modules/vim
     ./common.nix
     ../modules/boot.nix
     ../modules/home.nix
+    ../modules/wayland.nix
   ];
   environment.systemPackages = with pkgs; [
     gnome-keyring
@@ -38,6 +39,7 @@
     virt-viewer
     ansible
     entr
+    whitesur-cursors
   ];
   services.udisks2.enable = true;
   services.avahi.enable = true;

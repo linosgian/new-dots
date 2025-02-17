@@ -3,6 +3,7 @@
 
   imports = [
     ../modules/user.nix
+    ../modules/zsh
   ];
   environment.systemPackages = with pkgs; [
     nixVersions.stable
@@ -32,16 +33,17 @@
     nix-output-monitor
     nixd
     screen
+    fzf
+    kitty.terminfo
   ];
   nixpkgs.config.allowUnfree = true;
-  programs.zsh = {
-    enable = true;
-    #enableCompletion = false;
-    enableGlobalCompInit = false;
-    autosuggestions.enable = true;
-    syntaxHighlighting.enable = true;
-  };
-
+  #programs.zsh = {
+  #  enable = true;
+  #  #enableCompletion = false;
+  #  enableGlobalCompInit = false;
+  #  autosuggestions.enable = true;
+  #  syntaxHighlighting.enable = true;
+  #};
   i18n.defaultLocale = "en_US.UTF-8";
   time.timeZone = "Europe/Athens";
 

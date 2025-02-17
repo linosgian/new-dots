@@ -125,45 +125,45 @@ in
         };
       };
 
-      # ## TODO: make those configurable
-      # workspaceOutputAssign = [
-      #   {
-      #     output = "DP-4";
-      #     workspace = "1";
-      #   }
-      #   {
-      #     output = "DP-4";
-      #     workspace = "2";
-      #   }
-      #   {
-      #     output = "DP-3";
-      #     workspace = "3";
-      #   }
-      #   {
-      #     output = "DP-4";
-      #     workspace = "4";
-      #   }
-      #   {
-      #     output = "DP-3";
-      #     workspace = "5";
-      #   }
-      #   {
-      #     output = "DP-4";
-      #     workspace = "6";
-      #   }
-      #   {
-      #     output = "DP-4";
-      #     workspace = "7";
-      #   }
-      #   {
-      #     output = "DP-4";
-      #     workspace = "8";
-      #   }
-      #   {
-      #     output = "DP-4";
-      #     workspace = "9";
-      #   }
-      # ];
+      ## TODO: make those configurable
+      workspaceOutputAssign = [
+        {
+          output = "DP-4";
+          workspace = "1";
+        }
+        {
+          output = "DP-4";
+          workspace = "2";
+        }
+        {
+          output = "DP-3";
+          workspace = "3";
+        }
+        {
+          output = "DP-4";
+          workspace = "4";
+        }
+        {
+          output = "DP-3";
+          workspace = "5";
+        }
+        {
+          output = "DP-4";
+          workspace = "6";
+        }
+        {
+          output = "DP-4";
+          workspace = "7";
+        }
+        {
+          output = "DP-4";
+          workspace = "8";
+        }
+        {
+          output = "DP-4";
+          workspace = "9";
+        }
+      ];
 
       assigns = {
         "4" = [{app_id = "slack";}];
@@ -171,7 +171,7 @@ in
         "5" = [{app_id = "evince";}];
       };
       window.commands = [
-        { criteria = { class = "Slack"; }; command = "assign 4"; }
+        { criteria = { app_id = "slack"; }; command = "assign 4"; }
         { criteria = { app_id = "evince"; }; command = "assign 5"; }
         { criteria = { app_id = "scratchpad"; }; command = "floating enable"; }
         { criteria = { app_id = "scratchpad"; }; command = "move scratchpad"; }
@@ -205,6 +205,7 @@ in
       ];
     };
     extraConfig = ''
+      seat * xcursor_theme WhiteSur-cursors 32
       blur true
       blur_radius 5
       blur_saturation 2

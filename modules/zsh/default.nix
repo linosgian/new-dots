@@ -1,29 +1,22 @@
 {pkgs, ...}:
 {
-  home.packages = with pkgs; [
+
+  environment.systemPackages = with pkgs; [
     (pkgs.writeShellScriptBin "kube_ps1.sh" (builtins.readFile ./kube_ps1.sh))
   ];
-
-  # ZSH / FZF
-  programs.fzf = {
-    enable = true;
-    enableZshIntegration = true;
-  };
-
+  system.userActivationScripts.zshrc = "touch .zshrc";
   programs.zsh = {
+    syntaxHighlighting.enable = true;
     enable = true;
-    enableCompletion = false;
-    autosuggestion.enable = true;
-    autocd = true;
-    dotDir = ".config/zsh";
-    history = {
-      path = "/home/lgian/.zsh_history";
-      size = 10000000;
-      save = 10000000;
-      ignoreAllDups = true;
-      ignoreSpace = true;
-      share = true;
-    };
-    initExtra = builtins.readFile ./initextra.zsh;
+    enableCompletion = true;
+    autosuggestions.enable = true;
+    histSize = 10000000;
+    histFile = "/home/lgian/.zsh_history";
+    setOptions = [
+      "HIST_IGNORE_ALL_DUPS"
+      "HIST_IGNORE_SPACE"
+      "INC_APPEND_HISTORY"
+    ];
+    promptInit = builtins.readFile ./initextra.zsh;
   };
 }

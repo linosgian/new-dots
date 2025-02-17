@@ -1,4 +1,5 @@
-setopt nonomatch nohup inc_append_history promptsubst
+#TODO: convert those to zsh setOptions
+setopt nonomatch nohup promptsubst autocd
 autoload -U colors && colors
 autoload -Uz compinit select-word-style
 select-word-style bash
@@ -12,6 +13,7 @@ function username_color {
   fi
 }
 
+bindkey -e
 bindkey "^[[1;5C" forward-word
 bindkey "^[[1;5D" backward-word
 
@@ -66,9 +68,10 @@ compdef evinced=evince
 compdef _dexec dexec
 
 export HIST_STAMPS="dd.mm.yyyy"
-export FZF_DEFAULT_COMMAND='rg --files --hidden --follow --no-ignore-vcs'
+export FZF_DEFAULT_COMMAND='rg --files --hidden --follow --glob "!.git/"'
 export EDITOR="vim"
 export VISUAL="vim"
+export SSH_AUTH_SOCK=/run/user/1000/ssh-agent
 
 alias l="ls -ahltr --color=always"
 alias c="clear"
@@ -91,4 +94,4 @@ source kube_ps1.sh
 PROMPT='$(kube_ps1)'$PROMPT
 kubeoff
 
-eval "$(direnv hook zsh)"
+eval "$(fzf --zsh)"

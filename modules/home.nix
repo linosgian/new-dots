@@ -5,7 +5,6 @@
   home-manager.users.lgian = { lib, ...}:{
     home.stateVersion = "24.11";
     imports = [
-      ./zsh
       ./kitty
       ./sway
       ./swaync
@@ -24,10 +23,45 @@
       fzf
       ripgrep
       evince
+      tmux
     ];
 
     services.ssh-agent = {
       enable = true;
+    };
+
+    programs.ssh = {
+      enable = true;
+      matchBlocks = {
+        "router" = {
+          hostname = "router.lgian.com";
+          identityFile = "~/.ssh/old";
+          user = "root";
+        };
+        "mutual" = {
+          hostname = "192.168.5.2";
+          identityFile = "~/.ssh/olddstop";
+          proxyJump = "router";
+        };
+        "headscale" = {
+          hostname = "headscale.lgian.com";
+          identityFile = "~/.ssh/old";
+        };
+        "connector" = {
+          hostname = "connector.lgian.com";
+          identityFile = "~/.ssh/old";
+        };
+        "strovilos" = {
+          hostname = "strovilos.gr";
+          port = 3000;
+          identityFile = "~/.ssh/old";
+          user = "ragan";
+        };
+        "ntoulapa" = {
+          hostname = "ntoulapa.lgian.com";
+          identityFile = "~/.ssh/old";
+        };
+      };
     };
   };
 }

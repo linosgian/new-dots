@@ -40,7 +40,7 @@
     includes = [
       {
         condition = "gitdir:~/cflow/";
-        path = "~/.config/.git/gitconfig-work";
+        path = "~/.config/git/gitconfig-work";
       }
     ];
 
