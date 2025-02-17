@@ -28,6 +28,19 @@
     slack
   ];
 
+
+  home-manager.users.lgian = { lib, ...}:{
+    programs.ssh = {
+      enable = true;
+      matchBlocks = {
+        "*.cfl" = {
+          identityFile = "/home/lgian/.ssh/work";
+          identitiesOnly = true;
+        };
+      };
+    };
+  };
+
   networking.wg-quick.interfaces = {
     wg0 = {
       address = [ "192.168.10.28/32" ];
