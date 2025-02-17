@@ -18,6 +18,12 @@
   {
     formatter.x86_64-linux = nixpkgs.legacyPackages.x86_64-linux.nixfmt-rfc-style;
     nixosConfigurations = {
+      test-nix = nixpkgs.lib.nixosSystem {
+        system = "x86_64-linux";
+        modules = [
+          ./hosts/test-nix
+        ];
+      };
       mutual = nixpkgs.lib.nixosSystem {
         system = "x86_64-linux";
         modules = [
