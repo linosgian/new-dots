@@ -17,6 +17,14 @@ bindkey -e
 bindkey "^[[1;5C" forward-word
 bindkey "^[[1;5D" backward-word
 
+function prompt_symbol_color {
+  if [[ -n $SSH_CLIENT || -n $SSH_TTY ]]; then
+    echo "$fg[magenta]"  # Magenta for SSH sessions
+  else
+    echo "$fg[blue]"     # Blue for local
+  fi
+}
+
 function git_prompt_info() {
   PREFIX=" %{$fg[white]%}on%{$reset_color%} %{$fg[cyan]%}"
   local ref
@@ -79,11 +87,12 @@ alias ssh-add='ssh-add -t 24h'
 alias k="kubectl"
 alias kon="kubeon"
 alias koff="kubeoff"
+alias nixd="nix develop -c zsh"
 
-PROMPT="%{$terminfo[bold]$fg[blue]%}#%{$reset_color%} \
+PROMPT="%{$terminfo[bold]$(prompt_symbol_color)%}#%{$reset_color%} \
 %{$(username_color)%}%n\
 %{$fg[white]%}\
-"@%{$fg[green]%}"$HOST\
+"@%{$fg[green]%}" $HOST\
 %{$fg[white]%}[\
 %{$terminfo[bold]$fg[yellow]%}${current_dir}%{$reset_color%}\
 ${git_info}]\
@@ -94,4 +103,6 @@ source kube_ps1.sh
 PROMPT='$(kube_ps1)'$PROMPT
 kubeoff
 
+eval "$(fzf --zsh)"
+eval "$(direnv hook zsh)"
 eval "$(fzf --zsh)"

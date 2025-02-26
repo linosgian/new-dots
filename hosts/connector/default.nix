@@ -20,12 +20,6 @@
 
   networking.firewall.allowedTCPPorts = [ 22 80 443 9000 ];
 
-  services.prometheus.exporters.node = {
-    enable = true;
-    port = 9000;
-    enabledCollectors = [ "systemd" ];
-    extraFlags = [ "--collector.ethtool" "--collector.softirqs" "--collector.tcpstat" "--collector.wifi" ];
-  };
 
   system.stateVersion = "24.11"; # DO NOT CHANGE ME
 }

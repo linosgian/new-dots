@@ -35,15 +35,9 @@
     screen
     fzf
     kitty.terminfo
+    direnv
   ];
   nixpkgs.config.allowUnfree = true;
-  #programs.zsh = {
-  #  enable = true;
-  #  #enableCompletion = false;
-  #  enableGlobalCompInit = false;
-  #  autosuggestions.enable = true;
-  #  syntaxHighlighting.enable = true;
-  #};
   i18n.defaultLocale = "en_US.UTF-8";
   time.timeZone = "Europe/Athens";
 

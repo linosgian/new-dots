@@ -7,6 +7,7 @@
   users.users.lgian = {
     shell = pkgs.zsh;
     isNormalUser = true;
+    initialPassword = "linos123";
     extraGroups = [
       "dialup"
       "docker"

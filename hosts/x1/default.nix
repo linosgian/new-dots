@@ -5,6 +5,8 @@
     ../../blueprints/laptop.nix
     ./hardware-configuration.nix
   ];
+  boot.binfmt.emulatedSystems = [ "aarch64-linux" ];
+  networking.hostName = "x1";
   services.thinkfan = {
     enable = true;
     #sensor = "/sys/devices/virtual/thermal/thermal_zone0/temp";
@@ -52,7 +54,7 @@
         {
           publicKey = "bqOVQlwuEu3mXx/k0rRoMF4csjnG54uFz8JuEf63xQA=";
 
-          allowedIPs = [ "192.168.10.3/32" "192.168.10.0/24" "192.168.129.206/24" "192.168.129.206/24" "192.168.131.0/24" "192.168.130.214/24" "10.100.0.0/16" "10.250.0.0/16" "10.200.0.0/16" "10.1.0.0/16" ];
+          allowedIPs = ["192.168.2.15/32" "192.168.10.3/32" "192.168.128.0/24" "192.168.10.0/24" "192.168.129.206/24" "192.168.129.206/24" "192.168.131.0/24" "192.168.130.214/24" "10.100.0.0/16" "10.250.0.0/16" "10.200.0.0/16" "10.1.0.0/16" ];
           endpoint = "cf-wg-eu-90544ccb5a9cb155.elb.eu-central-1.amazonaws.com:55442";
         }
       ];
@@ -66,8 +68,8 @@
     };
     resolveLocalQueries = true;
     settings.server= [
-      "/ec2.cfl/10.100.0.2"
-      "/eks.cfl/10.100.0.2"
+      "/.cfl/10.100.0.2"
+      "/.cf/10.100.0.2"
       "/937DE1F752050623115CE038A346EA0E.gr7.eu-central-1.eks.amazonaws.com/10.100.0.2"
     ];
   };

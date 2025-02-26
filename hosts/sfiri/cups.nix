@@ -9,6 +9,16 @@
     browsing = true;
     defaultShared = true;
     listenAddresses = [ "*:631" ];
+    openFirewall = true;
+  };
+  services.avahi = {
+    enable = true;
+    nssmdns4 = true;
+    openFirewall = true;
+    publish = {
+      enable = true;
+      userServices = true;
+    };
   };
 
   hardware.printers = {

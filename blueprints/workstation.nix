@@ -32,7 +32,6 @@
     nix-direnv
     nix-diff
     nix-tree
-    direnv
     dive
     virt-manager
     qemu
@@ -42,7 +41,10 @@
     whitesur-cursors
   ];
   services.udisks2.enable = true;
-  services.avahi.enable = true;
+  services.avahi = {
+    enable = true;
+    nssmdns4 = true;
+  };
   virtualisation.docker.enable = true;
   security.rtkit.enable = true;
   programs.ssh = {
