@@ -19,7 +19,19 @@
       };
     };
   };
-
+  networking.nameservers = [ "127.0.0.1" ];  # Use dnsmasq locally
+  # Enable dnsmasq service
+  services.dnsmasq = {
+    enable = true;
+    settings = {
+      listen-address = "0.0.0.0";
+      bind-interfaces = true;
+    };
+    resolveLocalQueries = true;
+    settings.server= [
+      "/consul/127.0.0.1#8600"
+    ];
+  };
   systemd.services.consul = {
     wantedBy = [ "multi-user.target" ];
   };

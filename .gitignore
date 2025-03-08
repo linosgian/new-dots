@@ -1,3 +1,4 @@
 /result
 /tf/terraform.*
+/tf/.terraform/*
 *.qcow2
