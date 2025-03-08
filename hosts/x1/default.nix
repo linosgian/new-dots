@@ -46,7 +46,6 @@
   networking.wg-quick.interfaces = {
     wg0 = {
       address = [ "192.168.10.28/32" ];
-      #dns = [ "10.100.0.2" ];
       listenPort = 51820;
       privateKeyFile = "/etc/nixos/cf-privkey";
 
