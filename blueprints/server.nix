@@ -5,6 +5,11 @@
     ./common.nix
     ../modules/vim/server.nix
   ];
+
+  environment.systemPackages = with pkgs; [
+    rsyslog
+    ethtool
+  ];
   services.prometheus.exporters.node = {
     enable = true;
     openFirewall = true; # Opens port 9100 in the firewall
