@@ -70,6 +70,27 @@
     ];
   };
 
+  environment.systemPackages = with pkgs; [
+    restic
+  ];
+  services.restic.backups.ntoulapa = {
+    repository = "s3:http://snf-77423.ok-kno.grnetcloud.net:9000/restic-backups";
+    initialize = true;
+    passwordFile = "/etc/nixos/restic-password";  # File containing Restic repository password
+    environmentFile = "/etc/nixos/minio-credentials"; # Exposes AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY
+    paths = [ "/home/lgian/boo"]; # Folders to back up
+    timerConfig = {
+      OnCalendar = "daily";
+      Persistent = true;
+    };
+    pruneOpts = [
+      "--keep-last 7"
+      "--keep-daily 7"
+      "--keep-weekly 4"
+      "--keep-monthly 6"
+      "--prune"
+    ];
+  };
   security.acme.defaults.email = "linosgian00@gmail.com";
   security.acme.acceptTerms = true;
   security.acme.defaults.server = "https://acme-v02.api.letsencrypt.org/directory";
