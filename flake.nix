@@ -6,7 +6,6 @@
     openwrt-imagebuilder.url = "github:astro/nix-openwrt-imagebuilder";
     home-manager.url = "github:nix-community/home-manager/release-24.11";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
-    colmena.url = "github:zhaofengli/colmena";
 
     microvm.url = "github:astro/microvm.nix";
     microvm.inputs.nixpkgs.follows = "nixpkgs";
@@ -18,19 +17,11 @@
     home-manager,
     openwrt-imagebuilder,
     microvm,
-    colmena,
     ...
   }@inputs:
   rec {
-    formatter.x86_64-linux = nixpkgs.legacyPackages.x86_64-linux.nixfmt-rfc-style;
 
-    colmena = {
-      meta = {
-        nixpkgs = import nixpkgs {
-          system = "x86_64-linux";
-        };
-      };
-    };
+    formatter.x86_64-linux = nixpkgs.legacyPackages.x86_64-linux.nixfmt-rfc-style;
     nixosConfigurations = {
       my-microvm = nixpkgs.lib.nixosSystem {
         system = "x86_64-linux";
