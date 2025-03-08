@@ -1,4 +1,4 @@
-{ config , lib , pkgs ,  ...  }:
+{ inputs, config , lib , pkgs ,  ...  }:
 {
   imports = [
     ../modules/vim
@@ -39,6 +39,7 @@
     ansible
     entr
     whitesur-cursors
+    terraform
   ];
   services.udisks2.enable = true;
   services.avahi = {
