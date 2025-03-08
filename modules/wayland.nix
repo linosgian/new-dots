@@ -68,13 +68,13 @@ in
   };
   programs.sway.package = pkgs.swayfx;
 
+  services.displayManager.autoLogin = {
+    enable = true;
+    user = "lgian";
+  };
   services.xserver.displayManager = {
     gdm.enable = true;
     gdm.wayland = true;
-    autoLogin = {
-      enable = true;
-      user = "lgian";
-    };
   };
   systemd.services."getty@tty1".enable = false;
   systemd.services."autovt@tty1".enable = false;
