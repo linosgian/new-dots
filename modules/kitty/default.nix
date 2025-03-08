@@ -62,7 +62,7 @@
       "ctrl+l" = "kitten pass_keys.py right ctrl+l";
       "ctrl+f>v" = "launch --cwd=current --location=vsplit";
       "ctrl+f>s" = "launch --cwd=current --location=hsplit";
-      "ctrl+f>c" = "combine : new_tab : set_tab_title";
+      "ctrl+f>c" = "new_tab";
       "ctrl+f>q" = "close_window";
       "ctrl+f>d" = "close_tab";
       "ctrl+f>," = "set_tab_title";
