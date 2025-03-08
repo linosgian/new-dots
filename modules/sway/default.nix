@@ -188,7 +188,7 @@ in
         { command = "swaymsg -t get_inputs | jq -r '.[] | select(.type==\"touchpad\") | .identifier' | xargs -i swaymsg input \"{}\" tap enabled"; always = true; }
         { command = "slack"; always = false; }
         { command = "swaymsg 'workspace 1; exec kitty -o allow_remote_control=yes --listen-on unix:/tmp/mykitty3'"; always = false; }
-        { command = "systemctl --user import-environment DISPLAY WAYLAND_DISPLAY SWAYSOCK XDG_CURRENT_DESKTOP"; always = false; }
+        { command = "systemctl --user import-environment DISPLAY WAYLAND_DISPLAY SWAYSOCK XDG_CURRENT_DESKTOP WLR_NO_HARDWARE_CURSORS"; always = false; }
         { command = "systemctl --user start libinput-gestures.service"; always = false; }
         { command = "gnome-polkit-authentication-agent"; always = true; }
         { command = "swaybg -i ${wallpaperAbsPath} -m fill"; always = true; }

@@ -60,6 +60,13 @@
           home-manager.nixosModules.home-manager
         ];
       };
+      desktop = nixpkgs.lib.nixosSystem {
+        system = "x86_64-linux";
+        modules = [
+          ./hosts/desktop
+          home-manager.nixosModules.home-manager
+        ];
+      };
       xps = nixpkgs.lib.nixosSystem {
         system = "x86_64-linux";
         modules = [
