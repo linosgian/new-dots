@@ -67,11 +67,17 @@ in
     defaultSession = "sway";
   };
   programs.sway.package = pkgs.swayfx;
+
   services.xserver.displayManager = {
-    # lightdm.enable = true;
     gdm.enable = true;
     gdm.wayland = true;
+    autoLogin = {
+      enable = true;
+      user = "lgian";
+    };
   };
+  systemd.services."getty@tty1".enable = false;
+  systemd.services."autovt@tty1".enable = false;
   programs.sway.enable = true;
   programs.sway.wrapperFeatures.gtk = true;
 
