@@ -5,6 +5,7 @@ let
 in
 {
   home.file."${wallpaperPath}".source = ./wallpaper.jpg;
+
   services.blueman-applet = {
     enable = true;
   };
