@@ -155,7 +155,8 @@
         "home-manager": "home-manager",
         "microvm": "microvm",
         "nixpkgs": "nixpkgs",
-        "openwrt-imagebuilder": "openwrt-imagebuilder"
+        "openwrt-imagebuilder": "openwrt-imagebuilder",
+        "unstable": "unstable"
       }
     },
     "spectrum": {
@@ -201,6 +202,22 @@
       "original": {
         "owner": "nix-systems",
         "repo": "x86_64-linux",
+        "type": "github"
+      }
+    },
+    "unstable": {
+      "locked": {
+        "lastModified": 1741379970,
+        "narHash": "sha256-Wh7esNh7G24qYleLvgOSY/7HlDUzWaL/n4qzlBePpiw=",
+        "owner": "nixos",
+        "repo": "nixpkgs",
+        "rev": "36fd87baa9083f34f7f5027900b62ee6d09b1f2f",
+        "type": "github"
+      },
+      "original": {
+        "owner": "nixos",
+        "ref": "nixos-unstable",
+        "repo": "nixpkgs",
         "type": "github"
       }
     }

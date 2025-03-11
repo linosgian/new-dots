@@ -1,4 +1,4 @@
-{ lib, config, pkgs, ... }:
+{ lib, config, pkgs, unstablePkgs,... }:
 
 {
   environment.systemPackages = with pkgs; [
@@ -10,7 +10,7 @@
   };
   services.nomad = {
     enable = true;
-    package = pkgs.nomad;
+    package = unstablePkgs.nomad;
     extraPackages = [
       pkgs.cni-plugins
       pkgs.consul
@@ -49,6 +49,23 @@
     enableDocker = true;
   };
 
+
+  systemd.services.nomad = {
+    # Add the ExecStartPre directive
+    serviceConfig.ExecStartPre = "${pkgs.coreutils}/bin/sleep 40";
+    serviceConfig.TimeoutStartSec=60;
+  };
+  systemd.services.clear-nomad-networks = {
+    description = "Clear Nomad CNI reserved IPs";
+    after = [ "network.target" ];
+    before = [ "nomad.service" ];
+    serviceConfig = {
+      Type = "oneshot";
+      ExecStart = "${pkgs.coreutils}/bin/rm -rf /var/lib/cni/networks/nomad/*";
+      RemainAfterExit = "yes";
+    };
+    wantedBy = [ "multi-user.target" ];
+  };
   systemd.services.nomad = {
     requires = [ "consul.service" ];
   };

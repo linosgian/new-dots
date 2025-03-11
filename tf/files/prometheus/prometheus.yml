@@ -97,7 +97,6 @@ scrape_configs:
     static_configs:
       - targets:
         - https://strovilos.gr
-        - https://sync.lgian.com/.web/
     relabel_configs:
       - source_labels: [__address__]
         target_label: __param_target

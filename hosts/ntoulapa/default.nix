@@ -10,16 +10,29 @@
   imports =
     [
       ../../blueprints/server.nix
+      ../../modules/nomad.nix
+      ../../modules/consul.nix
       (modulesPath + "/profiles/qemu-guest.nix")
     ];
   virtualisation.diskSize = 50 * 1024 ; # in MB
-  virtualisation.memorySize = 8000;
+  virtualisation.memorySize = 24000;
   virtualisation.cores = 4;
   services.qemuGuest.enable = true;
   boot.initrd.availableKernelModules = [ "ata_piix" "uhci_hcd" "virtio_pci" "floppy" "sr_mod" "virtio_blk" ];
   boot.initrd.kernelModules = [ ];
   boot.kernelModules = [ "kvm-intel" ];
   boot.extraModulePackages = [ ];
+
+  # networking.vlans.vlan105 = {
+  #   id = 105;
+  #   interface = "eth0";
+  # };
+
+  # networking.bridges = {
+  #   "br-vlan105" = {
+  #     interfaces = [ "eth0.105" ];
+  #   };
+  # };
 
   fileSystems."/" =
     { device = "/dev/disk/by-uuid/2723e2d9-c8d1-4fcd-b587-93f82b36b826";

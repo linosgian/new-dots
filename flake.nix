@@ -1,6 +1,7 @@
 {
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-24.11";
+    unstable.url = "github:nixos/nixpkgs/nixos-unstable";
     hardware.url = "github:nixos/nixos-hardware";
 
     openwrt-imagebuilder.url = "github:astro/nix-openwrt-imagebuilder";
@@ -17,8 +18,15 @@
     home-manager,
     openwrt-imagebuilder,
     microvm,
+    unstable,
     ...
   }@inputs:
+  let
+    unstablePkgs = import unstable {
+      system = "x86_64-linux";  # Adjust your system architecture
+      config.allowUnfree = true;  # Allow unfree packages in unstable channel
+    };
+  in
   rec {
 
     formatter.x86_64-linux = nixpkgs.legacyPackages.x86_64-linux.nixfmt-rfc-style;
@@ -94,10 +102,9 @@
 
       ntoulapa = nixpkgs.lib.nixosSystem {
         system = "x86_64-linux";
+        specialArgs = { inherit unstablePkgs; };
         modules = [
           "${nixpkgs}/nixos/modules/virtualisation/qemu-vm.nix"
-          ./modules/nomad.nix
-          ./modules/consul.nix
           ./hosts/ntoulapa
         ];
       };
