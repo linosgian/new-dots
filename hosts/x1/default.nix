@@ -38,6 +38,10 @@
         identityFile = "/home/lgian/.ssh/work";
         identitiesOnly = true;
       };
+      "*.contextflow.com" = {
+        identityFile = "/home/lgian/.ssh/work";
+        identitiesOnly = true;
+      };
     };
   };
 
@@ -108,6 +112,7 @@
     settings.server= [
       "/.cfl/10.100.0.2"
       "/.cf/10.100.0.2"
+      "/gitlab.cloud.contextflow.com/10.100.0.2"
       "/937DE1F752050623115CE038A346EA0E.gr7.eu-central-1.eks.amazonaws.com/10.100.0.2"
     ];
   };

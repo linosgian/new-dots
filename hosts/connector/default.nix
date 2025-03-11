@@ -21,5 +21,5 @@
   networking.firewall.allowedTCPPorts = [ 22 80 443 9000 ];
 
 
-  system.stateVersion = "24.11"; # DO NOT CHANGE ME
+  system.stateVersion = "24.11";
 }

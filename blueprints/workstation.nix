@@ -40,6 +40,8 @@
     entr
     whitesur-cursors
     terraform
+    age
+    sops
   ];
   services.udisks2.enable = true;
   services.avahi = {

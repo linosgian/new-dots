@@ -92,7 +92,7 @@ job "traefik" {
 
 [http.middlewares.bAuth.basicAuth]
   users = [
-    "admin:$apr1$CqrU6VFW$7dqtq0vzktIpMWMFJCzBj0"
+    "${traefik_basic_auth}"
   ]
 [http.middlewares.traefiksso.forwardAuth]
   address = "http://traefiksso.service.consul:4181/_oauth"
