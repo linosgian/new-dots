@@ -7,6 +7,7 @@
     openwrt-imagebuilder.url = "github:astro/nix-openwrt-imagebuilder";
     home-manager.url = "github:nix-community/home-manager/release-24.11";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
+    sops-nix.url = "github:Mic92/sops-nix";
 
     microvm.url = "github:astro/microvm.nix";
     microvm.inputs.nixpkgs.follows = "nixpkgs";
@@ -19,6 +20,7 @@
     openwrt-imagebuilder,
     microvm,
     unstable,
+    sops-nix,
     ...
   }@inputs:
   let
@@ -87,10 +89,11 @@
         modules = [
           "${nixpkgs}/nixos/modules/installer/sd-card/sd-image-aarch64.nix"
           ./hosts/sfiri
-            {
-              sdImage.compressImage = false;
-              nixpkgs.hostPlatform = "aarch64-linux";
-            }
+          sops-nix.nixosModules.sops
+          {
+            sdImage.compressImage = false;
+            nixpkgs.hostPlatform = "aarch64-linux";
+          }
         ];
       };
       connector = nixpkgs.lib.nixosSystem {
@@ -106,6 +109,7 @@
         modules = [
           "${nixpkgs}/nixos/modules/virtualisation/qemu-vm.nix"
           ./hosts/ntoulapa
+          sops-nix.nixosModules.sops
         ];
       };
     };

@@ -57,19 +57,5 @@
 
   users.users.nginx.extraGroups = [ "acme" ];
 
-  security.acme.defaults.email = "linosgian00@gmail.com";
-  security.acme.acceptTerms = true;
-  security.acme.certs."sfiri.lgian.com" = {
-    domain = "sfiri.lgian.com";
-    dnsProvider = "digitalocean";
-    dnsPropagationCheck = true;
-    #TODO: sops
-    environmentFile = "${pkgs.writeText "do-creds" ''
-      DO_AUTH_TOKEN=dop_v1_5be6c5fd53f9195685d8433950d70845b91007c998453798fd99ba7cc038cd97
-      DO_PROPAGATION_TIMEOUT=600
-      DO_POLLING_INTERVAL=60
-    ''}";
-  };
-
   networking.firewall.allowedTCPPorts = [ 80 443 ];
 }

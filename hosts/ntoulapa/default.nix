@@ -7,13 +7,18 @@
 }:
 {
 
-  imports =
-    [
-      ../../blueprints/server.nix
-      ../../modules/nomad.nix
-      ../../modules/consul.nix
-      (modulesPath + "/profiles/qemu-guest.nix")
-    ];
+  imports = [
+    ../../blueprints/server.nix
+    ../../modules/nomad.nix
+    ../../modules/consul.nix
+    (modulesPath + "/profiles/qemu-guest.nix")
+  ];
+
+  sops = {
+    defaultSopsFile = ../../secrets/digitalocean/secrets.yaml;
+    secrets.digitalocean_api_token = {};
+  };
+
   virtualisation.diskSize = 50 * 1024 ; # in MB
   virtualisation.memorySize = 24000;
   virtualisation.cores = 4;
@@ -111,12 +116,14 @@
     domain = "*.foo.lgian.com";
     dnsProvider = "digitalocean";
     dnsPropagationCheck = true;
-    environmentFile = "${pkgs.writeText "do-creds" ''
-      DO_AUTH_TOKEN=dop_v1_5be6c5fd53f9195685d8433950d70845b91007c998453798fd99ba7cc038cd97
-      DO_PROPAGATION_TIMEOUT=600
-      DO_POLLING_INTERVAL=60
-    ''}";
+    environmentFile = config.sops.templates."acme-do-opts".path;
   };
+  sops.templates."acme-do-opts".content = ''
+    DO_AUTH_TOKEN=${config.sops.placeholder.digitalocean_api_token}
+    DO_PROPAGATION_TIMEOUT=600
+    DO_POLLING_INTERVAL=60
+  '';
+
   time.timeZone = "Europe/Athens";
   networking.firewall.allowedTCPPorts = [ 22 4646 4647 4648 8500 8600 8300 8301 8302 ];
   networking.firewall.allowedUDPPorts = [ 4648 8600 8301 8302 53];
