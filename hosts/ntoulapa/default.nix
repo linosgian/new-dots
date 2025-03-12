@@ -142,15 +142,5 @@
     { from = "host"; host.port = 28600; guest.port = 8600; } # Consul DNS
     { from = "host"; host.port = 2222; guest.port = 22; } # Consul DNS
   ];
-
-  nix.settings.trusted-users = [
-    "lgian"
-    "root"
-  ];
-  nix.settings.experimental-features = [
-    "nix-command"
-    "flakes"
-  ];
-
-  system.stateVersion = "24.05"; # DO NOT CHANGE ME
+  system.stateVersion = "24.11"; # DO NOT CHANGE ME
 }

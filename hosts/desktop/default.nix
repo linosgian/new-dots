@@ -4,6 +4,8 @@
     ../../blueprints/workstation.nix
     ./hardware-configuration.nix
   ];
+
+  boot.binfmt.emulatedSystems = [ "aarch64-linux" ];
   services.irqbalance.enable = true;
   home-manager.users.lgian.wayland.windowManager.sway.config.workspaceOutputAssign = [
     {

@@ -15,7 +15,6 @@
 
   networking.useDHCP = lib.mkDefault true;
   networking.tempAddresses = "disabled";
-  # networking.interfaces.ens14.useDHCP = lib.mkDefault true;
   boot.loader.grub.device = "/dev/vda";
 
   nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";

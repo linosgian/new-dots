@@ -50,11 +50,13 @@
   };
 
 
+  # If nomad starts before docker, the containers won't get the CNI bridge interface
   systemd.services.nomad = {
-    # Add the ExecStartPre directive
     serviceConfig.ExecStartPre = "${pkgs.coreutils}/bin/sleep 40";
     serviceConfig.TimeoutStartSec=60;
   };
+
+  # During shutdown, old CNI allocated IPs are not cleaned up leading to conflicts
   systemd.services.clear-nomad-networks = {
     description = "Clear Nomad CNI reserved IPs";
     after = [ "network.target" ];

@@ -19,8 +19,7 @@
       };
     };
   };
-  networking.nameservers = [ "127.0.0.1" ];  # Use dnsmasq locally
-  # Enable dnsmasq service
+  networking.nameservers = [ "127.0.0.1" ];
   services.dnsmasq = {
     enable = true;
     settings = {
