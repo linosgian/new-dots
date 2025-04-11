@@ -6,6 +6,13 @@ keys:
   - &xps age1jsef35sd02lahpyhy8pj4h4g5y895jmefpjc6yrkcw5vwzukeavqd63nz9
   - &okeanos age1t6nrlhnxg52ef7pux47flzcqq8uvegmmnzq72dxe3qmd42vzju6qfp37ap
 creation_rules:
+  - path_regex: secrets/home/secrets.yaml
+    key_groups:
+    - age:
+      - *desktop
+      - *x1
+      - *xps
+      - *sfiri
   - path_regex: tf/secrets.yaml
     key_groups:
     - age:
@@ -17,7 +24,6 @@ creation_rules:
     - age:
       - *desktop
       - *ntoulapa
-      - *sfiri
       - *x1
       - *xps
       - *okeanos

@@ -13,8 +13,9 @@
   networking.hostName = "sfiri";
 
   sops = {
-    defaultSopsFile = ../../secrets/digitalocean/secrets.yaml;
+    defaultSopsFile = ../../secrets/home/secrets.yaml;
     secrets.digitalocean_api_token = {};
+    secrets.tenta = {};
   };
 
   security.acme.defaults.email = "linosgian00@gmail.com";
@@ -32,13 +33,25 @@
     DO_POLLING_INTERVAL=60
   '';
 
+  sops.templates."psk".content = ''
+    tenta=${config.sops.placeholder.tenta}
+  '';
+
 
   networking.networkmanager.enable = false;
   networking.interfaces."wlan0".useDHCP = true;
   networking.wireless = {
     enable = true;
     interfaces = [ "wlan0" ];
-    networks."TENTA_5G".psk = "linakoss123";
+    secretsFile = config.sops.templates."psk".path;
+    networks."TENTA_5G" = {
+      pskRaw = "ext:tenta";
+      priority = 5;
+    };
+    networks."TENTA" = {
+      pskRaw = "ext:tenta";
+      priority = 100;
+    };
     extraConfig = "ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=wheel";
   };
   networking.firewall.allowedTCPPorts = [ 22 80 443 ];
