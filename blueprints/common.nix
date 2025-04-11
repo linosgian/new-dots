@@ -11,6 +11,7 @@
     git
     wireguard-tools
     fping
+    iperf3
     powertop
     htop
     tree
@@ -30,12 +31,14 @@
     ripgrep
     bashInteractive
     nixpkgs-fmt
+    nixfmt-rfc-style
     nix-output-monitor
     nixd
     screen
     fzf
     kitty.terminfo
     direnv
+    exiftool
   ];
   nixpkgs.config.allowUnfree = true;
   i18n.defaultLocale = "en_US.UTF-8";
