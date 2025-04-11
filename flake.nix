@@ -44,10 +44,11 @@
           }
         ];
       };
-      test-nix = nixpkgs.lib.nixosSystem {
+      okeanos = nixpkgs.lib.nixosSystem {
         system = "x86_64-linux";
         modules = [
-          ./hosts/test-nix
+          ./hosts/okeanos
+          sops-nix.nixosModules.sops
         ];
       };
       mutual = nixpkgs.lib.nixosSystem {
@@ -94,12 +95,6 @@
             sdImage.compressImage = false;
             nixpkgs.hostPlatform = "aarch64-linux";
           }
-        ];
-      };
-      connector = nixpkgs.lib.nixosSystem {
-        system = "x86_64-linux";
-        modules = [
-          ./hosts/connector
         ];
       };
 

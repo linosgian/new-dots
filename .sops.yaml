@@ -4,6 +4,7 @@ keys:
   - &sfiri age12tw08w0gysx22m2mgp5s7az7yldttgqsk8x5p4pxpyucph9jtv0sml9287
   - &x1 age1h4urlkv3pwnz25sp5va374mtt4cjldq93mn4yw77hwpzcw0yhcpq7xkfu5
   - &xps age1jsef35sd02lahpyhy8pj4h4g5y895jmefpjc6yrkcw5vwzukeavqd63nz9
+  - &okeanos age1t6nrlhnxg52ef7pux47flzcqq8uvegmmnzq72dxe3qmd42vzju6qfp37ap
 creation_rules:
   - path_regex: tf/secrets.yaml
     key_groups:
@@ -19,3 +20,4 @@ creation_rules:
       - *sfiri
       - *x1
       - *xps
+      - *okeanos

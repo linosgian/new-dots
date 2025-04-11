@@ -22,4 +22,10 @@
     device = "/dev/disk/by-uuid/a1534b58-8a59-42e2-91a9-5276eececb01";
     fsType = "ext4";
   };
+  fileSystems."/jellyfin" = {
+    device = "/dev/disk/by-uuid/29faca3f-0183-4a4a-b773-358ed476f142";
+    fsType = "ext4";
+    options = [ "nofail" ];
+  };
+
 }

@@ -23,15 +23,17 @@ in
 
   networking.hostName = "okeanos";
 
-  networking.firewall.allowedTCPPorts = [ 22 80 443 ];
+  networking.firewall.allowedTCPPorts = [ 22 80 443 5201 5202 ];
 
   services.nginx.enable = true;
   services.nginx.virtualHosts."blog.lgian.com" = {
-    forceSSL = false;
+    forceSSL = true;
     enableACME = false;
+    useACMEHost = "blog.lgian.com";
     root = "${blog}/";
   };
 
+  users.users.nginx.extraGroups = [ "acme" ];
   security.acme.defaults.email = "linosgian00@gmail.com";
   security.acme.acceptTerms = true;
   security.acme.certs."blog.lgian.com" = {
@@ -48,6 +50,27 @@ in
     DO_PROPAGATION_TIMEOUT=600
     DO_POLLING_INTERVAL=60
   '';
+
+  services.tailscale.enable = true;
+
+  services.jellyfin = {
+    enable = true;
+    dataDir = "/var/lib/jellyfin/config";
+    cacheDir = "/var/lib/jellyfin/cache/";
+    configDir = "/var/lib/jellyfin/config/config";
+  };
+
+  users.users.lgian.extraGroups = [ "jellyfin" ];
+  users.users.ntoulapa = {
+    isNormalUser = true;
+    home = "/home/ntoulapa";
+    shell = pkgs.bash;
+    extraGroups = [ "users" ];
+    openssh.authorizedKeys.keys = [
+      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIBFtRtZWyCsguvCp/xvN6SUitWGb5HMIu4YOZD7Z9BJP backups@okeanos"
+    ];
+  };
+  services.openssh.settings.AllowUsers = lib.mkAfter [ "ntoulapa" ];
 
 
   system.stateVersion = "24.11";

@@ -33,12 +33,6 @@
     programs.ssh = {
       enable = true;
       matchBlocks = {
-        "backups-new" = {
-          hostname = "snf-77423.ok-kno.grnetcloud.net";
-        };
-        "backups" = {
-          hostname = "snf-38659.ok-kno.grnetcloud.net";
-        };
         "blog" = {
           hostname = "snf-24475.ok-kno.grnetcloud.net";
         };
@@ -53,8 +47,8 @@
         "headscale" = {
           hostname = "headscale.lgian.com";
         };
-        "connector" = {
-          hostname = "connector.lgian.com";
+        "okeanos" = {
+          hostname = "snf-76883.ok-kno.grnetcloud.net";
         };
         "strovilos" = {
           hostname = "strovilos.gr";
