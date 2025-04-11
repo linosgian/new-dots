@@ -8,6 +8,7 @@
     ../modules/wayland.nix
   ];
   environment.systemPackages = with pkgs; [
+    geeqie
     gnome-keyring
     linuxPackages.cpupower
     wl-clipboard
@@ -18,7 +19,6 @@
     pulseaudio
     networkmanagerapplet
     pavucontrol
-    eog # image viewer
     nmap
     gnome-calculator
     chromium
