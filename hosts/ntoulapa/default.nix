@@ -105,14 +105,14 @@
   networking.firewall.interfaces."docker".allowedUDPPorts = [ 53 ];
   networking.firewall.interfaces."enp7s0".allowedUDPPorts = [ 51820 ];
 
-  # This is necessary so that cross-network traffic is allowed to reach my VMs
+  # This is necessary so that cross-network traffic is allowed to reach my VMs on VLAN106
   networking.firewall.checkReversePath = "loose";
 
   networking.wg-quick.interfaces = {
     wg0 = {
       address = [ "10.192.123.1/24" ];
       listenPort = 51820;
-      privateKeyFile = "/etc/nixos/privkey";
+      privateKeyFile = "/zfs/wg-privkey";
 
       peers = [
         {
