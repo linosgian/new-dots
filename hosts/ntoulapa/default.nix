@@ -97,13 +97,15 @@
     DO_POLLING_INTERVAL=60
   '';
 
-  networking.firewall.interfaces."enp7s0".allowedTCPPorts = [ 22 80 443  4646 8500 514 ];
-  networking.firewall.interfaces."wg0".allowedTCPPorts = [ 22 80 443  4646 8500 514 ];
-  networking.firewall.interfaces."nomad".allowedTCPPorts = [ 9633 9100 9753 8083 9374 ];
-
-  networking.firewall.interfaces."nomad".allowedUDPPorts = [ 53 ];
-  networking.firewall.interfaces."docker".allowedUDPPorts = [ 53 ];
+  networking.firewall.interfaces."enp7s0".allowedTCPPorts = [ 22 80 443 514 ];
   networking.firewall.interfaces."enp7s0".allowedUDPPorts = [ 51820 ];
+
+  networking.firewall.interfaces."wg0".allowedTCPPorts = [ 22 80 443 514 ];
+
+  networking.firewall.interfaces."nomad".allowedTCPPorts = [ 9633 9100 9753 8083 9374 ];
+  networking.firewall.interfaces."nomad".allowedUDPPorts = [ 53 ];
+
+  networking.firewall.interfaces."docker".allowedUDPPorts = [ 53 ];
 
   # This is necessary so that cross-network traffic is allowed to reach my VMs on VLAN106
   networking.firewall.checkReversePath = "loose";
