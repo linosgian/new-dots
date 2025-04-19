@@ -108,6 +108,37 @@
   # This is necessary so that cross-network traffic is allowed to reach my VMs
   networking.firewall.checkReversePath = "loose";
 
+  networking.wg-quick.interfaces = {
+    wg0 = {
+      address = [ "10.192.123.1/24" ];
+      listenPort = 51820;
+      privateKeyFile = "/etc/nixos/privkey";
+
+      peers = [
+        {
+          # work-lapton
+          publicKey = "oxynuj7S/TeyRvcnBcNOMfwmlFxSLBVwGX5KggUoSic=";
+          allowedIPs = [ "10.192.123.2/32" ];
+        }
+        {
+          # mobile
+          publicKey = "+my/01kg+R8Dza1Ge3jiapKXu5Eo+CFGoxrZRXhW0g0=";
+          allowedIPs = [ "10.192.123.3/32" ];
+        }
+        {
+          # ilektraphon
+          publicKey = "ow8UIpVPsV0BcnZ/6d0VRWjgwvgpxYg7Du38WfQPli8=";
+          allowedIPs = [ "10.192.123.5/32" ];
+        }
+        {
+          # Ipad
+          publicKey = "mzdCqfAIY4cxFoIu9L7l9fACWwyKHldOBccpPUiB7Go=";
+          allowedIPs = [ "10.192.123.6/32" ];
+        }
+      ];
+    };
+  };
+
   services.prometheus.exporters.node.listenAddress="172.26.64.1";
   services.prometheus.exporters.smartctl = {
     enable = true;
