@@ -94,6 +94,7 @@
 
   networking.wg-quick.interfaces = {
     wg0 = {
+      autostart = true;
       address = [ "192.168.10.28/32" ];
       listenPort = 51820;
       privateKeyFile = "/etc/nixos/cf-privkey";
@@ -107,7 +108,24 @@
         }
       ];
     };
+
+    wg1 = {
+      autostart = false;
+      address = [ "10.192.123.2/32" ];
+      listenPort = 51821;
+      privateKeyFile = "/etc/nixos/home-privkey";
+
+      peers = [
+        {
+          publicKey = "mr231PdFN46Os/OH+lXpTbfSN61pKdbiW1hqYY9n9Hk=";
+
+          allowedIPs = ["10.192.123.0/24"];
+          endpoint = "hm.lgian.com:51820";
+        }
+      ];
+    };
   };
+
   services.dnsmasq = {
     enable = true;
     settings = {
