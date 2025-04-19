@@ -7,11 +7,10 @@
 }:
 {
   imports = [
-    (modulesPath + "/profiles/qemu-guest.nix")
     ../../blueprints/server.nix
+    (modulesPath + "/profiles/qemu-guest.nix")
   ];
   services.qemuGuest.enable = true;
-
   fileSystems."/" = {
     device = "/dev/disk/by-label/nixos";
     autoResize = true;
@@ -35,10 +34,13 @@
     format = "qcow2";
     partitionTableType = "hybrid";
   };
+ 
 
   time.timeZone = "Europe/Athens";
+  networking.nameservers = ["1.1.1.1"];
 
   networking.hostName = "mutual";
+  networking.useDHCP = lib.mkDefault true;
   networking.firewall.interfaces."enp0s3".allowedTCPPorts = [ 22 9000 9999 ];
   networking.firewall.interfaces."tailscale0".allowedTCPPorts = [ 9000 9999 ];
 

@@ -42,7 +42,6 @@
         };
         "mutual" = {
           hostname = "192.168.5.2";
-          proxyJump = "router";
         };
         "headscale" = {
           hostname = "headscale.lgian.com";

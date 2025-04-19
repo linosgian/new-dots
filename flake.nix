@@ -8,9 +8,13 @@
     home-manager.url = "github:nix-community/home-manager/release-24.11";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
     sops-nix.url = "github:Mic92/sops-nix";
+    disko.url = "github:nix-community/disko";
+    disko.inputs.nixpkgs.follows = "nixpkgs";
+    nixvirt = {
+      url = "https://flakehub.com/f/AshleyYakeley/NixVirt/*.tar.gz";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
 
-    microvm.url = "github:astro/microvm.nix";
-    microvm.inputs.nixpkgs.follows = "nixpkgs";
   };
   outputs = {
     self,
@@ -18,7 +22,8 @@
     hardware,
     home-manager,
     openwrt-imagebuilder,
-    microvm,
+    disko,
+    nixvirt,
     unstable,
     sops-nix,
     ...
@@ -33,17 +38,6 @@
 
     formatter.x86_64-linux = nixpkgs.legacyPackages.x86_64-linux.nixfmt-rfc-style;
     nixosConfigurations = {
-      my-microvm = nixpkgs.lib.nixosSystem {
-        system = "x86_64-linux";
-        modules = [
-          microvm.nixosModules.microvm
-          ./blueprints/server.nix
-          {
-            networking.hostName = "foobar";
-            microvm.hypervisor = "qemu";
-          }
-        ];
-      };
       okeanos = nixpkgs.lib.nixosSystem {
         system = "x86_64-linux";
         modules = [
@@ -100,11 +94,12 @@
 
       ntoulapa = nixpkgs.lib.nixosSystem {
         system = "x86_64-linux";
-        specialArgs = { inherit unstablePkgs; };
+        specialArgs = { inherit self unstablePkgs nixvirt; };
         modules = [
-          "${nixpkgs}/nixos/modules/virtualisation/qemu-vm.nix"
+          disko.nixosModules.disko
           ./hosts/ntoulapa
           sops-nix.nixosModules.sops
+          nixvirt.nixosModules.default 
         ];
       };
     };

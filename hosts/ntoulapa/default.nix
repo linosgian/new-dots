@@ -1,10 +1,4 @@
-{
-  config,
-  lib,
-  pkgs,
-  modulesPath,
-  ...
-}:
+{ config, pkgs, nixvirt, ...  }:
 {
 
   imports = [
@@ -13,13 +7,12 @@
     ../../modules/consul.nix
     ./hardware-configuration.nix
     ./disko.nix
+    ./vms.nix
   ];
 
   networking.hostName = "ntoulapa";
 
-
-    };
-  };
+  virtualisation.libvirt.enable = true;
 
   sops = {
     defaultSopsFile = ../../secrets/ntoulapa/secrets.yaml;
