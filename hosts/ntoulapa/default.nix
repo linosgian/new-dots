@@ -108,6 +108,29 @@
   # This is necessary so that cross-network traffic is allowed to reach my VMs
   networking.firewall.checkReversePath = "loose";
 
+  services.prometheus.exporters.node.listenAddress="172.26.64.1";
+  services.prometheus.exporters.smartctl = {
+    enable = true;
+    listenAddress="172.26.64.1";
+  };
+  services.prometheus.exporters.smokeping = {
+    enable = true;
+    listenAddress="172.26.64.1";
+    # buckets = "0.001,0.0032,0.0064,0.0128,0.0256,0.03556,0.0452,0.0512,0.0620,0.07,0.08,0.090,0.1024";
+    hosts = [
+      "router.lgian.com"
+      "google.com"
+      "ntua.gr"
+      "doh.libredns.gr"
+      "skroutz.gr"
+      "80.106.125.101"
+      "ae1.er01.sof01.riotdirect.net"
+      "1.1.1.1"
+      "8.8.8.8"
+      "github.com"
+    ];
+  };
+
 
   services.rsyslogd = {
     enable = true;
