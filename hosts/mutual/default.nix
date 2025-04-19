@@ -36,7 +36,6 @@
   };
  
 
-  time.timeZone = "Europe/Athens";
   networking.nameservers = ["1.1.1.1"];
 
   networking.hostName = "mutual";
@@ -75,5 +74,5 @@
     minio-client
   ];
 
-  system.stateVersion = "24.11"; # DO NOT CHANGE ME
+  system.stateVersion = "24.11";
 }
