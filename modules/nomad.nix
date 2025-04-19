@@ -40,6 +40,15 @@
 
       client = {
         enabled = true;
+        network_interface = "lo";
+        host_network = {
+          "private" = {
+            interface = "lo";
+          };
+        };
+        reserved = {
+          reserved_ports = "22-10000";
+        };
         cni_path = "${pkgs.cni-plugins}/bin";
         options = {
           "docker.volumes.enabled" = "true";
