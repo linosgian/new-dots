@@ -1,10 +1,16 @@
-{config, pkgs, ...}:
+{lib, config, pkgs, ...}:
 {
   imports = [
     ../../blueprints/workstation.nix
     ../../blueprints/laptop.nix
     ./hardware-configuration.nix
   ];
+
+  hardware.sane ={
+    enable = true; # enables support for SANE scanners
+    extraBackends = [ pkgs.sane-airscan ];
+    openFirewall = true;
+  };
   boot.binfmt.emulatedSystems = [ "aarch64-linux" ];
   networking.hostName = "x1";
   services.thinkfan = {
@@ -20,7 +26,6 @@
   };
   services.irqbalance.enable = true;
   environment.systemPackages = with pkgs; [
-    dig
     aws-vault
     awscli2
     python3
@@ -28,6 +33,7 @@
     kubectl
     kubectx
     slack
+    simple-scan
   ];
 
 
