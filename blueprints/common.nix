@@ -11,6 +11,7 @@
     git
     wireguard-tools
     fping
+    dig
     iperf3
     powertop
     htop

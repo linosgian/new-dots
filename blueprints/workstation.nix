@@ -21,7 +21,6 @@
     pavucontrol
     nmap
     gnome-calculator
-    chromium
     kitty
     gnome-disk-utility
     evince

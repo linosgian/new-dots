@@ -9,6 +9,7 @@
   environment.systemPackages = with pkgs; [
     rsyslog
     ethtool
+    smartmontools
   ];
   services.prometheus.exporters.node = {
     enable = true;
