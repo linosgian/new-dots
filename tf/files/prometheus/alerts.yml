@@ -170,7 +170,7 @@ groups:
           summary: Host systemd service crashed
           description: "systemd service {{ $labels.name }} crashed"
       - alert: BackupHasErrors
-        expr: restic_backup_status == 1
+        expr: restic_check_success != 1
         for: 1m
         labels:
           severity: warning
@@ -178,7 +178,7 @@ groups:
           summary: "Backup failed"
           description: "restic check failed, refer to /var/log/restic_mon.log"
       - alert: NoBackupLast48H
-        expr: absent(restic_last_snapshot_ts) or (time() - restic_last_snapshot_ts) / 3600 > 48
+        expr: absent(restic_backup_timestamp) or ((time() - restic_backup_timestamp) / 3600) > 48
         for: 1m
         labels:
           severity: warning
@@ -186,7 +186,7 @@ groups:
           summary: "There is no backup in the last 48hours"
           description: "Last backup was taken at {{ printf `restic_last_snapshot_ts` | query | first | value | humanizeTimestamp }}"
       - alert: BackupDroppedInBytes
-        expr: absent(restic_stats_total_size_bytes) or restic_stats_total_size_bytes OFFSET 1d - restic_stats_total_size_bytes > restic_stats_total_size_bytes OFFSET 1d * 0.1
+        expr: absent(restic_backup_size_total) or restic_backup_size_total OFFSET 1d - restic_backup_size_total > restic_backup_size_total OFFSET 1d * 0.1
         for: 1m
         labels:
           severity: warning

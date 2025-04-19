@@ -6,6 +6,7 @@ job "cadvisor" {
     network {
       port "http" {
         to = "8080"
+        host_network = "private"
       }
     }
     restart {
@@ -16,7 +17,7 @@ job "cadvisor" {
     task "cadvisor" {
       driver = "docker"
       config {
-        image = "gcr.io/cadvisor/cadvisor:v0.51.0"
+        image = "gcr.io/cadvisor/cadvisor:v0.52.1"
         labels = {
           "wud.watch" = "true"
           "wud.tag.include" = "^v\\d+\\.\\d+\\.\\d+$"

@@ -30,7 +30,7 @@ job "podcasts" {
         TZ = "Europe/Athens"
       }
       config {
-        image = "advplyr/audiobookshelf:2.19.4"
+        image = "advplyr/audiobookshelf:2.20.0"
         security_opt = [
           "seccomp=unconfined"
         ]
@@ -39,10 +39,13 @@ job "podcasts" {
           "wud.tag.include" = "^\\d+\\.\\d+\\.\\d+$"
         }
         volumes = [
-          "/home/lgian/podcasts/podcasts:/podcasts",
-          "/home/lgian/podcasts/config:/config",
-          "/home/lgian/podcasts/metadata:/metadata",
+          "/zfs/podcasts/podcasts:/podcasts",
+          "/zfs/podcasts/config:/config",
+          "/zfs/podcasts/metadata:/metadata",
         ]
+      }
+      resources {
+        memory = 512
       }
     }
   }

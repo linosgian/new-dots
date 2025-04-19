@@ -27,7 +27,7 @@ job "keycloak" {
       driver = "docker"
       env {
         POSTGRES_USER="keycloak"
-        POSTGRES_PASSWORD="huGB9R4nZScVkH"
+        POSTGRES_PASSWORD="${keycloak_password}"
       }
       config {
         image = "postgres:15.3"
@@ -39,7 +39,7 @@ job "keycloak" {
           "seccomp=unconfined"
         ]
         volumes = [
-          "/home/lgian/foo/database/data:/var/lib/postgresql/data"
+          "/zfs/keycloak/database/data:/var/lib/postgresql/data"
         ]
         volume_driver = "docker"
       }
@@ -54,7 +54,7 @@ job "keycloak" {
         KEYCLOAK_ADMIN_USER="admin"
         KEYCLOAK_ADMIN_PASSWORD="${keycloak_password}"
         KEYCLOAK_PRODUCTION="true"
-        KEYCLOAK_HOSTNAME="id.foo.lgian.com"
+        KEYCLOAK_HOSTNAME="id.lgian.com"
         KEYCLOAK_PROXY_HEADERS="xforwarded"
 
         # This is required to run keycloak behind traefik
@@ -63,7 +63,7 @@ job "keycloak" {
         TZ="Europe/Athens"
       }
       config {
-        image = "bitnami/keycloak:26.0.7"
+        image = "bitnami/keycloak:26.2.0"
         labels = {
           "wud.watch" = "true"
           "wud.tag.include" = "^\\d+\\.\\d+\\.\\d+$"

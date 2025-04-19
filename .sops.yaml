@@ -1,11 +1,18 @@
 keys:
   - &desktop age1e8mypfpuckp953wjmju2t5wnsf6t0nkh38gy5dh6e8cyxn9j8y9sl76zln
-  - &ntoulapa age1g7skuvzvnnxl3ly7ku9cx6wuwtpysnlwxqzpdgde2ggqegdx038srxdvyl
+  - &ntoulapa age12scwjq8j9vmuwqna4vvya4p50uz7hf3cafy3r8tnczrcatd87pdqgnyd6p
   - &sfiri age12tw08w0gysx22m2mgp5s7az7yldttgqsk8x5p4pxpyucph9jtv0sml9287
   - &x1 age1h4urlkv3pwnz25sp5va374mtt4cjldq93mn4yw77hwpzcw0yhcpq7xkfu5
   - &xps age1jsef35sd02lahpyhy8pj4h4g5y895jmefpjc6yrkcw5vwzukeavqd63nz9
   - &okeanos age1t6nrlhnxg52ef7pux47flzcqq8uvegmmnzq72dxe3qmd42vzju6qfp37ap
 creation_rules:
+  - path_regex: secrets/ntoulapa/secrets.yaml
+    key_groups:
+    - age:
+      - *desktop
+      - *x1
+      - *xps
+      - *ntoulapa
   - path_regex: secrets/home/secrets.yaml
     key_groups:
     - age:

@@ -1,7 +1,7 @@
-job "sonarr" {
+job "bazarr" {
   datacenters = ["dc1"]
   type = "service"
-  group "sonarr" {
+  group "bazarr" {
     count = 1
     restart {
       attempts = 20
@@ -14,30 +14,35 @@ job "sonarr" {
     }
 
     service {
-      name = "series"
-      port = "8989"
+      name = "subs"
+      port = "6767"
       address_mode = "alloc"
       tags = [
         "traefik.enable=true",
-        "traefik.http.routers.series.middlewares=traefiksso@file"
+        "traefik.http.routers.subs.middlewares=traefiksso@file"
       ]
       connect {
         sidecar_service {
           disable_default_tcp_check = true
           proxy {
-            upstreams {
-              destination_name = "jackett"
-              local_bind_port = 8082
+            config {
+              envoy_prometheus_bind_addr = "0.0.0.0:9999"
             }
+
             upstreams {
-              destination_name = "torrents"
+              destination_name = "movies"
               local_bind_port = 8081
+            }
+
+            upstreams {
+              destination_name = "series"
+              local_bind_port = 8082
             }
           }
         }
       }
     }
-    task "sonarr-docker" {
+    task "bazarr-docker" {
       driver = "docker"
       env {
         TZ = "Europe/Athens"
@@ -45,18 +50,15 @@ job "sonarr" {
         PGID = 1000
       }
       config {
-        security_opt = [
-          "seccomp=unconfined"
-        ]
-        image = "linuxserver/sonarr:4.0.14"
         labels = {
           "wud.watch" = "true"
           "wud.tag.include" = "^\\d+\\.\\d+\\.\\d+$"
         }
+        image = "linuxserver/bazarr:1.5.1"
         volumes = [
-          "/zfs/sonarr/config:/config/",
+          "/zfs/bazarr/config:/config/",
+          "/zfs/torrents/complete/movies/:/movies",
           "/zfs/torrents/complete/series/:/series",
-          "/zfs/qbit/downloads:/downloads",
         ]
       }
       resources {
@@ -65,4 +67,3 @@ job "sonarr" {
     }
   }
 }
-

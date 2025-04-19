@@ -11,74 +11,42 @@
     ../../blueprints/server.nix
     ../../modules/nomad.nix
     ../../modules/consul.nix
-    (modulesPath + "/profiles/qemu-guest.nix")
+    ./hardware-configuration.nix
+    ./disko.nix
   ];
 
-  sops = {
-    defaultSopsFile = ../../secrets/digitalocean/secrets.yaml;
-    secrets.digitalocean_api_token = {};
+  networking.hostName = "ntoulapa";
+
+
+    };
   };
 
-  virtualisation.diskSize = 50 * 1024 ; # in MB
-  virtualisation.memorySize = 24000;
-  virtualisation.cores = 4;
-  services.qemuGuest.enable = true;
-  boot.initrd.availableKernelModules = [ "ata_piix" "uhci_hcd" "virtio_pci" "floppy" "sr_mod" "virtio_blk" ];
-  boot.initrd.kernelModules = [ ];
-  boot.kernelModules = [ "kvm-intel" ];
-  boot.extraModulePackages = [ ];
+  sops = {
+    defaultSopsFile = ../../secrets/ntoulapa/secrets.yaml;
+    secrets.digitalocean_api_token = {};
+    secrets.backblaze_acc_id = {};
+    secrets.backblaze_acc_key = {};
+    secrets.restic_password = {};
+  };
 
-  # networking.vlans.vlan105 = {
-  #   id = 105;
-  #   interface = "eth0";
-  # };
+  sops.templates."restic_envs".content = ''
+    B2_ACCOUNT_ID="${config.sops.placeholder.backblaze_acc_id}"
+    B2_ACCOUNT_KEY="${config.sops.placeholder.backblaze_acc_key}"
+  '';
 
-  # networking.bridges = {
-  #   "br-vlan105" = {
-  #     interfaces = [ "eth0.105" ];
-  #   };
-  # };
+  networking.vlans.vlan106 = {
+    id = 106;
+    interface = "enp7s0";
+  };
 
-  fileSystems."/" =
-    { device = "/dev/disk/by-uuid/2723e2d9-c8d1-4fcd-b587-93f82b36b826";
-      fsType = "ext4";
+  networking.bridges = {
+    "br-vlan106" = {
+      interfaces = [ "vlan106" ];
     };
+  };
 
-  fileSystems."/nix/.ro-store" =
-    { device = "nix-store";
-      fsType = "9p";
-    };
+  networking.dhcpcd.denyInterfaces = [ "veth*" ];
 
-  fileSystems."/nix/.rw-store" =
-    { device = "tmpfs";
-      fsType = "tmpfs";
-    };
-
-  fileSystems."/tmp/shared" =
-    { device = "shared";
-      fsType = "9p";
-    };
-
-  fileSystems."/tmp/xchg" =
-    { device = "xchg";
-      fsType = "9p";
-    };
-
-  fileSystems."/nix/store" =
-    { device = "overlay";
-      fsType = "overlay";
-    };
-
-  networking.useDHCP = lib.mkDefault true;
-
-  nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
-  boot.kernelParams = [
-    "console=ttyS0,115200"
-    "console=tty1" # enables libvirt console
-  ];
-  boot.growPartition = true;
-  boot.loader.grub.device = lib.mkForce "/dev/disk/by-uuid/2723e2d9-c8d1-4fcd-b587-93f82b36b826";
-  networking.hostName = "ntoulapa";
   services.dnsmasq = {
     enable = true;
     resolveLocalQueries = true;
@@ -92,28 +60,40 @@
     restic
   ];
   services.restic.backups.ntoulapa = {
-    repository = "s3:http://snf-77423.ok-kno.grnetcloud.net:9000/restic-backups";
-    initialize = true;
-    passwordFile = "/etc/nixos/restic-password";  # File containing Restic repository password
-    environmentFile = "/etc/nixos/minio-credentials"; # Exposes AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY
-    paths = [ "/home/lgian/boo"]; # Folders to back up
+    repository = "b2:ntoulapa:ntoulapa";
+    initialize = false;
+    passwordFile = config.sops.secrets.restic_password.path;
+    environmentFile = config.sops.templates."restic_envs".path;
+    paths = [ 
+      "/zfs/nextcloud/root/data/ilektra/files/"
+      "/zfs/nextcloud/root/data/lgian/files/linos/"
+      "/zfs/grafana/data/grafana.db"
+      "/zfs/nextcloud/root/data/mama/files/photos/"
+      "/zfs/immich/uploads/upload"
+    ];
     timerConfig = {
       OnCalendar = "daily";
       Persistent = true;
     };
     pruneOpts = [
-      "--keep-last 7"
-      "--keep-daily 7"
-      "--keep-weekly 4"
-      "--keep-monthly 6"
+      "--keep-last 3"
+      "--keep-monthly 3"
       "--prune"
     ];
   };
+
+  services.prometheus.exporters.restic= {
+    enable = true;
+    repository = "b2:ntoulapa:ntoulapa";
+    passwordFile = config.sops.secrets.restic_password.path;
+    environmentFile = config.sops.templates."restic_envs".path;
+    refreshInterval = 10800; # 3 hours
+    listenAddress = "172.26.64.1";
+  };
   security.acme.defaults.email = "linosgian00@gmail.com";
   security.acme.acceptTerms = true;
-  security.acme.defaults.server = "https://acme-v02.api.letsencrypt.org/directory";
-  security.acme.certs."foo.lgian.com" = {
-    domain = "*.foo.lgian.com";
+  security.acme.certs."lgian.com" = {
+    domain = "*.lgian.com";
     dnsProvider = "digitalocean";
     dnsPropagationCheck = true;
     environmentFile = config.sops.templates."acme-do-opts".path;
@@ -124,9 +104,17 @@
     DO_POLLING_INTERVAL=60
   '';
 
-  time.timeZone = "Europe/Athens";
-  networking.firewall.allowedTCPPorts = [ 22 4646 4647 4648 8500 8600 8300 8301 8302 ];
-  networking.firewall.allowedUDPPorts = [ 4648 8600 8301 8302 53];
+  networking.firewall.interfaces."enp7s0".allowedTCPPorts = [ 22 80 443  4646 8500 514 ];
+  networking.firewall.interfaces."wg0".allowedTCPPorts = [ 22 80 443  4646 8500 514 ];
+  networking.firewall.interfaces."nomad".allowedTCPPorts = [ 9633 9100 9753 8083 9374 ];
+
+  networking.firewall.interfaces."nomad".allowedUDPPorts = [ 53 ];
+  networking.firewall.interfaces."docker".allowedUDPPorts = [ 53 ];
+  networking.firewall.interfaces."enp7s0".allowedUDPPorts = [ 51820 ];
+
+  # This is necessary so that cross-network traffic is allowed to reach my VMs
+  networking.firewall.checkReversePath = "loose";
+
 
   services.rsyslogd = {
     enable = true;
@@ -139,15 +127,9 @@
       & stop
 
       module(load="imtcp")
-      input(type="imtcp" port="514" Address="10.0.2.15")
+      input(type="imtcp" port="514" Address="192.168.2.3")
     '';
   };
 
-  virtualisation.forwardPorts = [
-    { from = "host"; host.port = 24646; guest.port = 4646; } # Nomad API
-    { from = "host"; host.port = 28500; guest.port = 8500; } # Consul API
-    { from = "host"; host.port = 28600; guest.port = 8600; } # Consul DNS
-    { from = "host"; host.port = 2222; guest.port = 22; } # Consul DNS
-  ];
-  system.stateVersion = "24.11"; # DO NOT CHANGE ME
+  system.stateVersion = "24.11";
 }

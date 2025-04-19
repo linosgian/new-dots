@@ -1,9 +1,9 @@
 provider "nomad" {
-  address = "http://localhost:24646"
+  address = "http://ntoulapa.lgian.com:4646"
 }
 
 provider "consul" {
-  address    = "http://localhost:28500"
+  address    = "http://ntoulapa.lgian.com:8500"
 }
 
 terraform {

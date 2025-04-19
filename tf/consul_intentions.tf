@@ -20,12 +20,51 @@ resource "consul_config_entry" "jackett" {
   })
 }
 
+
+resource "consul_config_entry" "torrents-exporter" {
+  name = "torrents-exporter"
+  kind = "service-intentions"
+
+  config_json = jsonencode({
+    Sources = [
+      {
+        Action     = "allow"
+        Name       = "prometheus"
+        Precedence = 9
+        Type       = "consul"
+      }
+    ]
+  })
+}
+
+resource "consul_config_entry" "domain-exporter" {
+  name = "domain-exporter"
+  kind = "service-intentions"
+
+  config_json = jsonencode({
+    Sources = [
+      {
+        Action     = "allow"
+        Name       = "prometheus"
+        Precedence = 9
+        Type       = "consul"
+      }
+    ]
+  })
+}
+
 resource "consul_config_entry" "torrents" {
   name = "torrents"
   kind = "service-intentions"
 
   config_json = jsonencode({
     Sources = [
+      {
+        Action     = "allow"
+        Name       = "torrents-exporter"
+        Precedence = 9
+        Type       = "consul"
+      },
       {
         Action     = "allow"
         Name       = "series"

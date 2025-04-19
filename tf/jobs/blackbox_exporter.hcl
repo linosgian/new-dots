@@ -7,6 +7,7 @@ job "blackbox-exporter" {
     network {
       port "http" {
         to = "9115"
+        host_network = "private"
       }
       mode = "bridge"
     }
@@ -31,6 +32,9 @@ job "blackbox-exporter" {
       driver = "docker"
       config {
         image = "prom/blackbox-exporter:v0.23.0"
+      }
+      resources {
+        memory = 200
       }
     }
   }

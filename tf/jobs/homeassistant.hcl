@@ -11,6 +11,10 @@ job "assistant" {
     }
     network {
       mode = "bridge"
+      port "connect_proxy_assistant" {
+        to = 8123
+        host_network = "private"
+      }
     }
 
     service {
@@ -30,19 +34,19 @@ job "assistant" {
         TZ = "Europe/Athens"
       }
       config {
-        image = "homeassistant/home-assistant:2025.2.5"
+        image = "homeassistant/home-assistant:2025.4.2"
         labels = {
           "wud.watch" = "true"
           "wud.tag.include" = "^\\d+\\.\\d+\\.\\d+$"
         }
         volumes = [
-          "/home/lgian/foa/:/config"
+          "/zfs/homeassistant/:/config"
         ]
         args = [
         ]
       }
       resources {
-        memory = 512
+        memory = 1024
       }
     }
   }

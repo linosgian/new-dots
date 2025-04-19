@@ -37,29 +37,32 @@ job "traefik" {
         }
         network_mode = "host"
         args = [
-          "--entryPoints.http.address=10.0.2.15:80",
-          "--entryPoints.https.address=10.0.2.15:443",
+          "--entryPoints.http.address=192.168.2.3:80",
+          "--entryPoints.https.address=192.168.2.3:443",
           "--entryPoints.http.transport.respondingTimeouts.readTimeout=600s",
           "--entryPoints.https.transport.respondingTimeouts.readTimeout=600s",
           "--entryPoints.http.transport.respondingTimeouts.writeTimeout=600s",
           "--entryPoints.https.transport.respondingTimeouts.writeTimeout=600s",
           "--entryPoints.http.transport.respondingTimeouts.idleTimeout=600s",
           "--entryPoints.https.transport.respondingTimeouts.idleTimeout=600s",
+          "--entryPoints.http_wg.address=10.192.123.1:80",
+          "--entryPoints.https_wg.address=10.192.123.1:443",
           "--entryPoints.https.http.tls=true",
           "--entryPoints.https_wg.http.tls=true",
           "--entrypoints.http.http.redirections.entryPoint.to=https",
+          "--entrypoints.http_wg.http.redirections.entryPoint.to=https_wg",
           "--providers.file.watch=true",
           "--providers.file.filename=/etc/traefik/traefik-tls.toml",
           "--providers.consulcatalog=true",
           "--metrics=true",
-          "--entryPoints.metrics.address=10.0.2.15:8083",
+          "--entryPoints.metrics.address=172.26.64.1:8083",
           "--metrics.prometheus=true",
           "--metrics.prometheus.entryPoint=metrics",
           "--metrics.prometheus.addServicesLabels=true",
           "--providers.consulcatalog.connectaware=true",
           "--providers.consulcatalog.connectbydefault=true",
           "--providers.consulcatalog.servicename=traefik-ingress",
-          "--providers.consulcatalog.defaultrule=Host(`{{ normalize .Name }}.foo.lgian.com`)",
+          "--providers.consulcatalog.defaultrule=Host(`{{ normalize .Name }}.lgian.com`)",
           "--providers.consulcatalog.prefix=traefik",
           "--providers.consulcatalog.exposedbydefault=false",
           "--providers.consulcatalog.endpoint.address=127.0.0.1:8500",
@@ -71,8 +74,8 @@ job "traefik" {
 
         volumes = [
           "local/traefik-tls.toml:/etc/traefik/traefik-tls.toml",
-          "/var/lib/acme/foo.lgian.com/fullchain.pem:/cert.pem",
-          "/var/lib/acme/foo.lgian.com/key.pem:/privkey.pem"
+          "/var/lib/acme/lgian.com/fullchain.pem:/cert.pem",
+          "/var/lib/acme/lgian.com/key.pem:/privkey.pem"
         ]
       }
 
@@ -84,7 +87,7 @@ job "traefik" {
 
 ## Enables dashboard and puts it behind the `https` entrypoint
 [http.routers.websecure]
-    rule = "Host(`lb.foo.lgian.com`)"
+    rule = "Host(`lb.lgian.com`)"
     entrypoints = ["https", "https_wg"]
     service = "api@internal"
     middlewares = ["bAuth"]

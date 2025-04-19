@@ -1,44 +1,46 @@
-job "jackett" {
+job "livesync" {
   datacenters = ["dc1"]
   type = "service"
-  group "jackett" {
+  group "livesync" {
     count = 1
     restart {
-      attempts = 20
-      interval = "30m"
-      delay = "5s"
+      attempts = 10
+      interval = "5m"
+      delay = "15s"
       mode = "fail"
     }
     network {
       mode = "bridge"
     }
-
     service {
-      name = "jackett"
-      port = "9117"
+      name = "livesync"
+      connect {
+        sidecar_service{}
+      }
+      port = "5984"
+      task = "livesync-docker"
       address_mode = "alloc"
       tags = [
         "traefik.enable=true",
       ]
-      connect {
-        sidecar_service {}
-      }
     }
-    task "jackett-docker" {
+    task "couchdb" {
       driver = "docker"
       env {
-        TZ = "Europe/Athens"
-        PUID = 1000
-        PGID = 1000
+        COUCHDB_USER="admin"
+        COUCHDB_PASSWORD="${livesync_db_password}"
       }
       config {
-        image = "linuxserver/jackett:0.22.1784"
+        image = "couchdb:3.4.3"
         labels = {
           "wud.watch" = "true"
           "wud.tag.include" = "^\\d+\\.\\d+\\.\\d+$"
         }
+        args = [
+        ]
         volumes = [
-          "/zfs/jackett:/config/",
+          "/zfs/livesync/data:/opt/couchdb/data",
+          "/zfs/livesync/etc:/opt/couchdb/etc/local.d"
         ]
       }
       resources {

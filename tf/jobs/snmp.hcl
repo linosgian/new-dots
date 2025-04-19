@@ -3,8 +3,10 @@ job "snmp-exporter" {
   type = "service"
   group "snmp-exporter" {
     network {
+      mode = "bridge"
       port "http" {
         to = "9116"
+        host_network = "private"
       }
     }
     count = 1

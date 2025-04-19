@@ -1,7 +1,7 @@
-job "sonarr" {
+job "radarr" {
   datacenters = ["dc1"]
   type = "service"
-  group "sonarr" {
+  group "radarr" {
     count = 1
     restart {
       attempts = 20
@@ -14,12 +14,12 @@ job "sonarr" {
     }
 
     service {
-      name = "series"
-      port = "8989"
+      name = "movies"
+      port = "7878"
       address_mode = "alloc"
       tags = [
         "traefik.enable=true",
-        "traefik.http.routers.series.middlewares=traefiksso@file"
+        "traefik.http.routers.movies.middlewares=traefiksso@file"
       ]
       connect {
         sidecar_service {
@@ -37,7 +37,7 @@ job "sonarr" {
         }
       }
     }
-    task "sonarr-docker" {
+    task "radarr-docker" {
       driver = "docker"
       env {
         TZ = "Europe/Athens"
@@ -45,17 +45,14 @@ job "sonarr" {
         PGID = 1000
       }
       config {
-        security_opt = [
-          "seccomp=unconfined"
-        ]
-        image = "linuxserver/sonarr:4.0.14"
+        image = "linuxserver/radarr:5.21.1"
         labels = {
           "wud.watch" = "true"
           "wud.tag.include" = "^\\d+\\.\\d+\\.\\d+$"
         }
         volumes = [
-          "/zfs/sonarr/config:/config/",
-          "/zfs/torrents/complete/series/:/series",
+          "/zfs/radarr/config:/config/",
+          "/zfs/torrents/complete/movies/:/movies",
           "/zfs/qbit/downloads:/downloads",
         ]
       }
@@ -65,4 +62,3 @@ job "sonarr" {
     }
   }
 }
-

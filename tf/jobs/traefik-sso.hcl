@@ -29,10 +29,10 @@ job "traefiksso" {
       env {
         TZ="Europe/Athens"
         CLIENT_ID= "traefik"
-        CLIENT_SECRET= "MUW13Fopa6XnvAOf2JMKvnEZ58lQM7eq"
-        ENCRYPTION_KEY= "RZcmLKDJDRx52no5dXGm8mYGtBL5jjCa"
-        PROVIDER_URI= "http://id.service.consul/realms/master"
-        SECRET= "kNyUWQk8t6Hvfi8izhKgxVBt962VZnfJ"
+        CLIENT_SECRET= "${traefik_sso_client_secret}"
+        ENCRYPTION_KEY= "${traefik_sso_encryption_key}"
+        PROVIDER_URI= "https://id.lgian.com/realms/master"
+        SECRET= "${traefik_sso_secret}"
         AUTH_HOST= "keycloak"
         COOKIE_DOMAIN= "localhost"
       }

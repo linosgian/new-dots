@@ -8,7 +8,7 @@ job "prometheus" {
       mode = "bridge"
       port "prometheus-http" {
         to = 9090
-        static = 9090
+        host_network = "private"
       }
     }
 
@@ -16,7 +16,7 @@ job "prometheus" {
       name = "prometheus"
       tags = [
         "traefik.enable=true",
-        # "traefik.http.routers.prometheus.middlewares=traefiksso@file",
+        "traefik.http.routers.prometheus.middlewares=traefiksso@file",
         "metrics"
       ]
       port = "prometheus-http"
@@ -42,10 +42,6 @@ job "prometheus" {
               destination_name = "torrents-exporter"
               local_bind_port = 9223
             }
-            upstreams {
-              destination_name = "airquality-exporter"
-              local_bind_port = 9224
-            }
           }
         }
       }
@@ -68,7 +64,7 @@ job "prometheus" {
       address_mode = "alloc"
       task = "alertmanager"
       tags = [
-        # "traefik.http.routers.alerts.middlewares=traefiksso@file",
+        "traefik.http.routers.alerts.middlewares=traefiksso@file",
         "traefik.enable=true",
       ]
     }
@@ -90,20 +86,20 @@ EOF
         destination = "local/alertmanager.yml"
       }
       config {
-        image = "prom/alertmanager:v0.25.0"
+        image = "prom/alertmanager:v0.28.1"
         labels = {
           "wud.tag.include" = "^v\\d+\\.\\d+\\.\\d+$"
+          "wud.watch" = "true"
         }
 
         args = [
           "--config.file=/etc/alertmanager/alertmanager.yml",
           "--storage.path=/alertmanager",
-          "--web.external-url=https://alerts.foo.lgian.com"
-          # "--web.external-url=https://alerts.lgian.com"
+          "--web.external-url=https://alerts.lgian.com"
         ]
 
         volumes = [
-          "/home/lgian/alertmanager:/alertmanager",
+          "/zfs/alertmanager:/alertmanager",
           "local/alertmanager.yml:/etc/alertmanager/alertmanager.yml",
         ]
       }
@@ -117,12 +113,16 @@ EOF
       driver = "docker"
 
       config {
-        image = "prom/prometheus:v2.43.0"
+        image = "prom/prometheus:v3.3.0"
+        labels = {
+          "wud.watch" = "true"
+          "wud.tag.include" = "^v\\d+\\.\\d+\\.\\d+$"
+        }
         volumes = [
           "local/prometheus.yml:/etc/prometheus/prometheus.yml",
           "local/host.yml:/etc/prometheus/alerts/host.yml",
           "local/records.yml:/etc/prometheus/alerts/records.yml",
-          "/home/lgian/prometheus:/prometheus",
+          "/zfs/prometheus:/prometheus",
         ]
         args = [
           "--config.file=/etc/prometheus/prometheus.yml",
@@ -130,8 +130,7 @@ EOF
           "--web.console.libraries=/usr/share/prometheus/console_libraries",
           "--web.console.templates=/usr/share/prometheus/consoles",
           "--web.enable-admin-api",
-          # "--web.external-url=https://prometheus.lgian.com",
-          "--web.external-url=https://prometheus.foo.lgian.com",
+          "--web.external-url=https://prometheus.lgian.com",
           "--storage.tsdb.retention.time=5y",
         ]
       }
@@ -172,7 +171,7 @@ EOF
       }
 
       resources {
-        memory = 256
+        memory = 1024
       }
     }
   }

@@ -1,7 +1,7 @@
-job "bitwarden" {
+job "ytdl" {
   datacenters = ["dc1"]
   type = "service"
-  group "bitwarden" {
+  group "ytdl" {
     count = 1
     restart {
       attempts = 20
@@ -14,35 +14,33 @@ job "bitwarden" {
     }
 
     service {
-      name = "pass"
-      port = "80"
+      name = "yt"
+      port = "6767"
       address_mode = "alloc"
-      tags = [
-        "traefik.enable=true",
-      ]
       connect {
-        sidecar_service {}
+        sidecar_service {
+        }
       }
     }
-    task "bitwarden" {
+    task "ytdl" {
       driver = "docker"
       env {
         TZ = "Europe/Athens"
-        WEBSOCKET_ENABLED = true
-        SIGNUPS_ALLOWED = false
+        PUID = 1000
+        PGID = 1000
+        DOCKER_MODS = "linuxserver/mods:universal-cron"
       }
-      user = "1000:1000"
       config {
-        image = "vaultwarden/server:1.33.2"
-        security_opt = [
-          "seccomp=unconfined"
-        ]
+        image = "ghcr.io/jmbannon/ytdl-sub:latest"
         labels = {
           "wud.watch" = "true"
-          "wud.tag.include" = "^\\d+\\.\\d+\\.\\d+$"
+          "wud.watch.digest" = "true"
+          "wud.tag.include" = "^latest$"
         }
         volumes = [
-          "/zfs/bitwarden:/data"
+          "/zfs/ytdl/config:/config/",
+          "/zfs/ytdl/downloads/movies:/movies",
+          "/zfs/ytdl/downloads/tv_shows:/tv_shows",
         ]
       }
       resources {

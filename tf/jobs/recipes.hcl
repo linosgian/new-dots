@@ -19,7 +19,7 @@ job "recipes" {
       address_mode = "alloc"
       tags = [
         "traefik.enable=true",
-        # "traefik.http.routers.recipes.middlewares=traefiksso@file"
+        "traefik.http.routers.recipes.middlewares=traefiksso@file"
       ]
       connect {
         sidecar_service {}
@@ -39,13 +39,13 @@ job "recipes" {
         TZ="Europe/Athens"
       }
       config {
-        image = "hkotel/mealie:v2.6.0"
+        image = "hkotel/mealie:v2.8.0"
         labels = {
           "wud.watch" = "true"
           "wud.tag.include" = "^v\\d+\\.\\d+\\.\\d+$"
         }
         volumes = [
-          # "/zfs/mealie-new:/app/data"
+          "/zfs/mealie-new:/app/data"
         ]
       }
       resources {

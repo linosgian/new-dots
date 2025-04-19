@@ -41,7 +41,7 @@ job "updates" {
         ]
       }
       resources {
-        memory = 256
+        memory = 512
       }
     }
   }
