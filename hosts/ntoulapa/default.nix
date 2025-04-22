@@ -181,5 +181,56 @@
     '';
   };
 
+  power.ups = {
+    enable = true;
+
+    ups."eaton" = {
+      driver = "usbhid-ups";
+      port = "auto";
+      description = "Eaton UPS";
+    };
+
+    users.monitor = {
+      passwordFile = "/etc/nixos/upspass";
+      upsmon = "primary";
+    };
+
+    upsd = {
+      enable = true;
+      listen = [
+        { address = "127.0.0.1"; }
+      ];
+    };
+
+    upsmon = {
+      enable = true;
+      monitor.eaton = {
+        user = "monitor";
+        type = "master";
+        powerValue = 1;
+      };
+    };
+  };
+
+  services.prometheus.exporters.nut = {
+    enable = true;
+    listenAddress = "172.26.64.1";
+    port = 9199;
+    nutVariables = [
+      "battery.runtime"
+      "battery.status"
+      "battery.charge"
+      "battery.voltage"
+      "battery.voltage.nominal"
+      "input.voltage"
+      "input.voltage.nominal"
+      "ups.load"
+      "ups.status"
+      "ups.test.interval"
+      "ups.test.result"
+      "ups.test.date"
+    ];
+  };
+
   system.stateVersion = "24.11";
 }

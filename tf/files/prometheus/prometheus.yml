@@ -9,11 +9,11 @@ scrape_configs:
     scrape_interval: 20s
     static_configs:
       - targets: [ '127.0.0.1:9223' ]
-  - job_name: 'ups-router'
+  - job_name: 'nut'
     scrape_interval: 10s
     metrics_path: /ups_metrics
     static_configs:
-      - targets: ['nut-exporter.service.consul:9199']
+      - targets: ['172.26.64.1:9199']
         labels:
             ups:  "primary"
   - job_name: 'domain'
