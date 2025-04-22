@@ -45,6 +45,12 @@
           sops-nix.nixosModules.sops
         ];
       };
+      cine = nixpkgs.lib.nixosSystem {
+        system = "x86_64-linux";
+        modules = [
+          ./hosts/cine
+        ];
+      };
       mutual = nixpkgs.lib.nixosSystem {
         system = "x86_64-linux";
         modules = [

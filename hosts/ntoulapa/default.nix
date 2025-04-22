@@ -13,6 +13,7 @@
   networking.hostName = "ntoulapa";
 
   virtualisation.libvirt.enable = true;
+  virtualisation.libvirtd.qemu.vhostUserPackages = [ pkgs.virtiofsd ];
 
   sops = {
     defaultSopsFile = ../../secrets/ntoulapa/secrets.yaml;
@@ -102,7 +103,7 @@
 
   networking.firewall.interfaces."wg0".allowedTCPPorts = [ 22 80 443 514 ];
 
-  networking.firewall.interfaces."nomad".allowedTCPPorts = [ 9633 9100 9753 8083 9374 ];
+  networking.firewall.interfaces."nomad".allowedTCPPorts = [ 9633 9100 9753 8083 9374 9199 ];
   networking.firewall.interfaces."nomad".allowedUDPPorts = [ 53 ];
 
   networking.firewall.interfaces."docker".allowedUDPPorts = [ 53 ];
