@@ -5,6 +5,14 @@
     libinput
     libinput-gestures
   ];
+
+  services.upower = {
+    enable = true;
+    percentageLow = 30;
+    percentageCritical = 20;
+    percentageAction = 5;
+    criticalPowerAction = "HybridSleep";
+  };
   networking.networkmanager.enable = true;
   networking.networkmanager.wifi.macAddress = "stable";
   networking.firewall.enable = true;
