@@ -43,6 +43,9 @@
         "mutual" = {
           hostname = "192.168.5.2";
         };
+        "cine" = {
+          hostname = "192.168.5.3";
+        };
         "headscale" = {
           hostname = "headscale.lgian.com";
         };
