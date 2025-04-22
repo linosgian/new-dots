@@ -41,6 +41,7 @@
     terraform
     age
     sops
+    obsidian
   ];
   services.udisks2.enable = true;
   services.avahi = {
