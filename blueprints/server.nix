@@ -27,7 +27,7 @@
     openssh = {
       enable = true;
       ports = [ 22 ];
-      openFirewall = true;
+      openFirewall = false;
       listenAddresses = [{
         addr = "0.0.0.0";
       }];

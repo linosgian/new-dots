@@ -43,7 +43,7 @@
 
   networking.hostName = "cine";
   networking.useDHCP = lib.mkDefault true;
-  networking.firewall.interfaces."enp0s3".allowedTCPPorts = [ 9000 9999 ];
+  networking.firewall.interfaces."enp0s3".allowedTCPPorts = [ 22 9000 9999 ];
   networking.firewall.interfaces."tailscale0".allowedTCPPorts = [ 9000 9999 ];
 
   services.tailscale.enable = true;
