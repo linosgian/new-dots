@@ -20,7 +20,6 @@
     pulseaudio
     networkmanagerapplet
     pavucontrol
-    nmap
     gnome-calculator
     kitty
     gnome-disk-utility

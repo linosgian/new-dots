@@ -14,6 +14,7 @@
     dig
     iperf3
     powertop
+    nmap
     htop
     tree
     lm_sensors
