@@ -17,10 +17,6 @@
     fsType = "ext4";
   };
 
-  fileSystems."/data" = {
-    device = "/dev/vdb";
-    fsType = "ext4";
-  };
   boot.loader.grub.device = lib.mkDefault "/dev/vda";
   boot.kernelParams = [
     "console=ttyS0,115200"
