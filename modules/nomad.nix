@@ -40,14 +40,11 @@
 
       client = {
         enabled = true;
-        network_interface = "lo";
+        network_interface = "nomad-br0";
         host_network = {
           "private" = {
             interface = "lo";
           };
-        };
-        reserved = {
-          reserved_ports = "22-10000";
         };
         cni_path = "${pkgs.cni-plugins}/bin";
         options = {

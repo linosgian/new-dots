@@ -62,8 +62,24 @@ in
     "br-vlan106" = {
       interfaces = [ "vlan106" ];
     };
+
+    "nomad-br0" = {
+      interfaces = [ ];
+    };
   };
 
+  networking.interfaces."nomad-br0" = {
+    ipv4.addresses = [{ 
+      address = "192.168.100.1";
+      prefixLength = 24;
+    }];
+  };
+  networking.firewall.extraCommands = 
+    ''
+      iptables -I FORWARD -i nomad -o enp7s0 -d 192.168.2.0/24 -j DROP
+      iptables -I FORWARD -i nomad -o enp7s0 -d 192.168.3.0/24 -j DROP
+      iptables -I FORWARD -i nomad -o enp7s0 -d 192.168.5.0/24 -j DROP
+    '';
   networking.dhcpcd.denyInterfaces = [ "veth*" ];
 
   services.unbound = {
