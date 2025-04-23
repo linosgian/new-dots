@@ -41,13 +41,35 @@
 
   networking.dhcpcd.denyInterfaces = [ "veth*" ];
 
-  services.dnsmasq = {
+  services.unbound = {
     enable = true;
-    resolveLocalQueries = true;
-    settings.server= [
-      "/.consul/127.0.0.1#8600"
-      "192.168.2.1"
-    ];
+    enableRootTrustAnchor = false;
+    settings = {
+      remote-control.control-enable = true;
+      server = {
+        verbosity = 1;
+        interface = [ "0.0.0.0" ];
+        do-not-query-localhost = false;
+        access-control = [
+          "127.0.0.1/32 allow"
+          "172.26.64.1/24 allow"
+        ];
+
+        local-zone = [ "\"id.lgian.com\" transparent" ];
+        local-data = [ "\"id.lgian.com. 3600 A 127.0.0.1\"" ];
+      };
+
+      forward-zone = [
+        { 
+          name = ".";
+          forward-addr = "192.168.2.1";
+        }
+        {
+          name = "consul.";
+          forward-addr = "127.0.0.1@8600";  # Consul DNS
+        }
+      ];
+    };
   };
 
   environment.systemPackages = with pkgs; [
@@ -74,6 +96,11 @@
       "--keep-monthly 3"
       "--prune"
     ];
+  };
+
+  services.prometheus.exporters.unbound = {
+    enable = true;
+    listenAddress = "172.26.64.1";
   };
 
   services.prometheus.exporters.restic= {
@@ -103,7 +130,7 @@
 
   networking.firewall.interfaces."wg0".allowedTCPPorts = [ 22 80 443 514 ];
 
-  networking.firewall.interfaces."nomad".allowedTCPPorts = [ 9633 9100 9753 8083 9374 9199 ];
+  networking.firewall.interfaces."nomad".allowedTCPPorts = [ 9633 9100 9753 8083 9374 9199 9167 ];
   networking.firewall.interfaces."nomad".allowedUDPPorts = [ 53 ];
 
   networking.firewall.interfaces."docker".allowedUDPPorts = [ 53 ];

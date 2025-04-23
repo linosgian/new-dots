@@ -6,8 +6,8 @@
     webUi = true;
     extraConfig = {
       data_dir = "/var/lib/consul";
-      bind_addr = "0.0.0.0";
-      client_addr = "0.0.0.0";
+      bind_addr = "127.0.0.1";
+      client_addr = "127.0.0.1";
 
       server = true;
       bootstrap_expect = 1;
@@ -20,17 +20,6 @@
     };
   };
   networking.nameservers = [ "127.0.0.1" ];
-  services.dnsmasq = {
-    enable = true;
-    settings = {
-      listen-address = "0.0.0.0";
-      bind-interfaces = true;
-    };
-    resolveLocalQueries = true;
-    settings.server= [
-      "/consul/127.0.0.1#8600"
-    ];
-  };
   systemd.services.consul = {
     wantedBy = [ "multi-user.target" ];
   };
