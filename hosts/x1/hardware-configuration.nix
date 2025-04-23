@@ -12,6 +12,9 @@
   boot.initrd.kernelModules = [ ];
   boot.kernelModules = [ "kvm-intel" "i915.enable_guc=2"];
   boot.extraModulePackages = [ ];
+  boot.kernelParams = [
+  "resume_offset=68431872"
+  ];
 
   services.fwupd.enable = true;
 
@@ -29,7 +32,11 @@
       options = [ "fmask=0077" "dmask=0077" ];
     };
 
-  swapDevices = [ ];
+    swapDevices = [
+      { device = "/var/lib/swap/swapfile"; }
+    ];
+
+  boot.resumeDevice = "/dev/disk/by-uuid/4eae03e1-51ae-48be-adf0-36d0070be0e0";
 
   networking.useDHCP = lib.mkDefault true;
 
