@@ -13,6 +13,17 @@ job "keycloak" {
       mode = "bridge"
     }
     service {
+      name = "id-int"
+      port = "8443"
+      address_mode = "alloc"
+      tags = [
+        "traefik.enable=false",
+      ]
+      connect {
+        sidecar_service {}
+      }
+    }
+    service {
       name = "id"
       port = "8080"
       address_mode = "alloc"
@@ -56,6 +67,12 @@ job "keycloak" {
         KEYCLOAK_PRODUCTION="true"
         KEYCLOAK_HOSTNAME="id.lgian.com"
         KEYCLOAK_PROXY_HEADERS="xforwarded"
+        KEYCLOAK_HTTPS_KEY_STORE_FILE="/keystore.jks"
+        KEYCLOAK_HTTPS_KEY_STORE_PASSWORD="whocares"
+        KEYCLOAK_HTTPS_TRUST_STORE_FILE="/truststore.jks"
+        KEYCLOAK_HTTPS_TRUST_STORE_PASSWORD="whocares"
+        KEYCLOAK_HTTPS_PORT = "8443"
+        KEYCLOAK_ENABLE_HTTPS = "true"
 
         # This is required to run keycloak behind traefik
         PROXY_ADDRESS_FORWARDING="true"
@@ -70,6 +87,10 @@ job "keycloak" {
         }
         security_opt = [
           "seccomp=unconfined"
+        ]
+        volumes = [
+          "/var/lib/keycloak/certs/truststore.jks:/truststore.jks",
+          "/var/lib/keycloak/certs/keystore.jks:/keystore.jks"
         ]
       }
       resources {

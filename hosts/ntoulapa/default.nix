@@ -1,4 +1,29 @@
-{ config, pkgs, nixvirt, ...  }:
+{ lib, config, pkgs, nixvirt, ...  }:
+let
+    # List of prometheus exporters that should start after nomad
+  exportersAfterNomad = [
+    "node"
+    "nut"
+    "restic"
+    "smartctl"
+    "unbound"
+    "smokeping"
+  ];
+
+  # Create a set of systemd service overrides
+  exporterOverrides = lib.genAttrs
+    (map (name: "prometheus-${name}-exporter") exportersAfterNomad)
+    (name: {
+      serviceConfig = {
+        Restart = "on-failure";
+        RestartSec = "5s";
+        StartLimitIntervalSec = 300;
+        StartLimitBurst = 5;
+      };
+      after = [ "nomad.service" ];
+      requires = [ "nomad.service" ]; # Remove this if you only want ordering, not dependency
+    });
+in
 {
 
   imports = [
@@ -74,6 +99,9 @@
 
   environment.systemPackages = with pkgs; [
     restic
+    # required for id.lgian.com ACME postRun
+    openjdk
+    openssl
   ];
   services.restic.backups.ntoulapa = {
     repository = "b2:ntoulapa:ntoulapa";
@@ -111,8 +139,66 @@
     refreshInterval = 10800; # 3 hours
     listenAddress = "172.26.64.1";
   };
+
   security.acme.defaults.email = "linosgian00@gmail.com";
   security.acme.acceptTerms = true;
+  security.acme.certs."id.lgian.com" = {
+    domain = "id.lgian.com";
+    dnsProvider = "digitalocean";
+    dnsPropagationCheck = true;
+    environmentFile = config.sops.templates."acme-do-opts".path;
+    postRun = ''
+      CERT_DIR="/var/lib/acme/id.lgian.com"
+      KEYCLOAK_CERTS="/var/lib/keycloak/certs"
+      PASSWORD="whocares"
+
+      # Create output directory
+      mkdir -p $KEYCLOAK_CERTS
+
+      echo "Converting certificates to Java keystore..."
+
+      # Create PKCS12 keystore
+      ${pkgs.openssl}/bin/openssl pkcs12 -export \
+        -in $CERT_DIR/cert.pem \
+        -inkey $CERT_DIR/key.pem \
+        -out $KEYCLOAK_CERTS/keystore.p12 \
+        -name keycloak \
+        -passout pass:$PASSWORD
+
+      # Convert to JKS format
+      ${pkgs.jdk}/bin/keytool -importkeystore \
+        -srckeystore $KEYCLOAK_CERTS/keystore.p12 \
+        -srcstoretype PKCS12 \
+        -srcstorepass $PASSWORD \
+        -destkeystore $KEYCLOAK_CERTS/keystore.jks \
+        -deststoretype JKS \
+        -deststorepass $PASSWORD \
+        -destkeypass $PASSWORD
+
+      # Create truststore
+      ${pkgs.jdk}/bin/keytool -import \
+        -file $CERT_DIR/chain.pem \
+        -alias root \
+        -keystore $KEYCLOAK_CERTS/truststore.jks \
+        -storepass $PASSWORD \
+        -noprompt
+
+      # Also copy PEM files (for flexibility)
+      cp $CERT_DIR/cert.pem $KEYCLOAK_CERTS/tls.crt
+      cp $CERT_DIR/key.pem $KEYCLOAK_CERTS/tls.key
+      cp $CERT_DIR/chain.pem $KEYCLOAK_CERTS/ca.crt
+
+      # Set proper permissions
+      chmod 644 $KEYCLOAK_CERTS/*
+
+      # Clean up temporary files
+      rm $KEYCLOAK_CERTS/keystore.p12
+
+      # echo "Restarting Nomad job for Keycloak..."
+      # # Restart Nomad job
+      # ${pkgs.nomad}/bin/nomad job restart -detach keycloak
+    '';
+  };
   security.acme.certs."lgian.com" = {
     domain = "*.lgian.com";
     dnsProvider = "digitalocean";
@@ -259,5 +345,6 @@
     ];
   };
 
+  systemd.services = exporterOverrides;
   system.stateVersion = "24.11";
 }

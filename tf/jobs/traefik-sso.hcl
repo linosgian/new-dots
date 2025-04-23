@@ -21,7 +21,15 @@ job "traefiksso" {
         "traefik.http.routers.traefiksso.rule=Path(`/_oauth`)"
       ]
       connect {
-        sidecar_service {}
+        sidecar_service {
+          disable_default_tcp_check = true
+          proxy {
+            upstreams {
+              destination_name = "id-int"
+              local_bind_port = 443
+            }
+          }
+        }
       }
     }
     task "traefiksso" {

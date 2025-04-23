@@ -20,6 +20,37 @@ resource "consul_config_entry" "jackett" {
   })
 }
 
+resource "consul_config_entry" "notifs" {
+  name = "notifs"
+  kind = "service-intentions"
+
+  config_json = jsonencode({
+    Sources = [
+      {
+        Action     = "allow"
+        Name       = "jellyfin"
+        Precedence = 9
+        Type       = "consul"
+      }
+    ]
+  })
+}
+
+resource "consul_config_entry" "id-int" {
+  name = "id-int"
+  kind = "service-intentions"
+
+  config_json = jsonencode({
+    Sources = [
+      {
+        Action     = "allow"
+        Name       = "traefiksso"
+        Precedence = 9
+        Type       = "consul"
+      }
+    ]
+  })
+}
 
 resource "consul_config_entry" "torrents-exporter" {
   name = "torrents-exporter"
