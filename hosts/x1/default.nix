@@ -40,6 +40,14 @@
   home-manager.users.lgian.programs.ssh = {
     enable = true;
     matchBlocks = {
+      "gitlab.cf" = {
+        hostname = "gitlab.cloud.contextflow.com";
+        port = 2222;
+      };
+      "*.cf" = {
+        identityFile = "/home/lgian/.ssh/work";
+        identitiesOnly = true;
+      };
       "*.cfl" = {
         identityFile = "/home/lgian/.ssh/work";
         identitiesOnly = true;
