@@ -70,7 +70,6 @@
               type = "swap";
             };
           };
-          # Reserve remaining space for future expansion
         };
       };
       
@@ -78,8 +77,12 @@
       cache_vg = {
         type = "lvm_vg";
         lvs = {
+          transcode_cache_cine = {
+            size = "50G";
+            # handle this manually through nixvirt
+          };
           transcode_cache = {
-            size = "150G";
+            size = "100G";
             content = {
               type = "filesystem";
               format = "ext4";
@@ -88,10 +91,6 @@
           };
           l2arc = {
             size = "70G";
-            # content = {
-            #   type = "zfs_member";
-            #   pool = "l2arc_device";
-            # };
           };
         };
       };

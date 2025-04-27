@@ -1,4 +1,4 @@
-{ nixvirt, ... }:
+{ pkgs, nixvirt, ... }:
 let
   # Helper function to create a virtiofs mount configuration
   createVirtiofsMountpoint = { 
@@ -26,6 +26,30 @@ let
     };
     accessmode = accessmode;
   };
+
+  createRawBlockDevice = { 
+    sourcePath,
+    targetDev,
+    targetBus ? "virtio",
+    cacheMode ? "none",
+    ioMode ? "native"
+  }: {
+    type = "block";
+    device = "disk";
+    driver = {
+      name = "qemu";
+      type = "raw";
+      cache = cacheMode;
+      io = ioMode;
+    };
+    source = {
+      dev = sourcePath;
+    };
+    target = {
+      dev = targetDev;
+      bus = targetBus;
+    };
+  };
   createDomain = { 
     name, 
     uuid, 
@@ -33,7 +57,9 @@ let
     macAddress,
     memoryGiB ? 4,
     vcpuCount ? 2,
-    virtiofsMounts ? []
+    virtiofsMounts ? [],
+    rawBlockDevices ? [],
+    persistVM ? true
   }: {
     definition = nixvirt.lib.domain.writeXML ({
       type = "kvm";
@@ -103,7 +129,7 @@ let
             };
             address = drive_address 0;
           }
-        ];
+        ]++ rawBlockDevices;
         interface = {
           type = "bridge";
           mac = { address = macAddress; };
@@ -133,33 +159,39 @@ let
     active = true;
   };
 
-  # Define your domains here
   domains = [
-    # First domain
     (createDomain {
-      name = "mutual";
-      uuid = "ee43005c-2e7b-4af2-bfae-8c52eeb22672";
-      diskPath = /home/lgian/nixos.qcow2;
-      macAddress = "52:54:00:10:c4:28";
-    })
-
-    # Second domain
-    (createDomain {
-      name = "cinelgian";
+      name = "cine";
       uuid = "ff43005c-2e7b-4af2-bfae-8c52eeb22673";
       diskPath = /home/lgian/cine.qcow2;
       macAddress = "52:54:00:10:c4:29";
+      vcpuCount = 8;
+      memoryGiB = 8;
       virtiofsMounts = [
         (createVirtiofsMountpoint {
           hostPath = "/zfs/torrents/complete";
           targetTag = "media";
           slot = 5;
         })
+        (createVirtiofsMountpoint {
+          hostPath = "/zfs/jellyfin-cine";
+          targetTag = "jellyfin";
+          slot = 6;
+        })
+      ];
+      rawBlockDevices = [
+        (createRawBlockDevice {
+          sourcePath = "/dev/cache_vg/transcode_cache_cine";
+          targetDev = "vda";
+        })
       ];
     })
   ];
 in
 {
+
+  virtualisation.libvirt.enable = true;
+  virtualisation.libvirtd.qemu.vhostUserPackages = [ pkgs.virtiofsd ];
   virtualisation.libvirt.connections."qemu:///system" = {
     domains = domains;
   };
