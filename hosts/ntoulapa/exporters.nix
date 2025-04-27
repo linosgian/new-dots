@@ -1,7 +1,6 @@
 { lib, config, pkgs, nixvirt, ...  }:
 let
   exporterBindAddr = "172.26.64.1";
-    # List of prometheus exporters that should start after nomad
   exportersAfterNomad = [
     "node"
     "nut"
@@ -11,7 +10,6 @@ let
     "smokeping"
   ];
 
-  # Create a set of systemd service overrides
   exporterOverrides = lib.genAttrs
     (map (name: "prometheus-${name}-exporter") exportersAfterNomad)
     (name: {
@@ -22,7 +20,7 @@ let
         StartLimitBurst = 5;
       };
       after = [ "nomad.service" ];
-      requires = [ "nomad.service" ]; # Remove this if you only want ordering, not dependency
+      requires = [ "nomad.service" ];
     });
 in
 {
