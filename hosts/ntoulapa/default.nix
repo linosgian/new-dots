@@ -1,4 +1,4 @@
-{ lib, config, pkgs, nixvirt, ...  }:
+{ lib, config, pkgs, nixvirt, ... }:
 {
   imports = [
     ../../blueprints/server.nix
@@ -16,11 +16,11 @@
 
   sops = {
     defaultSopsFile = ../../secrets/ntoulapa/secrets.yaml;
-    secrets.digitalocean_api_token = {};
-    secrets.backblaze_acc_id = {};
-    secrets.backblaze_acc_key = {};
-    secrets.restic_password = {};
-    secrets.restic_password = {};
+    secrets.digitalocean_api_token = { };
+    secrets.backblaze_acc_id = { };
+    secrets.backblaze_acc_key = { };
+    secrets.restic_password = { };
+    secrets.restic_password = { };
   };
 
   sops.templates."restic_envs".content = ''
@@ -53,7 +53,8 @@
 
       forward-zone = [
         { name = "."; forward-addr = "192.168.2.1"; }
-        { name = "consul."; forward-addr = "127.0.0.1@8600";  } ];
+        { name = "consul."; forward-addr = "127.0.0.1@8600"; }
+      ];
     };
   };
 
@@ -65,7 +66,7 @@
     initialize = false;
     passwordFile = config.sops.secrets.restic_password.path;
     environmentFile = config.sops.templates."restic_envs".path;
-    paths = [ 
+    paths = [
       "/zfs/nextcloud/root/data/ilektra/files/"
       "/zfs/nextcloud/root/data/lgian/files/linos/"
       "/zfs/grafana/data/grafana.db"

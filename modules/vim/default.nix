@@ -1,6 +1,6 @@
 { pkgs, ... }:
-let 
-    vim-github-url = pkgs.vimUtils.buildVimPlugin {
+let
+  vim-github-url = pkgs.vimUtils.buildVimPlugin {
     name = "vim-better-whitespace";
     src = pkgs.fetchFromGitHub {
       owner = "pgr0ss";
@@ -14,7 +14,7 @@ in
   environment.variables = { EDITOR = "vim"; };
 
   environment.systemPackages = with pkgs; [
-    ((vim_configurable.override {  }).customize{
+    ((vim_configurable.override { }).customize {
       name = "vim";
       vimrcConfig.packages.myplugins = with pkgs.vimPlugins; {
         start = [
@@ -44,9 +44,10 @@ in
           lightline-bufferline
           lightline-vim
         ];
-        opt = [];
+        opt = [ ];
       };
       vimrcConfig.customRC = builtins.readFile ./vimrc;
     }
-  )];
+    )
+  ];
 }

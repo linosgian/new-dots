@@ -1,4 +1,4 @@
-{ lib, config, pkgs, unstablePkgs,... }:
+{ lib, config, pkgs, unstablePkgs, ... }:
 
 {
   environment.systemPackages = with pkgs; [
@@ -6,7 +6,7 @@
   ];
 
   virtualisation.docker.daemon.settings = {
-    "dns" = ["172.26.64.1"];
+    "dns" = [ "172.26.64.1" ];
   };
   services.nomad = {
     enable = true;
@@ -15,14 +15,14 @@
       pkgs.cni-plugins
       pkgs.consul
     ];
-    dropPrivileges=false;
+    dropPrivileges = false;
     settings = {
       data_dir = "/var/lib/nomad";
       bind_addr = "0.0.0.0";
       plugin = {
         docker = {
-          extra_labels = ["job_name" "task_name"];
-          allow_caps = ["audit_write" "chown" "dac_override" "fowner" "fsetid" "kill" "mknod" "net_bind_service" "setfcap" "setgid" "setpcap" "setuid" "sys_chroot" "net_raw"];
+          extra_labels = [ "job_name" "task_name" ];
+          allow_caps = [ "audit_write" "chown" "dac_override" "fowner" "fsetid" "kill" "mknod" "net_bind_service" "setfcap" "setgid" "setpcap" "setuid" "sys_chroot" "net_raw" ];
         };
       };
 
@@ -59,7 +59,7 @@
   # If nomad starts before docker, the containers won't get the CNI bridge interface
   systemd.services.nomad = {
     serviceConfig.ExecStartPre = "${pkgs.coreutils}/bin/sleep 40";
-    serviceConfig.TimeoutStartSec=60;
+    serviceConfig.TimeoutStartSec = 60;
   };
 
   # During shutdown, old CNI allocated IPs are not cleaned up leading to conflicts

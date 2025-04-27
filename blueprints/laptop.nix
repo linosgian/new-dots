@@ -1,4 +1,4 @@
-{ config , lib , pkgs , ...  }:
+{ config, lib, pkgs, ... }:
 {
   environment.systemPackages = with pkgs; [
     brightnessctl
@@ -43,10 +43,10 @@
   virtualisation.libvirtd.enable = true;
   services.hardware.bolt.enable = true;
 
-  home-manager.users.lgian = { lib, ...}:{
+  home-manager.users.lgian = { lib, ... }: {
     programs.chromium = {
-        enable = true;
-        commandLineArgs = [
+      enable = true;
+      commandLineArgs = [
         # Two-finger swipe for back/forward in history
         "--enable-features=TouchpadOverscrollHistoryNavigation"
       ];

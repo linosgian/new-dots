@@ -52,7 +52,8 @@ let
     echo "Restarting Nomad job for Keycloak..."
     ${pkgs.nomad}/bin/nomad job restart -detach keycloak
   '';
-in {
+in
+{
   environment.systemPackages = with pkgs; [
     # required for id.lgian.com ACME postRun
     openjdk

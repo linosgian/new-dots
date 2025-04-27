@@ -1,8 +1,7 @@
-{
-  config,
-  lib,
-  pkgs,
-  ...
+{ config
+, lib
+, pkgs
+, ...
 }:
 {
   imports = [
@@ -14,8 +13,8 @@
 
   sops = {
     defaultSopsFile = ../../secrets/home/secrets.yaml;
-    secrets.digitalocean_api_token = {};
-    secrets.tenta = {};
+    secrets.digitalocean_api_token = { };
+    secrets.tenta = { };
   };
 
   security.acme.defaults.email = "linosgian00@gmail.com";

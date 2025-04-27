@@ -1,4 +1,4 @@
-{ config , lib , pkgs , ...  }:
+{ config, lib, pkgs, ... }:
 {
 
   imports = [
@@ -15,12 +15,16 @@
     enable = true;
     openFirewall = false; # Opens port 9100 in the firewall
     extraFlags = [
-      "--collector.filesystem.ignored-fs-types" "^(tmpfs|devtmpfs|overlay|squashfs|bpf)$"
+      "--collector.filesystem.ignored-fs-types"
+      "^(tmpfs|devtmpfs|overlay|squashfs|bpf)$"
       "--collector.systemd"
       "--no-collector.pressure"
-      "--collector.filesystem.ignored-mount-points" "^/(sys|proc|dev|host|etc|run|boot|rootfs/var/lib/docker/containers|rootfs/var/lib/docker/overlay2|rootfs/run/docker/netns|rootfs/var/lib/docker/aufs|rootfs/var/lib/docker/devicemapper|rootfs/var/nomad/.+|var/nomad/.+)($$|/)"
-      "--collector.netclass.ignored-devices" "^(veth.+|docker[0-9])$"
-      "--collector.netdev.device-exclude" "^(veth.+|docker[0-9])$"
+      "--collector.filesystem.ignored-mount-points"
+      "^/(sys|proc|dev|host|etc|run|boot|rootfs/var/lib/docker/containers|rootfs/var/lib/docker/overlay2|rootfs/run/docker/netns|rootfs/var/lib/docker/aufs|rootfs/var/lib/docker/devicemapper|rootfs/var/nomad/.+|var/nomad/.+)($$|/)"
+      "--collector.netclass.ignored-devices"
+      "^(veth.+|docker[0-9])$"
+      "--collector.netdev.device-exclude"
+      "^(veth.+|docker[0-9])$"
     ];
   };
   services = {
@@ -38,7 +42,7 @@
         PrintMotd = false;
         ClientAliveInterval = 60;
         ClientAliveCountMax = 10;
-        AllowUsers = ["lgian"];
+        AllowUsers = [ "lgian" ];
       };
     };
     locate = {

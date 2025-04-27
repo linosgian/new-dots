@@ -1,4 +1,4 @@
-{home-manager, config, pkgs, ...}:
+{ home-manager, config, pkgs, ... }:
 let
   wallpaperPath = ".config/sway/wallpaper.jpg";
   wallpaperAbsPath = "${config.home.homeDirectory}/${wallpaperPath}";
@@ -167,9 +167,9 @@ in
       ];
 
       assigns = {
-        "4" = [{app_id = "slack";}];
-        "3" = [{app_id = "spotify";}];
-        "5" = [{app_id = "evince";}];
+        "4" = [{ app_id = "slack"; }];
+        "3" = [{ app_id = "spotify"; }];
+        "5" = [{ app_id = "evince"; }];
       };
       window.commands = [
         { criteria = { app_id = "slack"; }; command = "assign 4"; }

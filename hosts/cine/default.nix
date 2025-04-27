@@ -1,16 +1,15 @@
-{
-  config,
-  lib,
-  pkgs,
-  modulesPath,
-  ...
+{ config
+, lib
+, pkgs
+, modulesPath
+, ...
 }:
 {
   imports = [
     ../../blueprints/server.nix
     ./hardware-configuration.nix
   ];
-  networking.nameservers = ["1.1.1.1"];
+  networking.nameservers = [ "1.1.1.1" ];
 
   networking.hostName = "cine";
   networking.useDHCP = lib.mkDefault true;

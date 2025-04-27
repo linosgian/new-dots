@@ -1,11 +1,10 @@
-{
-  config,
-  lib,
-  pkgs,
-  ...
+{ config
+, lib
+, pkgs
+, ...
 }:
 let
-    blog = import ../../pkgs/blog { inherit lib pkgs; };
+  blog = import ../../pkgs/blog { inherit lib pkgs; };
 in
 {
   imports = [
@@ -14,7 +13,7 @@ in
   ];
   sops = {
     defaultSopsFile = ../../secrets/digitalocean/secrets.yaml;
-    secrets.digitalocean_api_token = {};
+    secrets.digitalocean_api_token = { };
   };
 
   environment.systemPackages = with pkgs; [

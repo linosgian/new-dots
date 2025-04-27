@@ -1,4 +1,4 @@
-{ config, pkgs, ...  }:
+{ config, pkgs, ... }:
 {
   security.sudo.wheelNeedsPassword = false;
   security.sudo.extraConfig = ''

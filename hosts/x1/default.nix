@@ -1,4 +1,4 @@
-{lib, config, pkgs, ...}:
+{ lib, config, pkgs, ... }:
 {
   imports = [
     ../../blueprints/workstation.nix
@@ -6,7 +6,7 @@
     ./hardware-configuration.nix
   ];
 
-  hardware.sane ={
+  hardware.sane = {
     enable = true; # enables support for SANE scanners
     extraBackends = [ pkgs.sane-airscan ];
     openFirewall = true;
@@ -111,7 +111,7 @@
         {
           publicKey = "bqOVQlwuEu3mXx/k0rRoMF4csjnG54uFz8JuEf63xQA=";
 
-          allowedIPs = ["192.168.2.15/32" "192.168.10.3/32" "192.168.128.0/24" "192.168.10.0/24" "192.168.129.206/24" "192.168.129.206/24" "192.168.131.0/24" "192.168.130.214/24" "10.100.0.0/16" "10.250.0.0/16" "10.200.0.0/16" "10.1.0.0/16" ];
+          allowedIPs = [ "192.168.2.15/32" "192.168.10.3/32" "192.168.128.0/24" "192.168.10.0/24" "192.168.129.206/24" "192.168.129.206/24" "192.168.131.0/24" "192.168.130.214/24" "10.100.0.0/16" "10.250.0.0/16" "10.200.0.0/16" "10.1.0.0/16" ];
           endpoint = "cf-wg-eu-90544ccb5a9cb155.elb.eu-central-1.amazonaws.com:55442";
         }
       ];
@@ -127,7 +127,7 @@
         {
           publicKey = "mr231PdFN46Os/OH+lXpTbfSN61pKdbiW1hqYY9n9Hk=";
 
-          allowedIPs = ["10.192.123.0/24"];
+          allowedIPs = [ "10.192.123.0/24" ];
           endpoint = "hm.lgian.com:51820";
         }
       ];
@@ -141,7 +141,7 @@
       bind-interfaces = true;
     };
     resolveLocalQueries = true;
-    settings.server= [
+    settings.server = [
       "/.cfl/10.100.0.2"
       "/.cf/10.100.0.2"
       "/*.cloud.contextflow.com/10.100.0.2"

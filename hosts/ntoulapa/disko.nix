@@ -30,7 +30,7 @@
           };
         };
       };
-      
+
       # Secondary SSD for caching and ZFS acceleration
       sdb = {
         type = "disk";
@@ -50,7 +50,7 @@
         };
       };
     };
-    
+
     lvm_vg = {
       # System volume group on first SSD
       system_vg = {
@@ -72,7 +72,7 @@
           };
         };
       };
-      
+
       # Cache volume group on second SSD
       cache_vg = {
         type = "lvm_vg";

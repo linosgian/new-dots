@@ -1,21 +1,21 @@
-{ config , lib , pkgs , ...  }:
+{ config, lib, pkgs, ... }:
 let
-    configure-gtk = pkgs.writeTextFile {
-      name = "configure-gtk";
-      destination = "/bin/configure-gtk";
-      executable = true;
-      text =
-        let
-          schema = pkgs.gsettings-desktop-schemas;
-          datadir = "${schema}/share/gsettings-schemas/${schema.name}";
-          gtk3_datadir = "${pkgs.gtk3}/share/gsettings-schemas/${pkgs.gtk3.name}";
-        in
-        ''
-          export XDG_DATA_DIRS=${datadir}:${gtk3_datadir}:$XDG_DATA_DIRS
-          gnome_schema=org.gnome.desktop.interface
-        '';
-    };
-    gnome-polkit-authentication-agent = pkgs.writeTextFile {
+  configure-gtk = pkgs.writeTextFile {
+    name = "configure-gtk";
+    destination = "/bin/configure-gtk";
+    executable = true;
+    text =
+      let
+        schema = pkgs.gsettings-desktop-schemas;
+        datadir = "${schema}/share/gsettings-schemas/${schema.name}";
+        gtk3_datadir = "${pkgs.gtk3}/share/gsettings-schemas/${pkgs.gtk3.name}";
+      in
+      ''
+        export XDG_DATA_DIRS=${datadir}:${gtk3_datadir}:$XDG_DATA_DIRS
+        gnome_schema=org.gnome.desktop.interface
+      '';
+  };
+  gnome-polkit-authentication-agent = pkgs.writeTextFile {
     name = "gnome-polkit-authentication-agent";
     destination = "/bin/gnome-polkit-authentication-agent";
     executable = true;
@@ -44,7 +44,7 @@ in
     arc-theme
     gtk3
     configure-gtk
-    gsettings-desktop-schemas  # Required for `gsettings` commands
+    gsettings-desktop-schemas # Required for `gsettings` commands
     nautilus
     grim
     gucharmap

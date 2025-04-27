@@ -5,11 +5,12 @@
 
 {
   imports =
-    [ (modulesPath + "/installer/scan/not-detected.nix")
+    [
+      (modulesPath + "/installer/scan/not-detected.nix")
     ];
 
   boot.initrd.availableKernelModules = [ "xhci_pci" "ahci" "usbhid" "usb_storage" "sd_mod" ];
-  boot.initrd.kernelModules = ["dm-snapshot"];
+  boot.initrd.kernelModules = [ "dm-snapshot" ];
   boot.kernelModules = [ "kvm-amd" ];
   boot.extraModulePackages = [ ];
 
@@ -18,7 +19,7 @@
 
   boot.supportedFilesystems = [ "zfs" ];
   services.zfs.autoScrub.enable = true;
-  
+
   # Generate a unique hostId (required for ZFS)
   # You should replace this with a unique value generated with 'head -c 8 /etc/machine-id'
   networking.hostId = "c9ba8b49";

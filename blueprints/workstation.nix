@@ -1,4 +1,4 @@
-{ inputs, config , lib , pkgs ,  ...  }:
+{ inputs, config, lib, pkgs, ... }:
 {
   imports = [
     ../modules/vim
@@ -77,8 +77,8 @@
               actions = {
                 update-props = {
                   "session.suspend-timeout-seconds" = 0;
-                   "api.alsa.period-size"   = 1024;
-                   "api.alsa.headroom"      = 8192;
+                  "api.alsa.period-size" = 1024;
+                  "api.alsa.headroom" = 8192;
                 };
               };
             }

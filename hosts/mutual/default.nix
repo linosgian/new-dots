@@ -1,9 +1,8 @@
-{
-  config,
-  lib,
-  pkgs,
-  modulesPath,
-  ...
+{ config
+, lib
+, pkgs
+, modulesPath
+, ...
 }:
 {
   imports = [
@@ -30,9 +29,9 @@
     format = "qcow2";
     partitionTableType = "hybrid";
   };
- 
 
-  networking.nameservers = ["1.1.1.1"];
+
+  networking.nameservers = [ "1.1.1.1" ];
 
   networking.hostName = "mutual";
   networking.useDHCP = lib.mkDefault true;
@@ -63,7 +62,7 @@
   services.minio = {
     enable = true;
     listenAddress = ":9999";
-    dataDir = ["/data"];
+    dataDir = [ "/data" ];
   };
 
   environment.systemPackages = with pkgs; [

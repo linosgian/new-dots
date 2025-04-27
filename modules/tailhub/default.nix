@@ -4,7 +4,8 @@ let
   serviceTemplate = name: port:
     let
       stateDir = "/var/lib/tailscale-${name}";
-    in {
+    in
+    {
       "tailscaled-${name}" = {
         description = "Tailscale Service Instance ${name}";
         wantedBy = [ "multi-user.target" ];
@@ -24,7 +25,7 @@ let
 
   tailscaleServices = lib.foldl'
     lib.recursiveUpdate
-    {}
+    { }
     (map (service: serviceTemplate service.name service.tailscaled_port) services);
 in
 {

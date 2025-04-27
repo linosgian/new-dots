@@ -1,6 +1,6 @@
-{config, pkgs, ... }:
+{ config, pkgs, ... }:
 {
-  nixpkgs.overlays =[
+  nixpkgs.overlays = [
     (final: prev: {
       klipper-firmware = prev.klipper-firmware.overrideAttrs (old: {
         installPhase = ''
@@ -20,17 +20,17 @@
         enable_object_processing = true;
         check_klipper_config_path = false;
       };
-      history = {};
+      history = { };
       server = { host = "0.0.0.0"; };
-      authorization = { 
+      authorization = {
         cors_domains = [ "*" ];
         force_logins = true;
-        trusted_clients = ["127.0.0.1/32"];
+        trusted_clients = [ "127.0.0.1/32" ];
       };
     };
   };
 
-  systemd.services.moonraker.restartTriggers = [config.environment.etc."moonraker.cfg".source];
+  systemd.services.moonraker.restartTriggers = [ config.environment.etc."moonraker.cfg".source ];
   services.klipper = {
     mutableConfig = true;
     enable = true;

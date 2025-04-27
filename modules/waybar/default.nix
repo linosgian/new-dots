@@ -1,4 +1,4 @@
-{ bigger-bar-screens, smaller-bar-screens, config,pkgs, ...}:
+{ bigger-bar-screens, smaller-bar-screens, config, pkgs, ... }:
 let
   mainBar = rec {
     modules-left = [

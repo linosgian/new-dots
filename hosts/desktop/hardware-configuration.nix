@@ -5,7 +5,8 @@
 
 {
   imports =
-    [ (modulesPath + "/installer/scan/not-detected.nix")
+    [
+      (modulesPath + "/installer/scan/not-detected.nix")
     ];
 
   boot.initrd.availableKernelModules = [ "xhci_pci" "ahci" "nvme" "usbhid" "usb_storage" "sd_mod" ];
@@ -15,18 +16,20 @@
 
   # Otherwise cursors are invisible
   environment.sessionVariables = rec {
-    WLR_NO_HARDWARE_CURSORS=1;
+    WLR_NO_HARDWARE_CURSORS = 1;
   };
 
   fileSystems."/" =
-    { device = "/dev/disk/by-uuid/4a31456f-9db9-42ac-9266-3e42a4647273";
+    {
+      device = "/dev/disk/by-uuid/4a31456f-9db9-42ac-9266-3e42a4647273";
       fsType = "ext4";
     };
 
   boot.initrd.luks.devices."luks-67e0262f-3a75-43f2-8a2f-2e1d98f7a1e1".device = "/dev/disk/by-uuid/67e0262f-3a75-43f2-8a2f-2e1d98f7a1e1";
 
   fileSystems."/boot" =
-    { device = "/dev/disk/by-uuid/0710-00DE";
+    {
+      device = "/dev/disk/by-uuid/0710-00DE";
       fsType = "vfat";
       options = [ "fmask=0077" "dmask=0077" ];
     };
@@ -42,7 +45,7 @@
     ];
   };
 
-  services.xserver.videoDrivers = ["nouveau"];
+  services.xserver.videoDrivers = [ "nouveau" ];
 
   nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
   hardware.cpu.amd.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;

@@ -4,7 +4,8 @@ with lib;
 
 let
   cfg = config.services.sshTunnel;
-in {
+in
+{
   options.services.sshTunnel = {
     enable = mkEnableOption "SSH tunnel service";
 
@@ -92,7 +93,7 @@ in {
           };
         };
       });
-      default = {};
+      default = { };
       description = "Set of SSH tunnels to create";
       example = literalExpression ''
         {
@@ -111,62 +112,67 @@ in {
 
   config = mkIf cfg.enable {
     # Create the SSH tunnel services
-    systemd.services = mapAttrs' (name: tunnelCfg: 
-      nameValuePair "ssh-tunnel-${name}" (mkIf tunnelCfg.enable {
-        description = "SSH tunnel for ${name} (${tunnelCfg.targetHost}:${toString tunnelCfg.targetPort})";
-        
-        wantedBy = [ "multi-user.target" ];
-        after = [ "network.target" ];
-        
-        # Script to verify port availability before starting the tunnel
-        preStart = ''
-          ${pkgs.nettools}/bin/nc -z ${tunnelCfg.bindAddress} ${toString tunnelCfg.localPort} && {
-            echo "Error: Port ${toString tunnelCfg.localPort} is already in use"
-            exit 1
-          } || {
-            echo "Port ${toString tunnelCfg.localPort} is available"
-          }
-        '';
-        
-        serviceConfig = {
-          Type = "simple";
-          Restart = "on-failure";
-          RestartSec = "10s";
-          
-          # Run as the specified user instead of DynamicUser
-          User = cfg.user;
-          Group = cfg.group;
-          
-          # Build the SSH command
-          ExecStart = let
-            identityFlag = if tunnelCfg.identityFile != null 
-                          then "-i ${tunnelCfg.identityFile}"
-                          else "";
-            
-            sshOptions = concatStringsSep " " 
-                        (map (opt: "-o ${opt}") tunnelCfg.extraSSHOptions);
-          in ''
-            ${pkgs.openssh}/bin/ssh \
-              -L ${tunnelCfg.bindAddress}:${toString tunnelCfg.localPort}:${tunnelCfg.targetHost}:${toString tunnelCfg.targetPort} \
-              ${tunnelCfg.remoteUser}@${tunnelCfg.remoteHost} \
-              -p ${toString tunnelCfg.remotePort} \
-              ${identityFlag} \
-              ${sshOptions} \
-              -N
+    systemd.services = mapAttrs'
+      (name: tunnelCfg:
+        nameValuePair "ssh-tunnel-${name}" (mkIf tunnelCfg.enable {
+          description = "SSH tunnel for ${name} (${tunnelCfg.targetHost}:${toString tunnelCfg.targetPort})";
+
+          wantedBy = [ "multi-user.target" ];
+          after = [ "network.target" ];
+
+          # Script to verify port availability before starting the tunnel
+          preStart = ''
+            ${pkgs.nettools}/bin/nc -z ${tunnelCfg.bindAddress} ${toString tunnelCfg.localPort} && {
+              echo "Error: Port ${toString tunnelCfg.localPort} is already in use"
+              exit 1
+            } || {
+              echo "Port ${toString tunnelCfg.localPort} is available"
+            }
           '';
-          
-          # Limit service permissions but keep access to SSH keys
-          PrivateTmp = true;
-          ProtectSystem = "strict";
-          ReadWritePaths = mkIf (tunnelCfg.identityFile != null) [ 
-            # Allow access to the directory containing the SSH key
-            (dirOf tunnelCfg.identityFile)
-          ];
-          
-          # SSH will maintain its own connection
-          KillMode = "process";
-        };
-      })
-    ) cfg.tunnels;
+
+          serviceConfig = {
+            Type = "simple";
+            Restart = "on-failure";
+            RestartSec = "10s";
+
+            # Run as the specified user instead of DynamicUser
+            User = cfg.user;
+            Group = cfg.group;
+
+            # Build the SSH command
+            ExecStart =
+              let
+                identityFlag =
+                  if tunnelCfg.identityFile != null
+                  then "-i ${tunnelCfg.identityFile}"
+                  else "";
+
+                sshOptions = concatStringsSep " "
+                  (map (opt: "-o ${opt}") tunnelCfg.extraSSHOptions);
+              in
+              ''
+                ${pkgs.openssh}/bin/ssh \
+                  -L ${tunnelCfg.bindAddress}:${toString tunnelCfg.localPort}:${tunnelCfg.targetHost}:${toString tunnelCfg.targetPort} \
+                  ${tunnelCfg.remoteUser}@${tunnelCfg.remoteHost} \
+                  -p ${toString tunnelCfg.remotePort} \
+                  ${identityFlag} \
+                  ${sshOptions} \
+                  -N
+              '';
+
+            # Limit service permissions but keep access to SSH keys
+            PrivateTmp = true;
+            ProtectSystem = "strict";
+            ReadWritePaths = mkIf (tunnelCfg.identityFile != null) [
+              # Allow access to the directory containing the SSH key
+              (dirOf tunnelCfg.identityFile)
+            ];
+
+            # SSH will maintain its own connection
+            KillMode = "process";
+          };
+        })
+      )
+      cfg.tunnels;
   };
 }

@@ -1,4 +1,4 @@
-{lib, config, pkgs,...}:
+{ lib, config, pkgs, ... }:
 {
   imports = [
     ../../blueprints/workstation.nix
@@ -46,25 +46,25 @@
     }
   ];
   home-manager.users.lgian.services.kanshi.settings = [
-      {
-        profile.name = "default";
-        profile.outputs = [
-          {
-            criteria = "Dell Inc. DELL S2721DGF CTPGZ83";
-            status = "enable";
-            mode = "2560x1440@59.951Hz";
-            position = "0,0";
-            scale = 1.0;
-          }
-          {
-            criteria = "BNQ BenQ EL2870U W4M06094SL0";
-            status = "enable";
-            mode = "2560x1440@59.951Hz";
-            position = "2560,0";
-            scale = 1.0;
-          }
-        ];
-      }
+    {
+      profile.name = "default";
+      profile.outputs = [
+        {
+          criteria = "Dell Inc. DELL S2721DGF CTPGZ83";
+          status = "enable";
+          mode = "2560x1440@59.951Hz";
+          position = "0,0";
+          scale = 1.0;
+        }
+        {
+          criteria = "BNQ BenQ EL2870U W4M06094SL0";
+          status = "enable";
+          mode = "2560x1440@59.951Hz";
+          position = "2560,0";
+          scale = 1.0;
+        }
+      ];
+    }
   ];
 
   system.stateVersion = "24.11";

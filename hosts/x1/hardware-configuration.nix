@@ -5,36 +5,39 @@
 
 {
   imports =
-    [ (modulesPath + "/installer/scan/not-detected.nix")
+    [
+      (modulesPath + "/installer/scan/not-detected.nix")
     ];
 
   boot.initrd.availableKernelModules = [ "xhci_pci" "nvme" "usb_storage" "sd_mod" ];
   boot.initrd.kernelModules = [ ];
-  boot.kernelModules = [ "kvm-intel" "i915.enable_guc=2"];
+  boot.kernelModules = [ "kvm-intel" "i915.enable_guc=2" ];
   boot.extraModulePackages = [ ];
   boot.kernelParams = [
-  "resume_offset=68431872"
+    "resume_offset=68431872"
   ];
 
   services.fwupd.enable = true;
 
 
   fileSystems."/" =
-    { device = "/dev/disk/by-uuid/4eae03e1-51ae-48be-adf0-36d0070be0e0";
+    {
+      device = "/dev/disk/by-uuid/4eae03e1-51ae-48be-adf0-36d0070be0e0";
       fsType = "ext4";
     };
 
   boot.initrd.luks.devices."luks-ef510110-da22-41ba-a559-ede82faeae14".device = "/dev/disk/by-uuid/ef510110-da22-41ba-a559-ede82faeae14";
 
   fileSystems."/boot" =
-    { device = "/dev/disk/by-uuid/6641-9258";
+    {
+      device = "/dev/disk/by-uuid/6641-9258";
       fsType = "vfat";
       options = [ "fmask=0077" "dmask=0077" ];
     };
 
-    swapDevices = [
-      { device = "/var/lib/swap/swapfile"; }
-    ];
+  swapDevices = [
+    { device = "/var/lib/swap/swapfile"; }
+  ];
 
   boot.resumeDevice = "/dev/disk/by-uuid/4eae03e1-51ae-48be-adf0-36d0070be0e0";
 

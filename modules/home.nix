@@ -1,8 +1,8 @@
-{home-manager, config, pkgs, ...}:
+{ home-manager, config, pkgs, ... }:
 {
   home-manager.useGlobalPkgs = true;
   home-manager.useUserPackages = true;
-  home-manager.users.lgian = { lib, ...}:{
+  home-manager.users.lgian = { lib, ... }: {
     home.stateVersion = "24.11";
     imports = [
       ./kitty
