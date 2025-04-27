@@ -74,6 +74,10 @@ scrape_configs:
     scrape_interval: 30s
     static_configs:
     - targets: ['cadvisor.service.consul:8080']
+  - job_name: 'cine'
+    scrape_interval: 10s
+    static_configs:
+    - targets: ['192.168.5.3:9100']
   - job_name: 'node'
     scrape_interval: 10s
     static_configs:
