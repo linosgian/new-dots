@@ -3,7 +3,7 @@ provider "nomad" {
 }
 
 provider "consul" {
-  address    = "http://localhost:8500"
+  address = "http://localhost:8500"
 }
 
 terraform {
