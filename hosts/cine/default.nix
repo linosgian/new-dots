@@ -14,8 +14,8 @@
 
   networking.hostName = "cine";
   networking.useDHCP = lib.mkDefault true;
-  networking.firewall.interfaces."enp2s1".allowedTCPPorts = [ 22 80 9100 ];
-  networking.firewall.interfaces."enp2s1".allowedUDPPorts = [ 41641 ];
+  networking.firewall.allowedTCPPorts = [ 22 80 9100 ];
+  networking.firewall.allowedUDPPorts = [ 41641 ];
   services.nginx = {
     enable = true;
     recommendedGzipSettings = true;
