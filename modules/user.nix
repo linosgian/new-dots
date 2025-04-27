@@ -7,7 +7,8 @@
   users.users.lgian = {
     shell = pkgs.zsh;
     isNormalUser = true;
-    initialPassword = "linos123";
+    # This is overwritten after the initial setup anyway
+    initialHashedPassword = "$6$r5G9ffstWHHgGp3T$Faz3bpOHvAnP8Gk8serg/42mqih99v0DC1caBRQ4fPgAMq3uR5CBLUQY5L9KvCPJ6HYAYM2Kuf.qr/dmvseCE1";
     extraGroups = [
       "dialup"
       "docker"
