@@ -21,8 +21,13 @@
       bind_addr = "0.0.0.0";
       plugin = {
         docker = {
-          extra_labels = [ "job_name" "task_name" ];
-          allow_caps = [ "audit_write" "chown" "dac_override" "fowner" "fsetid" "kill" "mknod" "net_bind_service" "setfcap" "setgid" "setpcap" "setuid" "sys_chroot" "net_raw" ];
+          config = {
+            extra_labels = [ "job_name" "task_name" ];
+            allow_caps = [ "audit_write" "chown" "dac_override" "fowner" "fsetid" "kill" "mknod" "net_bind_service" "setfcap" "setgid" "setpcap" "setuid" "sys_chroot" "net_raw" ];
+            volumes = {
+              enabled = true;
+            };
+          };
         };
       };
 

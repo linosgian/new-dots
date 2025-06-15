@@ -22,8 +22,32 @@ let
       after = [ "nomad.service" ];
       requires = [ "nomad.service" ];
     });
+  metricsScript = pkgs.writeShellScript "scrape-nomad-metrics" ''
+    #!/usr/bin/env sh
+    set -euo pipefail
+
+    url="http://localhost:4646/v1/metrics?format=prometheus"
+    out="/var/lib/node_exporter/textfile_collector/nomad.prom"
+
+    mkdir -p "$(dirname "$out")"
+    ${pkgs.curl}/bin/curl -fsSL "$url" | grep -v '^#' > "$out"
+  '';
 in
 {
+  systemd.timers.scrape-nomad-metrics = {
+    description = "Timer for scraping Nomad Prometheus metrics";
+    wantedBy = [ "timers.target" ];
+    timerConfig = {
+      OnBootSec = "1min";
+      OnUnitActiveSec = "1s";
+      Unit = "scrape-nomad-metrics.service";
+    };
+  };
+
+  # Ensure the directory exists and is owned properly
+  systemd.tmpfiles.rules = [
+    "d /var/lib/node_exporter/textfile_collector 0755 node_exporter node_exporter -"
+  ];
   services.prometheus.exporters.unbound = {
     enable = true;
     listenAddress = exporterBindAddr;
@@ -38,7 +62,13 @@ in
     listenAddress = exporterBindAddr;
   };
 
-  services.prometheus.exporters.node.listenAddress = exporterBindAddr;
+  services.prometheus.exporters.node =  {
+    listenAddress = exporterBindAddr;
+    extraFlags = [
+      "--collector.textfile"
+      "--collector.textfile.directory=/var/lib/node_exporter/textfile_collector"
+    ];
+  };
   services.prometheus.exporters.smartctl = {
     enable = true;
     listenAddress = exporterBindAddr;
@@ -81,5 +111,15 @@ in
     ];
   };
 
-  systemd.services = exporterOverrides;
+  systemd.services = exporterOverrides
+  // {
+    scrape-nomad-metrics = {
+      description = "Scrape Nomad Prometheus Metrics";
+      serviceConfig.Type = "oneshot";
+      serviceConfig.ExecStart = "${metricsScript}";
+      wants = [ "network-online.target" ];
+      after = [ "network-online.target" "nomad.service" ];
+      requires = [ "nomad.service" ];
+    };
+  };
 }
