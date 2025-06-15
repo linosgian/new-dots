@@ -1,4 +1,4 @@
-{ lib, config, pkgs, ... }:
+{ lib, config, pkgs, unstablePkgs, ... }:
 {
   imports = [
     ../../blueprints/workstation.nix
@@ -34,12 +34,17 @@
     kubectx
     slack
     simple-scan
+    darktable
+    unstablePkgs.cura-appimage
   ];
 
 
   home-manager.users.lgian.programs.ssh = {
     enable = true;
     matchBlocks = {
+      "gitlab-mgr.cf" = {
+        hostname = "gitlab-runner-manager.util.eu-central-1a.ec2.cfl";
+      };
       "gitlab.cf" = {
         hostname = "gitlab.cloud.contextflow.com";
         port = 2222;
@@ -53,6 +58,10 @@
         identitiesOnly = true;
       };
       "*.contextflow.com" = {
+        identityFile = "/home/lgian/.ssh/work";
+        identitiesOnly = true;
+      };
+      "*.dcm.gg" = {
         identityFile = "/home/lgian/.ssh/work";
         identitiesOnly = true;
       };
@@ -104,7 +113,7 @@
     wg0 = {
       autostart = true;
       address = [ "192.168.10.28/32" ];
-      listenPort = 51820;
+      listenPort = 51822;
       privateKeyFile = "/etc/nixos/cf-privkey";
 
       peers = [
@@ -145,6 +154,7 @@
       "/.cfl/10.100.0.2"
       "/.cf/10.100.0.2"
       "/*.cloud.contextflow.com/10.100.0.2"
+      "/*.dcm.gg/10.100.0.2"
       "/937DE1F752050623115CE038A346EA0E.gr7.eu-central-1.eks.amazonaws.com/10.100.0.2"
     ];
   };
