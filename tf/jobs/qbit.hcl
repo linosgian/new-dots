@@ -45,7 +45,7 @@ job "qbit" {
         TZ = "Europe/Athens"
       }
       config {
-        image = "jesec/flood:4.9.3"
+        image = "jesec/flood:4.9.5"
         args = [
           "--auth=none",
           "--qburl=http://localhost:8080",
@@ -72,7 +72,7 @@ job "qbit" {
         TZ = "Europe/Athens"
       }
       config {
-        image = "linuxserver/qbittorrent:5.0.4"
+        image = "linuxserver/qbittorrent:5.1.0"
         labels = {
           "wud.watch" = "true"
           "wud.tag.include" = "^\\d{1}\\.\\d+\\.\\d+$"

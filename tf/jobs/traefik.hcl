@@ -30,10 +30,10 @@ job "traefik" {
       }
 
       config {
-        image        = "traefik:v2.11.16"
+        image        = "traefik:v2.11.25"
         labels = {
           "wud.watch" = "true"
-          "wud.tag.include" = "^v\\d+\\.\\d+\\.\\d+$"
+          "wud.tag.include" = "^v2\\.\\d+\\.\\d+$"
         }
         network_mode = "host"
         args = [

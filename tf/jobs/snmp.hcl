@@ -20,7 +20,7 @@ job "snmp-exporter" {
       driver = "docker"
       config {
         network_mode = "bridge"
-        image = "prom/snmp-exporter:v0.28.0"
+        image = "prom/snmp-exporter:v0.29.0"
         labels = {
           "wud.watch" = "true"
           "wud.tag.include" = "^v\\d+\\.\\d+\\.\\d+$"

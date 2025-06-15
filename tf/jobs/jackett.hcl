@@ -32,7 +32,7 @@ job "jackett" {
         PGID = 1000
       }
       config {
-        image = "linuxserver/jackett:0.22.1784"
+        image = "linuxserver/jackett:0.22.2017"
         labels = {
           "wud.watch" = "true"
           "wud.tag.include" = "^\\d+\\.\\d+\\.\\d+$"

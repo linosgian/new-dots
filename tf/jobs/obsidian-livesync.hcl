@@ -31,7 +31,7 @@ job "livesync" {
         COUCHDB_PASSWORD="${livesync_db_password}"
       }
       config {
-        image = "couchdb:3.4.3"
+        image = "couchdb:3.5.0"
         labels = {
           "wud.watch" = "true"
           "wud.tag.include" = "^\\d+\\.\\d+\\.\\d+$"

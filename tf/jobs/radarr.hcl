@@ -45,7 +45,7 @@ job "radarr" {
         PGID = 1000
       }
       config {
-        image = "linuxserver/radarr:5.21.1"
+        image = "linuxserver/radarr:5.26.2"
         labels = {
           "wud.watch" = "true"
           "wud.tag.include" = "^\\d+\\.\\d+\\.\\d+$"

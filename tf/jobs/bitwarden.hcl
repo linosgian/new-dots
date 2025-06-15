@@ -33,7 +33,7 @@ job "bitwarden" {
       }
       user = "1000:1000"
       config {
-        image = "vaultwarden/server:1.33.2"
+        image = "vaultwarden/server:1.34.1"
         security_opt = [
           "seccomp=unconfined"
         ]

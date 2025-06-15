@@ -54,7 +54,7 @@ job "bazarr" {
           "wud.watch" = "true"
           "wud.tag.include" = "^\\d+\\.\\d+\\.\\d+$"
         }
-        image = "linuxserver/bazarr:1.5.1"
+        image = "linuxserver/bazarr:1.5.2"
         volumes = [
           "/zfs/bazarr/config:/config/",
           "/zfs/torrents/complete/movies/:/movies",

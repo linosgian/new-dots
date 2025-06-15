@@ -34,22 +34,13 @@ job "immich" {
         TZ = "Europe/Athens"
       }
       config {
-        image = "tensorchord/pgvecto-rs:pg14-v0.2.1"
+        image = "ghcr.io/immich-app/postgres:14-vectorchord0.3.0-pgvectors0.2.0"
         labels = {
           "wud.watch" = "true"
           "wud.tag.include" = "^pg14-v\\d+\\.\\d+\\.\\d+$"
         }
-        command = "postgres"
-        args = [
-          "-c", "shared_preload_libraries=vectors.so",
-          "-c", "search_path=\"$user\", public, vectors",
-          "-c", "logging_collector=on",
-          "-c", "max_wal_size=2GB",
-          "-c", "shared_buffers=512MB",
-          "-c", "wal_compression=on"
-        ]
         volumes = [
-          "/zfs/immich/db:/var/lib/postgresql/data"
+          "/ssd/immich-db:/var/lib/postgresql/data"
         ]
       }
       resources {
@@ -65,7 +56,7 @@ job "immich" {
         MPLCONFIGDIR = "/local/mplconfig"
       }
       config {
-        image = "ghcr.io/immich-app/immich-machine-learning:v1.131.3"
+        image = "ghcr.io/immich-app/immich-machine-learning:v1.134.0"
         labels = {
           "wud.watch" = "true"
           "wud.tag.include" = "^v\\d+\\.\\d+\\.\\d+$"
@@ -93,11 +84,17 @@ job "immich" {
         DB_DATABASE_NAME="immich"
       }
       config {
-        image = "ghcr.io/immich-app/immich-server:v1.131.3"
+        image = "ghcr.io/immich-app/immich-server:v1.134.0"
         labels = {
           "wud.watch" = "true"
           "wud.tag.include" = "^v\\d+\\.\\d+\\.\\d+$"
         }
+        devices = [
+          {
+            host_path = "/dev/dri/renderD128"
+            container_path = "/dev/dri/renderD128"
+          },
+        ]
         args = [
         ]
         volumes = [
@@ -110,8 +107,7 @@ job "immich" {
         ]
       }
       resources {
-        memory = 1024
-        memory_max = 3072
+        memory = 4024
       }
     }
 
@@ -125,12 +121,11 @@ job "immich" {
         }
         volumes = [
           "/zfs/immich/redis/config/:/etc/redis/",
-          "/zfs/immich/redis/data:/data"
+          "/ssd/immich-redis/:/data"
         ]
       }
       resources {
-        memory = 256
-        cpu = 150
+        memory = 1024
       }
     }
   }
