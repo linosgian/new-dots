@@ -36,6 +36,39 @@ resource "consul_config_entry" "notifs" {
   })
 }
 
+
+
+resource "consul_config_entry" "movies" {
+  name = "movies"
+  kind = "service-intentions"
+
+  config_json = jsonencode({
+    Sources = [
+      {
+        Action     = "allow"
+        Name       = "subs"
+        Precedence = 9
+        Type       = "consul"
+      }
+    ]
+  })
+}
+
+resource "consul_config_entry" "series" {
+  name = "series"
+  kind = "service-intentions"
+
+  config_json = jsonencode({
+    Sources = [
+      {
+        Action     = "allow"
+        Name       = "subs"
+        Precedence = 9
+        Type       = "consul"
+      }
+    ]
+  })
+}
 resource "consul_config_entry" "id-int" {
   name = "id-int"
   kind = "service-intentions"
@@ -45,6 +78,12 @@ resource "consul_config_entry" "id-int" {
       {
         Action     = "allow"
         Name       = "traefiksso"
+        Precedence = 9
+        Type       = "consul"
+      },
+      {
+        Action     = "allow"
+        Name       = "grafana"
         Precedence = 9
         Type       = "consul"
       }
