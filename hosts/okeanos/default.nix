@@ -72,5 +72,5 @@ in
   services.openssh.settings.AllowUsers = lib.mkAfter [ "ntoulapa" ];
 
 
-  system.stateVersion = "24.11";
+  system.stateVersion = "25.05";
 }

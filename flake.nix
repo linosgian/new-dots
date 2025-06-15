@@ -1,6 +1,6 @@
 {
   inputs = {
-    nixpkgs.url = "github:nixos/nixpkgs/nixos-24.11";
+    nixpkgs.url = "github:nixos/nixpkgs/nixos-25.05";
     unstable.url = "github:nixos/nixpkgs/nixos-unstable";
     hardware.url = "github:nixos/nixos-hardware";
 
@@ -64,6 +64,7 @@
           ];
         };
         cflow = nixpkgs.lib.nixosSystem {
+          specialArgs = { inherit self unstablePkgs;  };
           system = "x86_64-linux";
           modules = [
             ./hosts/x1
