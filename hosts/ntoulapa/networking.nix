@@ -40,6 +40,9 @@
       iptables -I FORWARD -i nomad -d 192.168.0.0/16 -j DROP
       iptables -I FORWARD -i nomad -d 10.0.0.8/8 -j DROP
       iptables -I FORWARD -i nomad -o enp7s0 -d 192.168.5.3/32 -p tcp --dport 9100 -j ACCEPT
+      iptables -I FORWARD -i nomad -o enp7s0 -d 192.168.3.4/32 -p tcp --dport 1883 -j ACCEPT
+      iptables -I FORWARD -i nomad -o enp7s0 -d 192.168.3.147/32 -j ACCEPT
+      iptables -I FORWARD -i nomad -o enp7s0 -d 192.168.3.0/24 -p tcp --dport 80 -j ACCEPT
       iptables -I FORWARD -i nomad -o enp7s0 -d 192.168.2.1/32 -p tcp --match multiport --dports 9100,9167,9374 -j ACCEPT
       iptables -I FORWARD -i nomad -d 172.26.64.1/20 -j ACCEPT
     '';
