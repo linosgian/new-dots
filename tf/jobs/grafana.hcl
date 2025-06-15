@@ -18,7 +18,15 @@ job "grafana" {
     service {
       name = "grafana"
       connect {
-        sidecar_service{}
+        sidecar_service{
+          disable_default_tcp_check = true
+          proxy {
+            upstreams {
+              destination_name = "id-int"
+              local_bind_port = 443
+            }
+          }
+        }
       }
       port = "3000"
       address_mode = "alloc"
@@ -52,7 +60,7 @@ job "grafana" {
        GF_AUTH_GENERIC_OAUTH_ALLOW_SIGN_UP = "true"
        GF_AUTH_GENERIC_OAUTH_ALLOW_ASSIGN_GRAFANA_ADMIN = "true"
        GF_AUTH_GENERIC_OAUTH_CLIENT_ID = "grafana"
-       GF_AUTH_GENERIC_OAUTH_CLIENT_SECRET = "8iyGRwhKlv2hQW6Atma0jBSynlAiElcK"
+       GF_AUTH_GENERIC_OAUTH_CLIENT_SECRET = "${grafana_oidc_secret}"
        GF_AUTH_GENERIC_OAUTH_EMAIL_ATTRIBUTE_PATH = "email"
        GF_AUTH_GENERIC_OAUTH_SCOPES = "openid email profile offline_access roles"
        GF_AUTH_GENERIC_OAUTH_LOGIN_ATTRIBUTE_PATH = "username"
