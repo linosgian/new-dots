@@ -56,7 +56,7 @@ job "immich" {
         MPLCONFIGDIR = "/local/mplconfig"
       }
       config {
-        image = "ghcr.io/immich-app/immich-machine-learning:v1.134.0"
+        image = "ghcr.io/immich-app/immich-machine-learning:v1.135.0"
         labels = {
           "wud.watch" = "true"
           "wud.tag.include" = "^v\\d+\\.\\d+\\.\\d+$"
@@ -70,7 +70,6 @@ job "immich" {
         memory_max = 5000
       }
     }
-
     task "immich-server" {
       driver = "docker"
       env {
@@ -84,7 +83,7 @@ job "immich" {
         DB_DATABASE_NAME="immich"
       }
       config {
-        image = "ghcr.io/immich-app/immich-server:v1.134.0"
+        image = "ghcr.io/immich-app/immich-server:v1.135.0"
         labels = {
           "wud.watch" = "true"
           "wud.tag.include" = "^v\\d+\\.\\d+\\.\\d+$"
