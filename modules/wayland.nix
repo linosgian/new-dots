@@ -90,7 +90,7 @@ in
       dina-font
       noto-fonts
       noto-fonts-emoji
-      nerdfonts
+      nerd-fonts.ubuntu
       powerline-fonts
       font-awesome_5
       font-awesome_4

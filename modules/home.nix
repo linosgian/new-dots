@@ -3,7 +3,7 @@
   home-manager.useGlobalPkgs = true;
   home-manager.useUserPackages = true;
   home-manager.users.lgian = { lib, ... }: {
-    home.stateVersion = "24.11";
+    home.stateVersion = "25.05";
     imports = [
       ./kitty
       ./sway

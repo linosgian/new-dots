@@ -1,10 +1,27 @@
-{ lib, config, pkgs, ... }:
+{ lib, config, pkgs, masterPkgs, ... }:
 {
   imports = [
     ../../blueprints/workstation.nix
     ./hardware-configuration.nix
   ];
 
+  nixpkgs.overlays = [
+    (self: super: {
+      signal-desktop = super.signal-desktop.overrideAttrs (old: {
+        preFixup = old.preFixup + ''
+          gappsWrapperArgs+=(
+            --add-flags "--enable-features=UseOzonePlatform"
+            --add-flags "--ozone-platform=wayland"
+          )
+        '';
+      });
+    })
+  ];
+  environment.systemPackages = with pkgs; [
+    masterPkgs.signal-desktop-bin
+    masterPkgs.cura-appimage
+  ];
+  networking.hostName = "desktop";
   boot.binfmt.emulatedSystems = [ "aarch64-linux" ];
   services.irqbalance.enable = true;
   home-manager.users.lgian.wayland.windowManager.sway.config.workspaceOutputAssign = [
@@ -67,5 +84,5 @@
     }
   ];
 
-  system.stateVersion = "24.11";
+  system.stateVersion = "25.05";
 }
