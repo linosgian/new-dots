@@ -19,7 +19,6 @@ job "recipes" {
       address_mode = "alloc"
       tags = [
         "traefik.enable=true",
-        "traefik.http.routers.recipes.middlewares=traefiksso@file"
       ]
       connect {
         sidecar_service {}
