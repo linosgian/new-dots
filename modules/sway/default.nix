@@ -6,6 +6,11 @@ in
 {
   home.file."${wallpaperPath}".source = ./wallpaper.jpg;
 
+
+  home.packages = with pkgs; [
+    rofi-power-menu
+  ];
+
   services.blueman-applet = {
     enable = true;
   };
@@ -37,19 +42,8 @@ in
       floating.modifier = "Mod1";
       workspaceLayout = "stacking";
 
-      modes = {
-        "System  (l) lock, (d) suspend, (h) hibernate, (r) reboot, (s) shutdown" = {
-          "l" = "exec --no-startup-id swaylock, mode default";
-          "d" = "exec --no-startup-id exit.sh suspend, mode default";
-          "h" = "exec --no-startup-id exit.sh hibernate, mode default";
-          "r" = "exec --no-startup-id exit.sh reboot, mode default";
-          "s" = "exec --no-startup-id exit.sh shutdown, mode default";
-          "Return" = "mode default";
-          "Escape" = "mode default";
-        };
-      };
       keybindings = {
-        "Mod1+r" = "mode \"System  (l) lock, (d) suspend, (h) hibernate, (r) reboot, (s) shutdown\"";
+        "Mod1+r" = "exec --no-startup-id rofi -show power-menu -modi power-menu:rofi-power-menu";
 
         # Application Launchers
         "Mod1+Return" = "exec kitty -o allow_remote_control=yes --single-instance --listen-on unix:@mykitty";
