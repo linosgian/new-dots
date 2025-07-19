@@ -242,15 +242,10 @@ let
   };
 in
 {
-  nixpkgs.overlays = [
-    (self: super: {
-      waybar = super.waybar.override {
-        withMediaPlayer = true;
-      };
-    })
-  ];
   programs.waybar = {
-    package = pkgs.waybar;
+    package = pkgs.waybar.override {
+      withMediaPlayer = true;
+    };
     enable = true;
     style = builtins.readFile ./style.css;
     settings = [
