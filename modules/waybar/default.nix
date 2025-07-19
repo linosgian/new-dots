@@ -195,8 +195,8 @@ let
 
     # Network module settings
     network = {
-      format-wifi = "  {essid} ({signalStrength}%) |  {bandwidthDownBits} /  {bandwidthUpBits}";
-      format-ethernet = " {ipaddr}/{cidr} |  {bandwidthDownBits} /  {bandwidthUpBits}";
+      format-wifi = "  {essid} ({signalStrength}%) | {bandwidthDownBits} /  {bandwidthUpBits}";
+      format-ethernet = " {ipaddr}/{cidr} |  {bandwidthDownBits} /  {bandwidthUpBits}";
       tooltip-format = "{ifname} via {gwaddr} ";
       format-linked = "{ifname} (No IP) ";
       format-disconnected = "Disconnected ⚠";
