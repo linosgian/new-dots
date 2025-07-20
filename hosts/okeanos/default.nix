@@ -52,25 +52,5 @@ in
 
   services.tailscale.enable = true;
 
-  services.jellyfin = {
-    enable = true;
-    dataDir = "/var/lib/jellyfin/config";
-    cacheDir = "/var/lib/jellyfin/cache/";
-    configDir = "/var/lib/jellyfin/config/config";
-  };
-
-  users.users.lgian.extraGroups = [ "jellyfin" ];
-  users.users.ntoulapa = {
-    isNormalUser = true;
-    home = "/home/ntoulapa";
-    shell = pkgs.bash;
-    extraGroups = [ "users" ];
-    openssh.authorizedKeys.keys = [
-      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIBFtRtZWyCsguvCp/xvN6SUitWGb5HMIu4YOZD7Z9BJP backups@okeanos"
-    ];
-  };
-  services.openssh.settings.AllowUsers = lib.mkAfter [ "ntoulapa" ];
-
-
   system.stateVersion = "25.05";
 }
