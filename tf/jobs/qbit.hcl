@@ -72,7 +72,7 @@ job "qbit" {
         TZ = "Europe/Athens"
       }
       config {
-        image = "linuxserver/qbittorrent:5.1.0"
+        image = "linuxserver/qbittorrent:5.1.2"
         labels = {
           "wud.watch" = "true"
           "wud.tag.include" = "^\\d{1}\\.\\d+\\.\\d+$"

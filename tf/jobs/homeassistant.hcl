@@ -34,7 +34,7 @@ job "assistant" {
         TZ = "Europe/Athens"
       }
       config {
-        image = "homeassistant/home-assistant:2025.6.1"
+        image = "homeassistant/home-assistant:2025.7.2"
         labels = {
           "wud.watch" = "true"
           "wud.tag.include" = "^\\d+\\.\\d+\\.\\d+$"

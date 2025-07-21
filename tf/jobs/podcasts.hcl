@@ -30,7 +30,7 @@ job "podcasts" {
         TZ = "Europe/Athens"
       }
       config {
-        image = "advplyr/audiobookshelf:2.25.1"
+        image = "advplyr/audiobookshelf:2.26.1"
         security_opt = [
           "seccomp=unconfined"
         ]

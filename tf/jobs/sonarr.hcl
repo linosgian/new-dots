@@ -48,7 +48,7 @@ job "sonarr" {
         security_opt = [
           "seccomp=unconfined"
         ]
-        image = "linuxserver/sonarr:4.0.14"
+        image = "linuxserver/sonarr:4.0.15"
         labels = {
           "wud.watch" = "true"
           "wud.tag.include" = "^\\d+\\.\\d+\\.\\d+$"

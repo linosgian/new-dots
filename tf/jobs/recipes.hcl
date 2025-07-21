@@ -38,7 +38,7 @@ job "recipes" {
         TZ="Europe/Athens"
       }
       config {
-        image = "hkotel/mealie:v2.8.0"
+        image = "hkotel/mealie:v3.0.1"
         labels = {
           "wud.watch" = "true"
           "wud.tag.include" = "^v\\d+\\.\\d+\\.\\d+$"

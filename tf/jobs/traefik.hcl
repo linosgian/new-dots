@@ -30,7 +30,7 @@ job "traefik" {
       }
 
       config {
-        image        = "traefik:v2.11.25"
+        image        = "traefik:v2.11.27"
         labels = {
           "wud.watch" = "true"
           "wud.tag.include" = "^v2\\.\\d+\\.\\d+$"

@@ -113,7 +113,7 @@ EOF
       driver = "docker"
 
       config {
-        image = "prom/prometheus:v3.4.1"
+        image = "prom/prometheus:v3.5.0"
         labels = {
           "wud.watch" = "true"
           "wud.tag.include" = "^v\\d+\\.\\d+\\.\\d+$"

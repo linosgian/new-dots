@@ -80,7 +80,7 @@ job "keycloak" {
         TZ="Europe/Athens"
       }
       config {
-        image = "bitnami/keycloak:26.2.5"
+        image = "bitnami/keycloak:26.3.1"
         labels = {
           "wud.watch" = "true"
           "wud.tag.include" = "^\\d+\\.\\d+\\.\\d+$"
