@@ -88,6 +88,7 @@ alias k="kubectl"
 alias kon="kubeon"
 alias koff="kubeoff"
 alias nixd="nix develop -c zsh"
+alias sudos="sudo -s"
 
 PROMPT="%{$terminfo[bold]$(prompt_symbol_color)%}#%{$reset_color%} \
 %{$(username_color)%}%n\
