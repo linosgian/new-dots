@@ -20,8 +20,8 @@
     options = [ "defaults" "nofail" ];
   };
   fileSystems."/ssd" = {
-    device = "/dev/vda";
-    fsType = "ext4";
+    device = "cache";
+    fsType = "virtiofs";
     options = [ "defaults" "nofail" ];
   };
   fileSystems."/var/lib/jellyfin" = {

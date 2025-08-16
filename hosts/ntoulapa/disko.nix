@@ -74,26 +74,26 @@
       };
 
       # Cache volume group on second SSD
-      cache_vg = {
-        type = "lvm_vg";
-        lvs = {
-          transcode_cache_cine = {
-            size = "50G";
-            # handle this manually through nixvirt
-          };
-          transcode_cache = {
-            size = "100G";
-            content = {
-              type = "filesystem";
-              format = "ext4";
-              mountpoint = "/ssd";
-            };
-          };
-          l2arc = {
-            size = "70G";
-          };
-        };
-      };
+      # cache_vg = {
+      #   type = "lvm_vg";
+      #   lvs = {
+      #     transcode_cache_cine = {
+      #       size = "50G";
+      #       # handle this manually through nixvirt
+      #     };
+      #     transcode_cache = {
+      #       size = "100G";
+      #       content = {
+      #         type = "filesystem";
+      #         format = "ext4";
+      #         mountpoint = "/ssd";
+      #       };
+      #     };
+      #     l2arc = {
+      #       size = "70G";
+      #     };
+      #   };
+      # };
     };
   };
 }

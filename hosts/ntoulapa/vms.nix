@@ -180,13 +180,19 @@ let
           targetTag = "jellyfin";
           slot = 6;
         })
-      ];
-      rawBlockDevices = [
-        (createRawBlockDevice {
-          sourcePath = "/dev/cache_vg/transcode_cache_cine";
-          targetDev = "vda";
+        (createVirtiofsMountpoint {
+          hostPath = "/ssd";
+          targetTag = "cache";
+          slot = 7;
         })
       ];
+      # until new SSD arrives
+      # rawBlockDevices = [
+      #   (createRawBlockDevice {
+      #     sourcePath = "/dev/cache_vg/transcode_cache_cine";
+      #     targetDev = "vda";
+      #   })
+      # ];
     })
   ];
 in
