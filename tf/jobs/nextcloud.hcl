@@ -77,8 +77,7 @@ job "nextcloud" {
         ]
       }
       resources {
-        memory_max = 3000
-        memory = 1500
+        memory = 512
       }
       template {
         data = <<EOF

@@ -56,7 +56,7 @@ job "immich" {
         MPLCONFIGDIR = "/local/mplconfig"
       }
       config {
-        image = "ghcr.io/immich-app/immich-machine-learning:v1.135.3"
+        image = "ghcr.io/immich-app/immich-machine-learning:v1.137.3"
         labels = {
           "wud.watch" = "true"
           "wud.tag.include" = "^v\\d+\\.\\d+\\.\\d+$"
@@ -83,7 +83,7 @@ job "immich" {
         DB_DATABASE_NAME="immich"
       }
       config {
-        image = "ghcr.io/immich-app/immich-server:v1.135.3"
+        image = "ghcr.io/immich-app/immich-server:v1.137.3"
         labels = {
           "wud.watch" = "true"
           "wud.tag.include" = "^v\\d+\\.\\d+\\.\\d+$"

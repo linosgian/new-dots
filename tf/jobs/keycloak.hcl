@@ -94,7 +94,7 @@ job "keycloak" {
         ]
       }
       resources {
-        memory = 1500
+        memory = 1200
       }
     }
   }

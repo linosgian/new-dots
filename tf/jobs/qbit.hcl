@@ -37,33 +37,6 @@ job "qbit" {
         sidecar_service {}
       }
     }
-    task "flood" {
-      driver = "docker"
-      env {
-        PUID = 1000
-        PGID = 1000
-        TZ = "Europe/Athens"
-      }
-      config {
-        image = "jesec/flood:4.9.5"
-        args = [
-          "--auth=none",
-          "--qburl=http://localhost:8080",
-          "--qbuser=admin",
-          "--qbpass=admin"
-        ]
-        labels = {
-          "wud.watch" = "true"
-          "wud.tag.include" = "^\\d{1}\\.\\d+\\.\\d+$"
-        }
-        volumes = [
-          "/zfs/flood/config:/config/",
-        ]
-      }
-      resources {
-        memory = 1024
-      }
-    }
     task "qbit-docker" {
       driver = "docker"
       env {
@@ -84,7 +57,7 @@ job "qbit" {
         ]
       }
       resources {
-        memory = 3000
+        memory = 1000
       }
     }
   }
