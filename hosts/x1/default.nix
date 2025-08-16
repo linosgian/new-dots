@@ -7,9 +7,21 @@
   ];
 
   hardware.sane = {
-    enable = true; # enables support for SANE scanners
-    extraBackends = [ pkgs.sane-airscan ];
+    enable = true;
     openFirewall = true;
+  };
+  # Override pixma.conf in sane.configDir
+  environment.etc."sane-config" = lib.mkForce {
+    source = pkgs.runCommand "custom-sane-config" {} ''
+      mkdir -p $out
+      cp -r ${config.hardware.sane.configDir}/* $out/
+      rm $out/pixma.conf
+      cat > $out/pixma.conf << EOF
+      # Hardcoded Canon scanner on remote network
+      networking=true
+      bjnp://192.168.3.127:8612
+      EOF
+    '';
   };
   boot.binfmt.emulatedSystems = [ "aarch64-linux" ];
   networking.hostName = "x1";
