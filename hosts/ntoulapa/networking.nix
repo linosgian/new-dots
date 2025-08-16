@@ -1,7 +1,7 @@
 {
 
-  networking.firewall.interfaces."enp7s0".allowedTCPPorts = [ 22 80 443 514 ];
-  networking.firewall.interfaces."enp7s0".allowedUDPPorts = [ 51820 ];
+  networking.firewall.interfaces."enp2s0".allowedTCPPorts = [ 22 80 443 514 ];
+  networking.firewall.interfaces."enp2s0".allowedUDPPorts = [ 51820 ];
 
   networking.firewall.interfaces."wg0".allowedTCPPorts = [ 22 80 443 514 ];
 
@@ -14,7 +14,7 @@
   networking.firewall.checkReversePath = false;
   networking.vlans.vlan106 = {
     id = 106;
-    interface = "enp7s0";
+    interface = "enp2s0";
   };
 
   networking.bridges = {
@@ -39,11 +39,11 @@
       iptables -I FORWARD -i nomad -d 172.16.0.0/12 -j DROP
       iptables -I FORWARD -i nomad -d 192.168.0.0/16 -j DROP
       iptables -I FORWARD -i nomad -d 10.0.0.8/8 -j DROP
-      iptables -I FORWARD -i nomad -o enp7s0 -d 192.168.5.3/32 -p tcp --dport 9100 -j ACCEPT
-      iptables -I FORWARD -i nomad -o enp7s0 -d 192.168.3.4/32 -p tcp --dport 1883 -j ACCEPT
-      iptables -I FORWARD -i nomad -o enp7s0 -d 192.168.3.147/32 -j ACCEPT
-      iptables -I FORWARD -i nomad -o enp7s0 -d 192.168.3.0/24 -p tcp --dport 80 -j ACCEPT
-      iptables -I FORWARD -i nomad -o enp7s0 -d 192.168.2.1/32 -p tcp --match multiport --dports 9100,9167,9374 -j ACCEPT
+      iptables -I FORWARD -i nomad -o enp2s0 -d 192.168.5.3/32 -p tcp --dport 9100 -j ACCEPT
+      iptables -I FORWARD -i nomad -o enp2s0 -d 192.168.3.4/32 -p tcp --dport 1883 -j ACCEPT
+      iptables -I FORWARD -i nomad -o enp2s0 -d 192.168.3.147/32 -j ACCEPT
+      iptables -I FORWARD -i nomad -o enp2s0 -d 192.168.3.0/24 -p tcp --dport 80 -j ACCEPT
+      iptables -I FORWARD -i nomad -o enp2s0 -d 192.168.2.1/32 -p tcp --match multiport --dports 9100,9167,9374 -j ACCEPT
       iptables -I FORWARD -i nomad -d 172.26.64.1/20 -j ACCEPT
     '';
   networking.dhcpcd.denyInterfaces = [ "veth*" ];
