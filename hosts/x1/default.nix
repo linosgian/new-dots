@@ -23,6 +23,13 @@
       EOF
     '';
   };
+  nix = {
+    settings = {
+      extra-sandbox-paths = [
+        "/etc/skopeo/auth.json=/etc/nix/skopeo/auth.json?"
+      ];
+    };
+  };
   boot.binfmt.emulatedSystems = [ "aarch64-linux" ];
   networking.hostName = "x1";
   services.thinkfan = {
@@ -48,6 +55,7 @@
     simple-scan
     darktable
     unstablePkgs.cura-appimage
+    jellyfin-media-player
   ];
 
 
