@@ -10,6 +10,7 @@
     ./exporters.nix
     ./networking.nix
     ./certs.nix
+    ./services.nix
   ];
 
   networking.hostName = "ntoulapa";

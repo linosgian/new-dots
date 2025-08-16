@@ -37,20 +37,16 @@ job "traefik" {
         }
         network_mode = "host"
         args = [
-          "--entryPoints.http.address=192.168.2.3:80",
-          "--entryPoints.https.address=192.168.2.3:443",
+          "--entryPoints.http.address=192.168.2.3:9999",
+          "--entryPoints.https.address=192.168.2.3:9443",
           "--entryPoints.http.transport.respondingTimeouts.readTimeout=600s",
           "--entryPoints.https.transport.respondingTimeouts.readTimeout=600s",
           "--entryPoints.http.transport.respondingTimeouts.writeTimeout=600s",
           "--entryPoints.https.transport.respondingTimeouts.writeTimeout=600s",
           "--entryPoints.http.transport.respondingTimeouts.idleTimeout=600s",
           "--entryPoints.https.transport.respondingTimeouts.idleTimeout=600s",
-          "--entryPoints.http_wg.address=10.192.123.1:80",
-          "--entryPoints.https_wg.address=10.192.123.1:443",
           "--entryPoints.https.http.tls=true",
-          "--entryPoints.https_wg.http.tls=true",
           "--entrypoints.http.http.redirections.entryPoint.to=https",
-          "--entrypoints.http_wg.http.redirections.entryPoint.to=https_wg",
           "--providers.file.watch=true",
           "--providers.file.filename=/etc/traefik/traefik-tls.toml",
           "--providers.consulcatalog=true",
@@ -88,7 +84,7 @@ job "traefik" {
 ## Enables dashboard and puts it behind the `https` entrypoint
 [http.routers.websecure]
     rule = "Host(`lb.lgian.com`)"
-    entrypoints = ["https", "https_wg"]
+    entrypoints = ["https"]
     service = "api@internal"
     middlewares = ["bAuth"]
     [http.routers.api.tls]
