@@ -36,6 +36,22 @@ resource "consul_config_entry" "notifs" {
   })
 }
 
+resource "consul_config_entry" "notifs-bridge" {
+  name = "notifs-bridge"
+  kind = "service-intentions"
+
+  config_json = jsonencode({
+    Sources = [
+      {
+        Action     = "allow"
+        Name       = "alerts"
+        Precedence = 9
+        Type       = "consul"
+      }
+    ]
+  })
+}
+
 
 
 resource "consul_config_entry" "movies" {
