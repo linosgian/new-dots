@@ -1,10 +1,12 @@
-{ lib, pkgs, ... }:
+{ config, lib, pkgs, ... }:
 let
-  mealiePort = 9000;
+  cfg = config.services.deployedSvcs;
 in
 {
   services.mealie = {
     enable = true;
+    port = cfg.defs.mealie.port;
+    listenAddress = "127.0.0.1";
     settings = {
       RECIPE_PUBLIC = true;
       RECIPE_SHOW_NUTRITION = true;
@@ -12,7 +14,7 @@ in
       RECIPE_LANDSCAPE_VIEW = true;
       RECIPE_DISABLE_COMMENTS = false;
       RECIPE_DISABLE_AMOUNT = false;
-      DATA_DIR="/zfs/mealie-b";
+      DATA_DIR="/zfs/mealie";
     };
   };
 

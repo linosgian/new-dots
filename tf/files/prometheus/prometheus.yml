@@ -30,42 +30,6 @@ scrape_configs:
       target_label: __param_target
     - target_label: __address__
       replacement: domain-exporter.service.consul:9222 # domain_exporter address
-  - job_name: snmp
-    scrape_interval: 10s
-    static_configs:
-      - targets:
-        - 192.168.2.5
-    params:
-      module: [if_mib]
-    metrics_path: /snmp
-    metric_relabel_configs:
-      - source_labels: [ifDescr]
-        regex: "port1"
-        target_label: "ifDescr"
-        replacement: "laptop"
-      - source_labels: [ifDescr]
-        regex: "port2"
-        target_label: "ifDescr"
-        replacement: "ntoulapa"
-      - source_labels: [ifDescr]
-        regex: "port3"
-        target_label: "ifDescr"
-        replacement: "desktop"
-      - source_labels: [ifDescr]
-        regex: "port4"
-        target_label: "ifDescr"
-        replacement: "router"
-    relabel_configs:
-      - source_labels: [__address__]
-        target_label: __param_target
-      - source_labels: [__param_target]
-        target_label: instance
-      - target_label: __address__
-        replacement: snmp-exporter.service.consul:9116  # The SNMP exporter's real hostname:port.
-  - job_name: 'docker-updates'
-    scrape_interval: 1m
-    static_configs:
-      - targets: ['updates.service.consul:3000']
   - job_name: traefik
     scrape_interval: 5s
     static_configs:

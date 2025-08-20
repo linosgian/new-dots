@@ -1,4 +1,4 @@
-{ lib, config, pkgs, nixvirt, ... }:
+{ lib, config, pkgs, unstablePkgs, nixvirt, ... }:
 {
   imports = [
     ../../blueprints/server.nix
@@ -22,8 +22,14 @@
     secrets.backblaze_acc_key = { };
     secrets.restic_password = { };
     secrets.restic_password = { };
+    secrets.grafana_oidc_secret = { };
+    secrets.keycloak_db_password = { };
   };
 
+
+  sops.templates."keycloak_db_password".content = ''
+    ${config.sops.placeholder.keycloak_db_password}
+  '';
   sops.templates."restic_envs".content = ''
     B2_ACCOUNT_ID="${config.sops.placeholder.backblaze_acc_id}"
     B2_ACCOUNT_KEY="${config.sops.placeholder.backblaze_acc_key}"

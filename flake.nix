@@ -108,7 +108,7 @@
 
         ntoulapa = nixpkgs.lib.nixosSystem {
           system = "x86_64-linux";
-          specialArgs = { inherit self unstablePkgs nixvirt; };
+          specialArgs = { inherit self unstable unstablePkgs nixvirt; };
           modules = [
             disko.nixosModules.disko
             ./hosts/ntoulapa
