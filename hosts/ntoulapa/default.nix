@@ -62,6 +62,29 @@
   environment.systemPackages = with pkgs; [
     restic
   ];
+
+  sops.templates."ddns-config".content = ''
+    {
+      "settings": [
+        {
+          "provider": "digitalocean",
+          "domain": "hm.lgian.com",
+          "token": "${config.sops.placeholder.digitalocean_api_token}",
+          "ip_version": "ipv4"
+        }
+      ]
+    }
+  '';
+  environment.etc."ddns-config".source = config.sops.templates."ddns-config".path;
+  services.ddns-updater = {
+    enable = true;
+    package = unstablePkgs.ddns-updater;
+    environment = {
+      RESOLVER_ADDRESS="1.1.1.1:53";
+      CONFIG_FILEPATH = "%d/conf";
+    };
+  };
+  systemd.services.ddns-updater.serviceConfig.LoadCredential = "conf:/etc/ddns-config";
   services.restic.backups.ntoulapa = {
     repository = "b2:ntoulapa:ntoulapa";
     initialize = false;
