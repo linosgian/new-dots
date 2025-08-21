@@ -2,8 +2,9 @@
 {
   imports = [
     ../../blueprints/server.nix
-    ../../modules/nomad.nix
-    ../../modules/consul.nix
+    ../../modules/alloy.nix
+    ../../modules/prometheus/default.nix
+    ../../modules/prometheus/ntfy.nix
     ./hardware-configuration.nix
     ./disko.nix
     ./vms.nix
@@ -11,6 +12,7 @@
     ./networking.nix
     ./certs.nix
     ./services.nix
+    ./alloy.nix
   ];
 
   networking.hostName = "ntoulapa";
@@ -24,9 +26,17 @@
     secrets.restic_password = { };
     secrets.grafana_oidc_secret = { };
     secrets.keycloak_db_password = { };
+    secrets.ntfy_user_password = { };
   };
 
 
+  sops.templates."alertmanager-ntfy".content = ''
+    ntfy:
+      auth:
+        basic:
+          username: notifs
+          password: ${config.sops.placeholder.ntfy_user_password}
+  '';
   sops.templates."keycloak_db_password".content = ''
     ${config.sops.placeholder.keycloak_db_password}
   '';
@@ -48,19 +58,12 @@
       # required for unbound-exporter
       remote-control.control-enable = true;
       server = {
-        interface = [ "0.0.0.0" ];
+        interface = [ "127.0.0.1" ];
         do-not-query-localhost = false;
-        access-control = [
-          "127.0.0.1/32 allow"
-          "172.26.64.1/24 allow"
-        ];
-        local-zone = [ "\"id.lgian.com\" transparent" ];
-        local-data = [ "\"id.lgian.com. 3600 A 127.0.0.1\"" ];
       };
 
       forward-zone = [
         { name = "."; forward-addr = "192.168.2.1"; }
-        { name = "consul."; forward-addr = "127.0.0.1@8600"; }
       ];
     };
   };

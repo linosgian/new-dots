@@ -1,33 +1,8 @@
-{ lib, config, pkgs, nixvirt, ... }:
+{ lib, config, pkgs, ... }:
 let
-  exporterBindAddr = "172.26.64.1";
-  exportersAfterNomad = [
-    "node"
-    "nut"
-    "restic"
-    "smartctl"
-    "unbound"
-    "smokeping"
-  ];
-
-  exporterOverrides = lib.genAttrs
-    (map (name: "prometheus-${name}-exporter") exportersAfterNomad)
-    (name: {
-      serviceConfig = {
-        Restart = "on-failure";
-        RestartSec = "5s";
-        StartLimitIntervalSec = 300;
-        StartLimitBurst = 5;
-      };
-      after = [ "nomad.service" ];
-      requires = [ "nomad.service" ];
-    });
+  exporterBindAddr = "127.0.0.1";
 in
 {
-  # Ensure the directory exists and is owned properly
-  systemd.tmpfiles.rules = [
-    "d /var/lib/node_exporter/textfile_collector 0755 node_exporter node_exporter -"
-  ];
   services.prometheus.exporters.unbound = {
     enable = true;
     listenAddress = exporterBindAddr;
@@ -44,19 +19,16 @@ in
 
   services.prometheus.exporters.node =  {
     listenAddress = exporterBindAddr;
-    extraFlags = [
-      "--collector.textfile"
-      "--collector.textfile.directory=/var/lib/node_exporter/textfile_collector"
-    ];
   };
   services.prometheus.exporters.smartctl = {
     enable = true;
     listenAddress = exporterBindAddr;
   };
+
   services.prometheus.exporters.smokeping = {
     enable = true;
     listenAddress = exporterBindAddr;
-    # buckets = "0.001,0.0032,0.0064,0.0128,0.0256,0.03556,0.0452,0.0512,0.0620,0.07,0.08,0.090,0.1024";
+    buckets = "0.001,0.0032,0.0064,0.0128,0.0256,0.03556,0.0452,0.0512,0.0620,0.07,0.08,0.090,0.1024";
     hosts = [
       "router.lgian.com"
       "google.com"
@@ -69,6 +41,16 @@ in
       "8.8.8.8"
       "github.com"
     ];
+  };
+  systemd.services.prometheus-smokeping-exporter = {
+    serviceConfig = {
+      Restart = "always";
+      RestartSec = "10s";
+    };
+    after = [ "unbound.service" ];
+    wants = [ "unbound.service" ];
+    startLimitIntervalSec = 60;
+    startLimitBurst = 3;
   };
 
   services.prometheus.exporters.nut = {
@@ -90,6 +72,4 @@ in
       "ups.test.date"
     ];
   };
-
-  systemd.services = exporterOverrides;
 }

@@ -6,7 +6,6 @@
     ../modules/boot.nix
     ../modules/home.nix
     ../modules/wayland.nix
-    ../modules/ssh-tunnel
   ];
   environment.systemPackages = with pkgs; [
     geeqie
@@ -84,30 +83,6 @@
             }
           ];
         };
-      };
-    };
-  };
-
-  # Configure your tunnels
-  services.sshTunnel = {
-    enable = true;
-    tunnels = {
-      terraform-consul = {
-        localPort = 8500;
-        remoteHost = "ntoulapa.lgian.com";
-        remoteUser = "lgian";
-        targetHost = "localhost";
-        targetPort = 8500;
-        identityFile = "/home/lgian/.ssh/id_ed25519";
-      };
-
-      terraform-nomad = {
-        localPort = 4646;
-        remoteHost = "ntoulapa.lgian.com";
-        remoteUser = "lgian";
-        targetHost = "localhost";
-        targetPort = 4646;
-        identityFile = "/home/lgian/.ssh/id_ed25519";
       };
     };
   };

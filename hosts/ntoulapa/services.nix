@@ -1,23 +1,34 @@
 { config, lib, pkgs, ... }:
 with lib;
 let
+  defaultExtraConfig = {
+    client_max_body_size = "1024M";
+  };
+
   cfg = config.services.deployedSvcs;
-   mkVhost = name: { port, host }: {
-    "${host}" = {
-      serverName = "${host}.lgian.com";
-      forceSSL = true;
-      enableACME = false;
-      useACMEHost = "lgian.com";
-      locations."/" = {
+  # turn attrset into multiline string
+  configToString = cfg:
+    lib.concatStringsSep "\n" (
+      lib.mapAttrsToList (k: v: "${k} ${v};") cfg
+    );
+  mkVhost = name: { port, host, extraConfig ? {}}: {
+   "${host}" = {
+     serverName = "${host}.lgian.com";
+     forceSSL = true;
+     enableACME = false;
+     useACMEHost = "lgian.com";
+     locations = {
+      "/" = {
         proxyPass = "http://127.0.0.1:${toString port}";
         proxyWebsockets = true;
         recommendedProxySettings = true;
         extraConfig = ''
-          client_max_body_size 1024M;
+          ${configToString (defaultExtraConfig // extraConfig)}
         '';
       };
-    };
+     };
   };
+};
 in
 {
   options.services.deployedSvcs.defs = lib.mkOption {
@@ -34,7 +45,20 @@ in
       radarr = { port = 9007; host = "movies"; };
       jackett = { port = 9008; host = "jackett"; };
       transmission = { port = 9009; host = "torrents"; };
-      keycloak = { port = 9010; host = "id"; };
+      ntfy-sh = { port = 9011; host = "notifs"; };
+      jellyfin = { port = 8096; host = "jellyfin"; };
+      prometheus = { port = 9090; host = "prometheus"; };
+      alertmanager = { port = 9093; host = "alerts"; };
+      immich = { 
+        port = 9012;
+        host = "immich";
+        extraConfig = {
+          client_max_body_size = "50000M";
+          proxy_read_timeout = "600s";
+          proxy_send_timeout = "600s";
+          send_timeout = "600s";
+        };
+      };
     };
     description = "Custom service definitions shared across modules.";
   };
@@ -50,7 +74,9 @@ in
     ../../modules/services/radarr.nix
     ../../modules/services/jackett.nix
     ../../modules/services/transmission.nix
-    ../../modules/services/keycloak.nix
+    ../../modules/services/ntfy-sh.nix
+    ../../modules/services/jellyfin.nix
+    ../../modules/services/immich.nix
   ];
   config = {
     services.nginx = {

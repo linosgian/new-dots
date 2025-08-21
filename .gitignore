@@ -1,5 +1,3 @@
 /result
-/tf/terraform.*
-/tf/.terraform/*
 /pkgs/openwrt-custom-packages/*
 *.qcow2
