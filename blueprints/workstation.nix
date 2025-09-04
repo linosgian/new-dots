@@ -41,6 +41,7 @@
     age
     sops
     obsidian
+    eog
   ];
   services.udisks2.enable = true;
   services.avahi = {
