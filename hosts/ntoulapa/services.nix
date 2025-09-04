@@ -46,6 +46,7 @@ in
       jackett = { port = 9008; host = "jackett"; };
       transmission = { port = 9009; host = "torrents"; };
       ntfy-sh = { port = 9011; host = "notifs"; };
+      deluge = { port = 9013; host = "torrents2"; };
       jellyfin = { port = 8096; host = "jellyfin"; };
       prometheus = { port = 9090; host = "prometheus"; };
       alertmanager = { port = 9093; host = "alerts"; };
@@ -77,6 +78,7 @@ in
     ../../modules/services/ntfy-sh.nix
     ../../modules/services/jellyfin.nix
     ../../modules/services/immich.nix
+    ../../modules/services/deluge.nix
   ];
   config = {
     services.nginx = {

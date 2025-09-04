@@ -7,12 +7,12 @@
     ../../modules/prometheus/ntfy.nix
     ./hardware-configuration.nix
     ./disko.nix
-    ./vms.nix
     ./exporters.nix
     ./networking.nix
     ./certs.nix
     ./services.nix
     ./alloy.nix
+    ./containers.nix
   ];
 
   networking.hostName = "ntoulapa";
@@ -27,6 +27,8 @@
     secrets.grafana_oidc_secret = { };
     secrets.keycloak_db_password = { };
     secrets.ntfy_user_password = { };
+    secrets.deluge_admin_password = { };
+    secrets.deluge_user_password = { };
   };
 
 
@@ -39,6 +41,10 @@
   '';
   sops.templates."keycloak_db_password".content = ''
     ${config.sops.placeholder.keycloak_db_password}
+  '';
+  sops.templates."deluge_auth_file".content = ''
+    admin:${config.sops.placeholder.deluge_admin_password}:10
+    localclient:${config.sops.placeholder.deluge_user_password}:10
   '';
   sops.templates."restic_envs".content = ''
     B2_ACCOUNT_ID="${config.sops.placeholder.backblaze_acc_id}"

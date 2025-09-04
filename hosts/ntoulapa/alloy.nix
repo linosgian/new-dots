@@ -32,6 +32,19 @@
       '';
   };
 
+  environment.etc."alloy/misc.alloy" = {
+    text = ''
+      prometheus.scrape "misc_exporters" {
+        targets = [
+          {"__address__" = "127.0.0.1:9374"},
+          {"__address__" = "127.0.0.1:9167"},
+          {"__address__" = "127.0.0.1:9633"},
+        ]
+        forward_to      = [prometheus.relabel.global_labels.receiver]
+        scrape_interval = "10s"
+      }
+      '';
+  };
   environment.etc."alloy/blackbox.alloy" = {
     text = ''
       prometheus.exporter.blackbox "main" {
@@ -59,6 +72,7 @@
         }
       }
       prometheus.scrape "blackbox" {
+        scrape_interval = "15s"
         targets    = discovery.relabel.blackbox.output
         forward_to = [prometheus.relabel.global_labels.receiver]
       }

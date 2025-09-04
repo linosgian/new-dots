@@ -54,6 +54,7 @@ in
         }
         prometheus.scrape "node_exporter" {
           targets    = prometheus.exporter.unix.node_exporter.targets
+          scrape_interval = "15s"
           forward_to = [
             prometheus.relabel.node_relabel.receiver,
           ]

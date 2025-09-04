@@ -29,6 +29,7 @@
   };
 
   services.tailscale.enable = true;
+  services.tailscale.interfaceName = "userspace-networking";
 
   services.jellyfin = {
     enable = true;
@@ -37,5 +38,18 @@
     configDir = "/var/lib/jellyfin/config";
   };
 
-  system.stateVersion = "24.11";
+  networking.useHostResolvConf = false;
+  networking.interfaces.eth1 = {
+    useDHCP = false;
+    ipv4.addresses = [
+      {
+        address = "192.168.5.3";
+        prefixLength = 24;
+      }
+    ];
+  };
+  networking.defaultGateway.interface = "eth1";
+  networking.defaultGateway.address = "192.168.5.1";
+
+  system.stateVersion = "25.05";
 }

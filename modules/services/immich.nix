@@ -7,7 +7,7 @@ in
     package = unstablePkgs.postgresql_16;
     enable = true;
     ensureDatabases = [ "immich" ];
-    dataDir = "/ssd/immich-db-new-upgrade-16/pgdata";
+    dataDir = "/ssd-new/immich-db/pgdata";
     ensureUsers = [
       {
         name = "immich";
@@ -275,6 +275,7 @@ in
   # Maintain the old docker paths to avoid migrating
   systemd.services.immich-server.serviceConfig.BindPaths = [
     "/zfs/immich/uploads/:/usr/src/app/upload"
+    "/ssd-new/immich-thumbs/thumbs:/usr/src/app/upload/thumbs"
     "/zfs/immich/config/:/config"
   ];
   systemd.services.immich-server.serviceConfig.BindReadOnlyPaths = [

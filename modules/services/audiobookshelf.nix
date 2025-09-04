@@ -9,6 +9,6 @@ in
   };
 
   systemd.services.audiobookshelf.serviceConfig = {
-    WorkingDirectory = lib.mkForce "/zfs/audiobookshelf";
+    WorkingDirectory = lib.mkForce "/ssd-new/audiobookshelf";
   };
 }

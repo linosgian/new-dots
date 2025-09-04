@@ -5,7 +5,7 @@
       # Primary SSD for NixOS
       sda = {
         type = "disk";
-        device = "/dev/sda";
+        device = "/dev/disk/by-id/ata-Samsung_SSD_860_EVO_250GB_S4CJNF0NC35989N";
         content = {
           type = "gpt";
           partitions = {
@@ -31,10 +31,9 @@
         };
       };
 
-      # Secondary SSD for caching and ZFS acceleration
-      sdb = {
+      nvme = {
         type = "disk";
-        device = "/dev/sdb";
+        device = "/dev/disk/by-id/nvme-Samsung_SSD_970_EVO_Plus_500GB_S4EVNX1W493080V";
         content = {
           type = "gpt";
           partitions = {
@@ -73,27 +72,22 @@
         };
       };
 
-      # Cache volume group on second SSD
-      # cache_vg = {
-      #   type = "lvm_vg";
-      #   lvs = {
-      #     transcode_cache_cine = {
-      #       size = "50G";
-      #       # handle this manually through nixvirt
-      #     };
-      #     transcode_cache = {
-      #       size = "100G";
-      #       content = {
-      #         type = "filesystem";
-      #         format = "ext4";
-      #         mountpoint = "/ssd";
-      #       };
-      #     };
-      #     l2arc = {
-      #       size = "70G";
-      #     };
-      #   };
-      # };
+      cache_vg = {
+        type = "lvm_vg";
+        lvs = {
+          l2arc = {
+            size = "25G";
+          };
+          ssd = {
+            size = "100%FREE";
+            content = {
+              type = "filesystem";
+              format = "ext4";
+              mountpoint = "/ssd-new";
+            };
+          };
+        };
+      };
     };
   };
 }

@@ -10,6 +10,6 @@ in
       port = cfg.defs.radarr.port;
       bindaddress = "127.0.0.1";
     };
-    dataDir = "/zfs/radarr-new/config";
+    dataDir = "/zfs/radarr/config";
   };
 }

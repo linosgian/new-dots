@@ -13,7 +13,7 @@ in
   # Maintain the old docker paths to avoid migrating
   systemd.services.jellyfin.serviceConfig.BindPaths = [
     "/zfs/torrents/complete:/media"
-    "/zfs/jellyfin-new/config:/config"
+    "/zfs/jellyfin/config:/config"
     "/zfs/ytdl/downloads/movies:/ytdl-singles"
     "/zfs/ytdl/downloads/tv_shows:/ytdl"
   ];

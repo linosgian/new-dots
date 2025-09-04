@@ -11,6 +11,15 @@
     stateDir = "prometheus";
     scrapeConfigs = [
       {
+        job_name = "smart";
+        scrape_interval = "30s";
+        static_configs = [
+          {
+            targets = [ "127.0.0.1:9633" ];
+          }
+        ];
+      }
+      {
         job_name = "unbound";
         scrape_interval = "30s";
         static_configs = [
@@ -38,15 +47,6 @@
             labels = {
               ups = "primary";
             };
-          }
-        ];
-      }
-      {
-        job_name = "cine";
-        scrape_interval = "10s";
-        static_configs = [
-          {
-            targets = [ "192.168.5.3:9100" ];
           }
         ];
       }
@@ -85,7 +85,6 @@
 
     rules = import ./rules.nix {inherit pkgs;};
 
-    # Alertmanager configuration
     alertmanagers = [
       {
         static_configs = [
@@ -101,8 +100,7 @@
   services.prometheus.alertmanager = {
     enable = true;
     port = 9093;
-    
-    # External URL
+
     extraFlags = [
       "--web.external-url=https://alerts.lgian.com"
     ];
@@ -137,7 +135,7 @@
              { url = "http://127.0.0.1:3001/hook"; }
            ];
          }
-      ];   
+      ];
     };
   };
 
@@ -147,6 +145,6 @@
   };
 
   systemd.services.prometheus.serviceConfig.BindPaths = [
-    "/zfs/prometheus-new:/var/lib/prometheus/data/"
+    "/zfs/prometheus:/var/lib/prometheus/data/"
   ];
 }
