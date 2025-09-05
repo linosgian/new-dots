@@ -11,46 +11,6 @@
     stateDir = "prometheus";
     scrapeConfigs = [
       {
-        job_name = "smart";
-        scrape_interval = "30s";
-        static_configs = [
-          {
-            targets = [ "127.0.0.1:9633" ];
-          }
-        ];
-      }
-      {
-        job_name = "unbound";
-        scrape_interval = "30s";
-        static_configs = [
-          {
-            targets = [ "127.0.0.1:9167" ];
-          }
-        ];
-      }
-      {
-        job_name = "restic";
-        scrape_interval = "30s";
-        static_configs = [
-          {
-            targets = [ "127.0.0.1:9753" ];
-          }
-        ];
-      }
-      {
-        job_name = "nut";
-        scrape_interval = "10s";
-        metrics_path = "/ups_metrics";
-        static_configs = [
-          {
-            targets = [ "127.0.0.1:9199" ];
-            labels = {
-              ups = "primary";
-            };
-          }
-        ];
-      }
-      {
         job_name = "router";
         scrape_interval = "5s";
         static_configs = [
@@ -65,7 +25,7 @@
       }
       {
         job_name = "smartplugz";
-        scrape_interval = "15s";
+        scrape_interval = "5s";
         static_configs = [
           {
             targets = [

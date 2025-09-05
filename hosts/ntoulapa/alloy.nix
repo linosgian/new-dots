@@ -32,13 +32,26 @@
       '';
   };
 
+  environment.etc."alloy/nut.alloy" = {
+    text = ''
+      prometheus.scrape "nut_exporter" {
+        targets = [
+          {"__address__" = "127.0.0.1:9199", "exporter" = "nut", "ups" = "primary"},
+        ]
+        forward_to      = [prometheus.relabel.global_labels.receiver]
+        metrics_path = "/ups_metrics"
+        scrape_interval = "10s"
+      }
+      '';
+  };
   environment.etc."alloy/misc.alloy" = {
     text = ''
       prometheus.scrape "misc_exporters" {
         targets = [
-          {"__address__" = "127.0.0.1:9374"},
-          {"__address__" = "127.0.0.1:9167"},
-          {"__address__" = "127.0.0.1:9633"},
+          {"__address__" = "127.0.0.1:9374", "exporter" = "smokeping_prober"},
+          {"__address__" = "127.0.0.1:9167", "exporter" = "unbound"},
+          {"__address__" = "127.0.0.1:9633", "exporter" = "smartctl"},
+          {"__address__" = "127.0.0.1:9753", "exporter" = "restic"},
         ]
         forward_to      = [prometheus.relabel.global_labels.receiver]
         scrape_interval = "10s"
