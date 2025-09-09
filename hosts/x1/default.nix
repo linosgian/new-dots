@@ -178,5 +178,5 @@
       "/937DE1F752050623115CE038A346EA0E.gr7.eu-central-1.eks.amazonaws.com/10.100.0.2"
     ];
   };
-  system.stateVersion = "24.11";
+  system.stateVersion = "25.05";
 }
