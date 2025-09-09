@@ -1,0 +1,30 @@
+#!/usr/bin/env bash
+# Fail commit if any staged Nix files are not formatted
+
+# Find staged .nix files
+staged_nix=$(git diff --cached --name-only --diff-filter=ACM | grep '\.nix$')
+
+if [ -z "$staged_nix" ]; then
+    exit 0
+fi
+
+# Track unformatted files
+unformatted=()
+
+for file in $staged_nix; do
+    # Check if file is properly formatted
+    if ! nixfmt --check "$file" >/dev/null 2>&1; then
+        unformatted+=("$file")
+    fi
+done
+
+if [ ${#unformatted[@]} -ne 0 ]; then
+    echo "ERROR: The following Nix files are not formatted:"
+    for f in "${unformatted[@]}"; do
+        echo "  $f"
+    done
+    echo "Run 'nixfmt' to fix them before committing."
+    exit 1
+fi
+
+exit 0

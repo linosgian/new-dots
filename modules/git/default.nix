@@ -52,6 +52,7 @@
     extraConfig = {
       core = {
         sshCommand = "ssh -i ~/.ssh/id_ed25519";
+        hooksPath = ".githooks";
       };
       push = {
         default = "current";
