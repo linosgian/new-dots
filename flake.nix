@@ -31,6 +31,7 @@
     , ...
     }@inputs:
     let
+      system = "x86_64-linux";
       unstablePkgs = import unstable {
         system = "x86_64-linux"; # Adjust your system architecture
         config.allowUnfree = true; # Allow unfree packages in unstable channel
@@ -41,37 +42,37 @@
       };
     in
     rec {
-
       formatter.x86_64-linux = nixpkgs.legacyPackages.x86_64-linux.nixfmt-rfc-style;
       nixosConfigurations = {
         okeanos = nixpkgs.lib.nixosSystem {
-          system = "x86_64-linux";
+          inherit system;
           modules = [
             ./hosts/okeanos
             sops-nix.nixosModules.sops
           ];
         };
         cine = nixpkgs.lib.nixosSystem {
-          system = "x86_64-linux";
+          specialArgs = { inherit self unstablePkgs;  };
+          inherit system;
           modules = [
             ./hosts/cine
           ];
         };
         mutual = nixpkgs.lib.nixosSystem {
-          system = "x86_64-linux";
+          inherit system;
           modules = [
             ./hosts/mutual
           ];
         };
         headscale = nixpkgs.lib.nixosSystem {
-          system = "x86_64-linux";
+          inherit system;
           modules = [
             ./hosts/headscale
           ];
         };
         cflow = nixpkgs.lib.nixosSystem {
           specialArgs = { inherit self unstablePkgs;  };
-          system = "x86_64-linux";
+          inherit system;
           modules = [
             ./hosts/x1
             hardware.nixosModules.lenovo-thinkpad-x1-7th-gen
@@ -79,7 +80,7 @@
           ];
         };
         desktop = nixpkgs.lib.nixosSystem {
-          system = "x86_64-linux";
+          inherit system;
           modules = [
             ./hosts/desktop
             home-manager.nixosModules.home-manager
@@ -87,7 +88,7 @@
           specialArgs = { inherit self masterPkgs; };
         };
         xps = nixpkgs.lib.nixosSystem {
-          system = "x86_64-linux";
+          inherit system;
           modules = [
             ./hosts/xps
             hardware.nixosModules.dell-xps-15-9500
@@ -107,7 +108,7 @@
         };
 
         ntoulapa = nixpkgs.lib.nixosSystem {
-          system = "x86_64-linux";
+          inherit system;
           specialArgs = { inherit self unstable unstablePkgs nixvirt; };
           modules = [
             disko.nixosModules.disko

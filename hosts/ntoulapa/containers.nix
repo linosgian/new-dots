@@ -1,4 +1,4 @@
-{ config, pkgs, ... }:
+{ lib, modulesPath, unstablePkgs, config, pkgs, ... }:
 {
   boot.enableContainers = true;
   containers.cine = {
@@ -39,7 +39,9 @@
       }
     ];
     config = { config, pkgs, ... }: {
-      imports = [ ../cine/default.nix ];
+      imports = [ 
+        (import ../cine/default.nix  { inherit config lib pkgs modulesPath unstablePkgs; })
+      ];
     };
   };
 }
