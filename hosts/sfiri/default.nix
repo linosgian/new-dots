@@ -8,6 +8,7 @@
     ../../blueprints/server.nix
     ./cups.nix
     ./klipper.nix
+    ./hardware-configuration.nix
   ];
   networking.hostName = "sfiri";
 
@@ -54,5 +55,5 @@
     extraConfig = "ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=wheel";
   };
   networking.firewall.allowedTCPPorts = [ 22 80 443 ];
-  system.stateVersion = "24.11"; # DO NOT CHANGE ME
+  system.stateVersion = "25.05"; # DO NOT CHANGE ME
 }
