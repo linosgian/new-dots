@@ -125,9 +125,35 @@
           let
             pkgs = nixpkgs.legacyPackages.x86_64-linux;
 
-            profiles = openwrt-imagebuilder.lib.profiles { inherit pkgs; release = "23.05.5"; };
-            disabledServices = [ "dnsmasq" ];
+            lib = nixpkgs.lib;
+            mkPackageEntry = filename: {
+              filename = filename;
+              file = builtins.path {
+                path = ./pkgs/prebuilt-openwrt/${filename};
+                name = filename;
+              };
+              depends = [];
+              provides = null;
+              type = "real";
+            };
+
+            localPackages = 
+              let
+                ipkFiles = lib.filter (lib.hasSuffix ".ipk") 
+                  (builtins.attrNames (builtins.readDir ./pkgs/prebuilt-openwrt));
+
+                toPackageAttr = filename: {
+                  name = lib.removeSuffix ".ipk" filename;
+                  value = mkPackageEntry filename;
+                };
+              in
+              builtins.listToAttrs (map toPackageAttr ipkFiles);
+
+
+            profiles = openwrt-imagebuilder.lib.profiles { inherit pkgs; release = "24.10.2"; };
             config = profiles.identifyProfile "asus_tuf-ax4200" // {
+              disabledServices = [ "dnsmasq" ];
+              extraPackages = localPackages;
               packages = [
                 "-odhcpd-ipv6only"
                 "odhcpd"
@@ -169,28 +195,27 @@
                 "qosify"
                 "ss"
                 "tc-full"
-              ];
-              hackExtraPackages = [
                 "smokeping_prober"
                 "unbound_exporter"
                 "prometheus-node-exporter-lua-sqm"
               ];
-              # files = pkgs.runCommand "image-files" {} ''
-              #   mkdir -p $out/etc/uci-defaults
-              #     cat > $out/etc/uci-defaults/99-custom <<EOF
-              #     sed -i '/\s*devices = {{ fw4\.set(flowtable_devices, true) }};/s/{{.*}}/{ "eth1", "lan1", "lan2", "lan3", "lan4", "phy0-ap0", "phy0-ap1", "phy1-ap0", "phy1-ap1" }/' /usr/share/firewall4/templates/ruleset.uc
-              #     EOF
-              # '';
+              files = pkgs.runCommand "image-files" {} ''
+                mkdir -p $out/etc/uci-defaults
+                  cat > $out/etc/uci-defaults/99-custom <<EOF
+                  sed -i '/\s*devices = {{ fw4\.set(flowtable_devices, true) }};/s/{{.*}}/{ "eth1", "lan1", "lan2", "lan3", "lan4", "phy0-ap0", "phy0-ap1", "phy1-ap0", "phy1-ap1" }/' /usr/share/firewall4/templates/ruleset.uc
+                  EOF
+              '';
             };
           in
           openwrt-imagebuilder.lib.build config;
-        mainrouter =
+        oldrouter =
           let
             pkgs = nixpkgs.legacyPackages.x86_64-linux;
 
-            profiles = openwrt-imagebuilder.lib.profiles { inherit pkgs; release = "23.05.5"; };
-            disabledServices = [ "dnsmasq" ];
+            profiles = openwrt-imagebuilder.lib.profiles { inherit pkgs; release = "24.10.2"; };
+
             config = profiles.identifyProfile "xiaomi_redmi-router-ax6s" // {
+              disabledServices = [ "dnsmasq" ];
               packages = [
                 "-odhcpd-ipv6only"
                 "odhcpd"
@@ -224,17 +249,15 @@
                 "lm-sensors"
                 "lua-cjson"
                 "prometheus-node-exporter-lua"
+                "prometheus-node-exporter-lua-sqm"
                 "prometheus-node-exporter-lua-openwrt"
                 "prometheus-node-exporter-lua-wifi"
                 "prometheus-node-exporter-lua-wifi_stations"
                 "qosify"
                 "ss"
                 "tc-full"
-              ];
-              hackExtraPackages = [
-                "smokeping_prober"
                 "unbound_exporter"
-                "prometheus-node-exporter-lua-sqm"
+                "smokeping_prober"
               ];
               files = pkgs.runCommand "image-files" { } ''
                 mkdir -p $out/etc/uci-defaults
