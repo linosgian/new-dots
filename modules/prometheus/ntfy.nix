@@ -1,4 +1,5 @@
-{config, ...}:{
+{ config, ... }:
+{
   services.prometheus.alertmanager-ntfy = {
     enable = true;
     extraConfigFiles = [

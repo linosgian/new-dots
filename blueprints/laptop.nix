@@ -1,4 +1,9 @@
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 {
   environment.systemPackages = with pkgs; [
     brightnessctl
@@ -43,15 +48,17 @@
   virtualisation.libvirtd.enable = true;
   services.hardware.bolt.enable = true;
 
-  home-manager.users.lgian = { lib, ... }: {
-    programs.chromium = {
-      enable = true;
-      commandLineArgs = [
-        # Two-finger swipe for back/forward in history
-        "--enable-features=TouchpadOverscrollHistoryNavigation"
-      ];
+  home-manager.users.lgian =
+    { lib, ... }:
+    {
+      programs.chromium = {
+        enable = true;
+        commandLineArgs = [
+          # Two-finger swipe for back/forward in history
+          "--enable-features=TouchpadOverscrollHistoryNavigation"
+        ];
+      };
     };
-  };
 
   ## usb devices can interfere with sleep without the below
   systemd.services.disable-usb-wakeup = rec {

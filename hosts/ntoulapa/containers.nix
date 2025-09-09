@@ -1,4 +1,11 @@
-{ lib, modulesPath, unstablePkgs, config, pkgs, ... }:
+{
+  lib,
+  modulesPath,
+  unstablePkgs,
+  config,
+  pkgs,
+  ...
+}:
 {
   boot.enableContainers = true;
   containers.cine = {
@@ -8,7 +15,6 @@
     extraVeths.eth1 = {
       hostBridge = "br-vlan106";
     };
-    
 
     # GPU access (the security reduction we discussed)
     bindMounts = {
@@ -38,10 +44,20 @@
         node = "/dev/dri/renderD128";
       }
     ];
-    config = { config, pkgs, ... }: {
-      imports = [ 
-        (import ../cine/default.nix  { inherit config lib pkgs modulesPath unstablePkgs; })
-      ];
-    };
+    config =
+      { config, pkgs, ... }:
+      {
+        imports = [
+          (import ../cine/default.nix {
+            inherit
+              config
+              lib
+              pkgs
+              modulesPath
+              unstablePkgs
+              ;
+          })
+        ];
+      };
   };
 }

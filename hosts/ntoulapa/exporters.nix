@@ -1,4 +1,9 @@
-{ lib, config, pkgs, ... }:
+{
+  lib,
+  config,
+  pkgs,
+  ...
+}:
 let
   exporterBindAddr = "127.0.0.1";
 in
@@ -17,7 +22,7 @@ in
     listenAddress = exporterBindAddr;
   };
 
-  services.prometheus.exporters.node =  {
+  services.prometheus.exporters.node = {
     listenAddress = exporterBindAddr;
   };
   services.prometheus.exporters.smartctl = {

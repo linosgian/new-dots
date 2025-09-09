@@ -1,9 +1,19 @@
 {
 
-  networking.firewall.interfaces."enp2s0".allowedTCPPorts = [ 22 80 443 514 ];
+  networking.firewall.interfaces."enp2s0".allowedTCPPorts = [
+    22
+    80
+    443
+    514
+  ];
   networking.firewall.interfaces."enp2s0".allowedUDPPorts = [ 51820 ];
 
-  networking.firewall.interfaces."wg0".allowedTCPPorts = [ 22 80 443 514 ];
+  networking.firewall.interfaces."wg0".allowedTCPPorts = [
+    22
+    80
+    443
+    514
+  ];
 
   # This is necessary so that cross-network traffic is allowed to reach my VMs on VLAN106
   networking.firewall.checkReversePath = false;

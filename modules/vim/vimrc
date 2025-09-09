@@ -584,10 +584,14 @@
     " }
     "
     " ale {
-    	" let g:ale_linters = {
-	" \   'nix': ['nixpkgs']
-	" \}
-	" let g:ale_fix_on_save = 0
+    	let g:ale_fixers = {
+	\   'nix': ['nixfmt']
+	\}
+	let g:ale_fix_on_save = 1
+
+	let g:ale_linters = {
+	\   'nix': ['nix-linter'],
+	\}
     " }
 "}
 

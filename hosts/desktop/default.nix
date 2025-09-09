@@ -1,4 +1,10 @@
-{ lib, config, pkgs, masterPkgs, ... }:
+{
+  lib,
+  config,
+  pkgs,
+  masterPkgs,
+  ...
+}:
 {
   imports = [
     ../../blueprints/workstation.nix

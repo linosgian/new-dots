@@ -1,7 +1,13 @@
-{ pkgs, lib, config, ... }:
+{
+  pkgs,
+  lib,
+  config,
+  ...
+}:
 let
   # Tailscale service template
-  serviceTemplate = name: port:
+  serviceTemplate =
+    name: port:
     let
       stateDir = "/var/lib/tailscale-${name}";
     in
@@ -19,14 +25,21 @@ let
     };
   # Services list
   services = [
-    { name = "self"; tailscaled_port = 8080; cidr = "198.18.0.0/24"; }
-    { name = "com"; tailscaled_port = 8081; cidr = "198.18.4.0/24"; }
+    {
+      name = "self";
+      tailscaled_port = 8080;
+      cidr = "198.18.0.0/24";
+    }
+    {
+      name = "com";
+      tailscaled_port = 8081;
+      cidr = "198.18.4.0/24";
+    }
   ];
 
-  tailscaleServices = lib.foldl'
-    lib.recursiveUpdate
-    { }
-    (map (service: serviceTemplate service.name service.tailscaled_port) services);
+  tailscaleServices = lib.foldl' lib.recursiveUpdate { } (
+    map (service: serviceTemplate service.name service.tailscaled_port) services
+  );
 in
 {
   # Environment configurations
@@ -39,4 +52,3 @@ in
   services.tailscale.useRoutingFeatures = "server";
   services.tailscale.enable = true;
 }
-

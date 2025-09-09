@@ -1,4 +1,9 @@
-{ home-manager, config, pkgs, ... }:
+{
+  home-manager,
+  config,
+  pkgs,
+  ...
+}:
 {
   home.file = {
     ".config/kitty/pass_keys.py".source = ./pass_keys.py;

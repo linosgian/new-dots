@@ -2,11 +2,13 @@
 let
   # Helper function to create a virtiofs mount configuration
   createVirtiofsMountpoint =
-    { hostPath
-    , targetTag
-    , slot
-    , accessmode ? "passthrough"
-    }: {
+    {
+      hostPath,
+      targetTag,
+      slot,
+      accessmode ? "passthrough",
+    }:
+    {
       type = "mount";
       driver = {
         type = "virtiofs";
@@ -28,12 +30,14 @@ let
     };
 
   createRawBlockDevice =
-    { sourcePath
-    , targetDev
-    , targetBus ? "virtio"
-    , cacheMode ? "none"
-    , ioMode ? "native"
-    }: {
+    {
+      sourcePath,
+      targetDev,
+      targetBus ? "virtio",
+      cacheMode ? "none",
+      ioMode ? "native",
+    }:
+    {
       type = "block";
       device = "disk";
       driver = {
@@ -51,22 +55,28 @@ let
       };
     };
   createDomain =
-    { name
-    , uuid
-    , diskPath
-    , macAddress
-    , memoryGiB ? 4
-    , vcpuCount ? 2
-    , virtiofsMounts ? [ ]
-    , rawBlockDevices ? [ ]
-    , persistVM ? true
-    }: {
+    {
+      name,
+      uuid,
+      diskPath,
+      macAddress,
+      memoryGiB ? 4,
+      vcpuCount ? 2,
+      virtiofsMounts ? [ ],
+      rawBlockDevices ? [ ],
+      persistVM ? true,
+    }:
+    {
       definition = nixvirt.lib.domain.writeXML ({
         type = "kvm";
         inherit name uuid;
         memoryBacking = {
-          source = { type = "memfd"; };
-          access = { mode = "shared"; };
+          source = {
+            type = "memfd";
+          };
+          access = {
+            mode = "shared";
+          };
         };
         memory = {
           count = memoryGiB;
@@ -80,15 +90,29 @@ let
           type = "hvm";
           arch = "x86_64";
           machine = "pc-i440fx-2.9";
-          boot = [{ dev = "cdrom"; } { dev = "hd"; }];
-          bootmenu = { enable = true; };
+          boot = [
+            { dev = "cdrom"; }
+            { dev = "hd"; }
+          ];
+          bootmenu = {
+            enable = true;
+          };
         };
         clock = {
           offset = "localtime";
           timer = [
-            { name = "rtc"; tickpolicy = "catchup"; }
-            { name = "pit"; tickpolicy = "delay"; }
-            { name = "hpet"; present = false; }
+            {
+              name = "rtc";
+              tickpolicy = "catchup";
+            }
+            {
+              name = "pit";
+              tickpolicy = "delay";
+            }
+            {
+              name = "hpet";
+              present = false;
+            }
           ];
         };
         on_poweroff = "destroy";
@@ -131,12 +155,19 @@ let
                 };
                 address = drive_address 0;
               }
-            ] ++ rawBlockDevices;
+            ]
+            ++ rawBlockDevices;
             interface = {
               type = "bridge";
-              mac = { address = macAddress; };
-              source = { bridge = "br-vlan106"; };
-              model = { type = "virtio"; };
+              mac = {
+                address = macAddress;
+              };
+              source = {
+                bridge = "br-vlan106";
+              };
+              model = {
+                type = "virtio";
+              };
               address = pci_address 2 1 0;
             };
             serial = {
@@ -144,12 +175,17 @@ let
               target = {
                 type = "isa-serial";
                 port = 0;
-                model = { name = "isa-serial"; };
+                model = {
+                  name = "isa-serial";
+                };
               };
             };
             console = {
               type = "pty";
-              target = { type = "serial"; port = 0; };
+              target = {
+                type = "serial";
+                port = 0;
+              };
             };
             filesystem = virtiofsMounts;
             memballoon = {

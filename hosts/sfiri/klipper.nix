@@ -21,7 +21,9 @@
         check_klipper_config_path = false;
       };
       history = { };
-      server = { host = "0.0.0.0"; };
+      server = {
+        host = "0.0.0.0";
+      };
       authorization = {
         cors_domains = [ "*" ];
         force_logins = true;
@@ -46,7 +48,6 @@
   };
   systemd.services.moonraker.serviceConfig.SupplementaryGroups = "klipper";
 
-
   services.fluidd = {
     enable = true;
     nginx = {
@@ -60,5 +61,8 @@
 
   users.users.nginx.extraGroups = [ "acme" ];
 
-  networking.firewall.allowedTCPPorts = [ 80 443 ];
+  networking.firewall.allowedTCPPorts = [
+    80
+    443
+  ];
 }

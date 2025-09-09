@@ -1,11 +1,15 @@
-{ home-manager, config, pkgs, ... }:
+{
+  home-manager,
+  config,
+  pkgs,
+  ...
+}:
 let
   wallpaperPath = ".config/sway/wallpaper.jpg";
   wallpaperAbsPath = "${config.home.homeDirectory}/${wallpaperPath}";
 in
 {
   home.file."${wallpaperPath}".source = ./wallpaper.jpg;
-
 
   home.packages = with pkgs; [
     rofi-power-menu
@@ -46,8 +50,10 @@ in
         "Mod1+r" = "exec --no-startup-id rofi -show power-menu -modi power-menu:rofi-power-menu";
 
         # Application Launchers
-        "Mod1+Return" = "exec kitty -o allow_remote_control=yes --single-instance --listen-on unix:@mykitty";
-        "Mod1+d" = "exec --no-startup-id rofi -auto-select -dpi 120 -sorting-method fzf -sort -matching fuzzy -modi drun -show drun -show-icons -drun-match-fields name";
+        "Mod1+Return" =
+          "exec kitty -o allow_remote_control=yes --single-instance --listen-on unix:@mykitty";
+        "Mod1+d" =
+          "exec --no-startup-id rofi -auto-select -dpi 120 -sorting-method fzf -sort -matching fuzzy -modi drun -show drun -show-icons -drun-match-fields name";
         "Mod1+o" = "exec --no-startup-id bash switcher.sh";
 
         # Screenshots
@@ -161,34 +167,117 @@ in
       ];
 
       assigns = {
-        "4" = [{ app_id = "slack"; }];
-        "3" = [{ app_id = "spotify"; }];
-        "5" = [{ app_id = "evince"; }];
+        "4" = [ { app_id = "slack"; } ];
+        "3" = [ { app_id = "spotify"; } ];
+        "5" = [ { app_id = "evince"; } ];
       };
       window.commands = [
-        { criteria = { app_id = "slack"; }; command = "assign 4"; }
-        { criteria = { app_id = "evince"; }; command = "assign 5"; }
-        { criteria = { app_id = "scratchpad"; }; command = "floating enable"; }
-        { criteria = { app_id = "scratchpad"; }; command = "move scratchpad"; }
-        { criteria = { app_id = "scratchpad"; }; command = "move position center"; }
-        { criteria = { app_id = "scratchpad"; }; command = "resize set 50 50"; }
-        { criteria = { app_id = "scratchpad"; }; command = "border pixel 2"; }
-        { criteria = { app_id = "scratchpad"; }; command = "sticky enable"; }
-        { criteria = { app_id = "pavucontrol"; }; command = "floating enable, border normal"; }
-        { criteria = { app_id = "pavucontrol"; }; command = "resize set 1200 800"; }
+        {
+          criteria = {
+            app_id = "slack";
+          };
+          command = "assign 4";
+        }
+        {
+          criteria = {
+            app_id = "evince";
+          };
+          command = "assign 5";
+        }
+        {
+          criteria = {
+            app_id = "scratchpad";
+          };
+          command = "floating enable";
+        }
+        {
+          criteria = {
+            app_id = "scratchpad";
+          };
+          command = "move scratchpad";
+        }
+        {
+          criteria = {
+            app_id = "scratchpad";
+          };
+          command = "move position center";
+        }
+        {
+          criteria = {
+            app_id = "scratchpad";
+          };
+          command = "resize set 50 50";
+        }
+        {
+          criteria = {
+            app_id = "scratchpad";
+          };
+          command = "border pixel 2";
+        }
+        {
+          criteria = {
+            app_id = "scratchpad";
+          };
+          command = "sticky enable";
+        }
+        {
+          criteria = {
+            app_id = "pavucontrol";
+          };
+          command = "floating enable, border normal";
+        }
+        {
+          criteria = {
+            app_id = "pavucontrol";
+          };
+          command = "resize set 1200 800";
+        }
       ];
       startup = [
-        { command = "swaymsg 'exec kitty --class=\"scratchpad\" -o allow_remote_control=yes --listen-on unix:/tmp/mykitty1'"; always = false; }
-        { command = "swaymsg -t get_inputs | jq -r '.[] | select(.type==\"touchpad\") | .identifier' | xargs -i swaymsg input \"{}\" natural_scroll enabled"; always = true; }
-        { command = "swaymsg -t get_inputs | jq -r '.[] | select(.type==\"touchpad\") | .identifier' | xargs -i swaymsg input \"{}\" tap enabled"; always = true; }
-        { command = "swaymsg 'workspace 1; exec kitty -o allow_remote_control=yes --listen-on unix:/tmp/mykitty3'"; always = false; }
-        { command = "systemctl --user import-environment DISPLAY WAYLAND_DISPLAY SWAYSOCK XDG_CURRENT_DESKTOP WLR_NO_HARDWARE_CURSORS"; always = false; }
-        { command = "systemctl --user start libinput-gestures.service"; always = false; }
-        { command = "gnome-polkit-authentication-agent"; always = true; }
-        { command = "swaybg -i ${wallpaperAbsPath} -m fill"; always = true; }
-        { command = "source configure-gtk"; always = true; }
-        { command = "gsettings set org.gnome.desktop.interface  gtk-theme 'Arc-Dark'"; always = true; }
-        { command = "systemctl --user restart kanshi"; always = true; }
+        {
+          command = "swaymsg 'exec kitty --class=\"scratchpad\" -o allow_remote_control=yes --listen-on unix:/tmp/mykitty1'";
+          always = false;
+        }
+        {
+          command = "swaymsg -t get_inputs | jq -r '.[] | select(.type==\"touchpad\") | .identifier' | xargs -i swaymsg input \"{}\" natural_scroll enabled";
+          always = true;
+        }
+        {
+          command = "swaymsg -t get_inputs | jq -r '.[] | select(.type==\"touchpad\") | .identifier' | xargs -i swaymsg input \"{}\" tap enabled";
+          always = true;
+        }
+        {
+          command = "swaymsg 'workspace 1; exec kitty -o allow_remote_control=yes --listen-on unix:/tmp/mykitty3'";
+          always = false;
+        }
+        {
+          command = "systemctl --user import-environment DISPLAY WAYLAND_DISPLAY SWAYSOCK XDG_CURRENT_DESKTOP WLR_NO_HARDWARE_CURSORS";
+          always = false;
+        }
+        {
+          command = "systemctl --user start libinput-gestures.service";
+          always = false;
+        }
+        {
+          command = "gnome-polkit-authentication-agent";
+          always = true;
+        }
+        {
+          command = "swaybg -i ${wallpaperAbsPath} -m fill";
+          always = true;
+        }
+        {
+          command = "source configure-gtk";
+          always = true;
+        }
+        {
+          command = "gsettings set org.gnome.desktop.interface  gtk-theme 'Arc-Dark'";
+          always = true;
+        }
+        {
+          command = "systemctl --user restart kanshi";
+          always = true;
+        }
 
       ];
 

@@ -1,4 +1,9 @@
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 let
   cfg = config.services.deployedSvcs;
 in
@@ -14,7 +19,7 @@ in
       RECIPE_LANDSCAPE_VIEW = true;
       RECIPE_DISABLE_COMMENTS = false;
       RECIPE_DISABLE_AMOUNT = false;
-      DATA_DIR="/zfs/mealie";
+      DATA_DIR = "/zfs/mealie";
     };
   };
 

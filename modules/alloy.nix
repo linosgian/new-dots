@@ -1,6 +1,12 @@
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 with lib;
-let cfg = config.lg.alloy;
+let
+  cfg = config.lg.alloy;
 in
 {
   options.lg.alloy = {

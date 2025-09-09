@@ -1,4 +1,9 @@
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 {
   lg.alloy.enable = true;
   services.prometheus.exporters.domain = {
@@ -29,7 +34,7 @@
         scrape_interval = "30s"
         scrape_timeout  = "10s"
       }
-      '';
+    '';
   };
 
   environment.etc."alloy/nut.alloy" = {
@@ -42,7 +47,7 @@
         metrics_path = "/ups_metrics"
         scrape_interval = "10s"
       }
-      '';
+    '';
   };
   environment.etc."alloy/misc.alloy" = {
     text = ''
@@ -56,7 +61,7 @@
         forward_to      = [prometheus.relabel.global_labels.receiver]
         scrape_interval = "10s"
       }
-      '';
+    '';
   };
   environment.etc."alloy/blackbox.alloy" = {
     text = ''
@@ -89,6 +94,6 @@
         targets    = discovery.relabel.blackbox.output
         forward_to = [prometheus.relabel.global_labels.receiver]
       }
-      '';
+    '';
   };
 }

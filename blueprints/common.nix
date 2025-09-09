@@ -1,4 +1,9 @@
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 {
 
   imports = [
@@ -49,7 +54,14 @@
   services.fwupd.enable = true;
   services.ntp.enable = true;
   nix.settings = {
-    trusted-users = [ "root" "lgian" "@wheel" ];
-    experimental-features = [ "nix-command" "flakes" ];
+    trusted-users = [
+      "root"
+      "lgian"
+      "@wheel"
+    ];
+    experimental-features = [
+      "nix-command"
+      "flakes"
+    ];
   };
 }

@@ -1,4 +1,9 @@
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 {
 
   imports = [
@@ -32,9 +37,11 @@
       enable = true;
       ports = [ 22 ];
       openFirewall = false;
-      listenAddresses = [{
-        addr = "0.0.0.0";
-      }];
+      listenAddresses = [
+        {
+          addr = "0.0.0.0";
+        }
+      ];
       settings = {
         PasswordAuthentication = false;
         KbdInteractiveAuthentication = false;
@@ -50,4 +57,3 @@
     };
   };
 }
-

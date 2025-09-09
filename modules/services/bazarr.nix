@@ -1,4 +1,10 @@
-{ config, lib, unstable, pkgs, ... }:
+{
+  config,
+  lib,
+  unstable,
+  pkgs,
+  ...
+}:
 let
   cfg = config.services.deployedSvcs;
 in

@@ -1,4 +1,9 @@
-{ home-manager, config, pkgs, ... }:
+{
+  home-manager,
+  config,
+  pkgs,
+  ...
+}:
 {
   services.swaync = {
     enable = true;

@@ -1,4 +1,10 @@
-{ lib, config, pkgs, unstablePkgs, ... }:
+{
+  lib,
+  config,
+  pkgs,
+  unstablePkgs,
+  ...
+}:
 {
   imports = [
     ../../blueprints/workstation.nix
@@ -12,7 +18,7 @@
   };
   # Override pixma.conf in sane.configDir
   environment.etc."sane-config" = lib.mkForce {
-    source = pkgs.runCommand "custom-sane-config" {} ''
+    source = pkgs.runCommand "custom-sane-config" { } ''
       mkdir -p $out
       cp -r ${config.hardware.sane.configDir}/* $out/
       rm $out/pixma.conf
@@ -36,10 +42,26 @@
     enable = true;
     #sensor = "/sys/devices/virtual/thermal/thermal_zone0/temp";
     levels = [
-      [ 0 0 55 ]
-      [ "level auto" 53 87 ]
-      [ "level full-speed" 85 95 ]
-      [ "level disengaged" 93 32767 ]
+      [
+        0
+        0
+        55
+      ]
+      [
+        "level auto"
+        53
+        87
+      ]
+      [
+        "level full-speed"
+        85
+        95
+      ]
+      [
+        "level disengaged"
+        93
+        32767
+      ]
     ];
 
   };
@@ -57,7 +79,6 @@
     unstablePkgs.cura-appimage
     jellyfin-media-player
   ];
-
 
   home-manager.users.lgian.programs.ssh = {
     enable = true;
@@ -140,7 +161,22 @@
         {
           publicKey = "bqOVQlwuEu3mXx/k0rRoMF4csjnG54uFz8JuEf63xQA=";
 
-          allowedIPs = [ "192.168.160.0/22" "192.168.2.15/32" "192.168.163.231/24"  "192.168.10.3/32" "192.168.128.0/24" "192.168.10.0/24" "192.168.129.206/24" "192.168.129.206/24" "192.168.131.0/24" "192.168.130.214/24" "10.100.0.0/16" "10.250.0.0/16" "10.200.0.0/16" "10.1.0.0/16" ];
+          allowedIPs = [
+            "192.168.160.0/22"
+            "192.168.2.15/32"
+            "192.168.163.231/24"
+            "192.168.10.3/32"
+            "192.168.128.0/24"
+            "192.168.10.0/24"
+            "192.168.129.206/24"
+            "192.168.129.206/24"
+            "192.168.131.0/24"
+            "192.168.130.214/24"
+            "10.100.0.0/16"
+            "10.250.0.0/16"
+            "10.200.0.0/16"
+            "10.1.0.0/16"
+          ];
           endpoint = "cf-wg-eu-90544ccb5a9cb155.elb.eu-central-1.amazonaws.com:55442";
         }
       ];

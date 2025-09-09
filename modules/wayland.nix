@@ -1,4 +1,9 @@
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 let
   configure-gtk = pkgs.writeTextFile {
     name = "configure-gtk";

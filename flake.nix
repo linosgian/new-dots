@@ -18,17 +18,18 @@
 
   };
   outputs =
-    { self
-    , nixpkgs
-    , hardware
-    , home-manager
-    , openwrt-imagebuilder
-    , disko
-    , nixvirt
-    , unstable
-    , nixpkgs-master
-    , sops-nix
-    , ...
+    {
+      self,
+      nixpkgs,
+      hardware,
+      home-manager,
+      openwrt-imagebuilder,
+      disko,
+      nixvirt,
+      unstable,
+      nixpkgs-master,
+      sops-nix,
+      ...
     }@inputs:
     let
       system = "x86_64-linux";
@@ -42,7 +43,7 @@
       };
     in
     rec {
-      formatter.x86_64-linux = nixpkgs.legacyPackages.x86_64-linux.nixfmt-rfc-style;
+      formatter.x86_64-linux = nixpkgs.legacyPackages.${system}.nixfmt-tree;
       nixosConfigurations = {
         okeanos = nixpkgs.lib.nixosSystem {
           inherit system;
@@ -52,7 +53,7 @@
           ];
         };
         cine = nixpkgs.lib.nixosSystem {
-          specialArgs = { inherit self unstablePkgs;  };
+          specialArgs = { inherit self unstablePkgs; };
           inherit system;
           modules = [
             ./hosts/cine
@@ -71,7 +72,7 @@
           ];
         };
         cflow = nixpkgs.lib.nixosSystem {
-          specialArgs = { inherit self unstablePkgs;  };
+          specialArgs = { inherit self unstablePkgs; };
           inherit system;
           modules = [
             ./hosts/x1
@@ -109,7 +110,14 @@
 
         ntoulapa = nixpkgs.lib.nixosSystem {
           inherit system;
-          specialArgs = { inherit self unstable unstablePkgs nixvirt; };
+          specialArgs = {
+            inherit
+              self
+              unstable
+              unstablePkgs
+              nixvirt
+              ;
+          };
           modules = [
             disko.nixosModules.disko
             ./hosts/ntoulapa
@@ -133,15 +141,16 @@
                 path = ./pkgs/prebuilt-openwrt/${filename};
                 name = filename;
               };
-              depends = [];
+              depends = [ ];
               provides = null;
               type = "real";
             };
 
-            localPackages = 
+            localPackages =
               let
-                ipkFiles = lib.filter (lib.hasSuffix ".ipk") 
-                  (builtins.attrNames (builtins.readDir ./pkgs/prebuilt-openwrt));
+                ipkFiles = lib.filter (lib.hasSuffix ".ipk") (
+                  builtins.attrNames (builtins.readDir ./pkgs/prebuilt-openwrt)
+                );
 
                 toPackageAttr = filename: {
                   name = lib.removeSuffix ".ipk" filename;
@@ -150,8 +159,10 @@
               in
               builtins.listToAttrs (map toPackageAttr ipkFiles);
 
-
-            profiles = openwrt-imagebuilder.lib.profiles { inherit pkgs; release = "24.10.2"; };
+            profiles = openwrt-imagebuilder.lib.profiles {
+              inherit pkgs;
+              release = "24.10.2";
+            };
             config = profiles.identifyProfile "asus_tuf-ax4200" // {
               disabledServices = [ "dnsmasq" ];
               extraPackages = localPackages;
@@ -200,7 +211,7 @@
                 "unbound_exporter"
                 "prometheus-node-exporter-lua-sqm"
               ];
-              files = pkgs.runCommand "image-files" {} ''
+              files = pkgs.runCommand "image-files" { } ''
                 mkdir -p $out/etc/uci-defaults
                   cat > $out/etc/uci-defaults/99-custom <<EOF
                   sed -i '/\s*devices = {{ fw4\.set(flowtable_devices, true) }};/s/{{.*}}/{ "eth1", "lan1", "lan2", "lan3", "lan4", "phy0-ap0", "phy0-ap1", "phy1-ap0", "phy1-ap1" }/' /usr/share/firewall4/templates/ruleset.uc
@@ -213,7 +224,10 @@
           let
             pkgs = nixpkgs.legacyPackages.x86_64-linux;
 
-            profiles = openwrt-imagebuilder.lib.profiles { inherit pkgs; release = "24.10.2"; };
+            profiles = openwrt-imagebuilder.lib.profiles {
+              inherit pkgs;
+              release = "24.10.2";
+            };
 
             config = profiles.identifyProfile "xiaomi_redmi-router-ax6s" // {
               disabledServices = [ "dnsmasq" ];
@@ -273,7 +287,10 @@
           let
             pkgs = nixpkgs.legacyPackages.x86_64-linux;
 
-            profiles = openwrt-imagebuilder.lib.profiles { inherit pkgs; release = "24.10.0"; };
+            profiles = openwrt-imagebuilder.lib.profiles {
+              inherit pkgs;
+              release = "24.10.0";
+            };
             config = profiles.identifyProfile "xiaomi_mi-router-4a-100m" // {
               packages = [
                 "tcpdump"

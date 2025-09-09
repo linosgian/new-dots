@@ -1,4 +1,11 @@
-{ lib, config, pkgs, unstablePkgs, nixvirt, ... }:
+{
+  lib,
+  config,
+  pkgs,
+  unstablePkgs,
+  nixvirt,
+  ...
+}:
 {
   imports = [
     ../../blueprints/server.nix
@@ -30,7 +37,6 @@
     secrets.deluge_admin_password = { };
     secrets.deluge_user_password = { };
   };
-
 
   sops.templates."alertmanager-ntfy".content = ''
     ntfy:
@@ -69,7 +75,10 @@
       };
 
       forward-zone = [
-        { name = "."; forward-addr = "192.168.2.1"; }
+        {
+          name = ".";
+          forward-addr = "192.168.2.1";
+        }
       ];
     };
   };
@@ -95,7 +104,7 @@
     enable = true;
     package = unstablePkgs.ddns-updater;
     environment = {
-      RESOLVER_ADDRESS="1.1.1.1:53";
+      RESOLVER_ADDRESS = "1.1.1.1:53";
       CONFIG_FILEPATH = "%d/conf";
     };
   };

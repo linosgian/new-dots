@@ -1,7 +1,8 @@
-{ config
-, lib
-, pkgs
-, ...
+{
+  config,
+  lib,
+  pkgs,
+  ...
 }:
 let
   blog = import ../../pkgs/blog { inherit lib pkgs; };
@@ -22,7 +23,13 @@ in
 
   networking.hostName = "okeanos";
 
-  networking.firewall.allowedTCPPorts = [ 22 80 443 5201 5202 ];
+  networking.firewall.allowedTCPPorts = [
+    22
+    80
+    443
+    5201
+    5202
+  ];
 
   services.nginx.enable = true;
   services.nginx.virtualHosts."blog.lgian.com" = {

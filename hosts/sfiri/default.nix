@@ -1,7 +1,8 @@
-{ config
-, lib
-, pkgs
-, ...
+{
+  config,
+  lib,
+  pkgs,
+  ...
 }:
 {
   imports = [
@@ -37,7 +38,6 @@
     tenta=${config.sops.placeholder.tenta}
   '';
 
-
   networking.networkmanager.enable = false;
   networking.interfaces."wlan0".useDHCP = true;
   networking.wireless = {
@@ -54,6 +54,10 @@
     };
     extraConfig = "ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=wheel";
   };
-  networking.firewall.allowedTCPPorts = [ 22 80 443 ];
+  networking.firewall.allowedTCPPorts = [
+    22
+    80
+    443
+  ];
   system.stateVersion = "25.05"; # DO NOT CHANGE ME
 }

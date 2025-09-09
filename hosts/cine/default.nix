@@ -1,9 +1,10 @@
-{ config
-, lib
-, pkgs
-, modulesPath
-, unstablePkgs
-, ...
+{
+  config,
+  lib,
+  pkgs,
+  modulesPath,
+  unstablePkgs,
+  ...
 }:
 {
   imports = [
@@ -14,7 +15,11 @@
 
   networking.hostName = "cine";
   networking.useDHCP = lib.mkDefault true;
-  networking.firewall.allowedTCPPorts = [ 22 80 9100 ];
+  networking.firewall.allowedTCPPorts = [
+    22
+    80
+    9100
+  ];
   networking.firewall.allowedUDPPorts = [ 41641 ];
   services.nginx = {
     enable = true;

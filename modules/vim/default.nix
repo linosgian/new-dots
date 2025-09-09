@@ -11,7 +11,9 @@ let
   };
 in
 {
-  environment.variables = { EDITOR = "vim"; };
+  environment.variables = {
+    EDITOR = "vim";
+  };
 
   environment.systemPackages = with pkgs; [
     ((vim_configurable.override { }).customize {
@@ -47,7 +49,6 @@ in
         opt = [ ];
       };
       vimrcConfig.customRC = builtins.readFile ./vimrc;
-    }
-    )
+    })
   ];
 }

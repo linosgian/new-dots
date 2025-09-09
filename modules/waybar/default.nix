@@ -1,4 +1,10 @@
-{ bigger-bar-screens, smaller-bar-screens, config, pkgs, ... }:
+{
+  bigger-bar-screens,
+  smaller-bar-screens,
+  config,
+  pkgs,
+  ...
+}:
 let
   mainBar = rec {
     modules-left = [
@@ -250,10 +256,13 @@ in
     style = builtins.readFile ./style.css;
     settings = [
       (mainBar // { output = bigger-bar-screens; })
-      (mainBar // {
-        output = smaller-bar-screens;
-        modules-right = builtins.filter (m: m != "bluetooth") mainBar.modules-right;
-      })
+      (
+        mainBar
+        // {
+          output = smaller-bar-screens;
+          modules-right = builtins.filter (m: m != "bluetooth") mainBar.modules-right;
+        }
+      )
     ];
   };
 }

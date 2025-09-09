@@ -1,4 +1,10 @@
-{ lib, config, pkgs, unstablePkgs, ... }:
+{
+  lib,
+  config,
+  pkgs,
+  unstablePkgs,
+  ...
+}:
 {
   services.prometheus = {
     enable = true;
@@ -43,7 +49,7 @@
       }
     ];
 
-    rules = import ./rules.nix {inherit pkgs;};
+    rules = import ./rules.nix { inherit pkgs; };
 
     alertmanagers = [
       {
@@ -74,7 +80,10 @@
 
         routes = [
           {
-            matchers = [ "service = gateway" "severity = major" ];
+            matchers = [
+              "service = gateway"
+              "severity = major"
+            ];
             receiver = "ntfy";
           }
         ];
@@ -82,19 +91,23 @@
 
       inhibit_rules = [
         {
-          source_match = { severity = "critical"; };
-          target_match = { severity = "warning"; };
+          source_match = {
+            severity = "critical";
+          };
+          target_match = {
+            severity = "warning";
+          };
           equal = [ "alertname" ];
         }
       ];
 
       receivers = [
-         {
-           name = "ntfy";
-           webhook_configs = [
-             { url = "http://127.0.0.1:3001/hook"; }
-           ];
-         }
+        {
+          name = "ntfy";
+          webhook_configs = [
+            { url = "http://127.0.0.1:3001/hook"; }
+          ];
+        }
       ];
     };
   };

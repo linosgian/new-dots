@@ -1,4 +1,10 @@
-{ unstable, config, pkgs, unstablePkgs, ... }:
+{
+  unstable,
+  config,
+  pkgs,
+  unstablePkgs,
+  ...
+}:
 let
   cfg = config.services.deployedSvcs;
 in
@@ -15,9 +21,17 @@ in
         ensureClauses.login = true;
       }
     ];
-    extensions = ps: with ps; [ pgvecto-rs vectorchord pgvector ];
+    extensions =
+      ps: with ps; [
+        pgvecto-rs
+        vectorchord
+        pgvector
+      ];
     settings = {
-      shared_preload_libraries = [ "vectors.so" "vchord.so"];
+      shared_preload_libraries = [
+        "vectors.so"
+        "vchord.so"
+      ];
       search_path = "\"$user\", public, vectors";
     };
   };
