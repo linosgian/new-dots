@@ -105,6 +105,6 @@
   };
 
   systemd.services.prometheus.serviceConfig.BindPaths = [
-    "/zfs/prometheus:/var/lib/prometheus/data/"
+    "/ssd-new/prometheus/data:/var/lib/prometheus/data/"
   ];
 }
