@@ -48,6 +48,7 @@
     sops
     obsidian
     eog
+    ghostscript
   ];
   services.udisks2.enable = true;
   services.avahi = {
