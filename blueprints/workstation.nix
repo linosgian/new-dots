@@ -49,6 +49,8 @@
     obsidian
     eog
     ghostscript
+    unzip
+    zip
   ];
   services.udisks2.enable = true;
   services.avahi = {
