@@ -2,6 +2,7 @@
   config,
   lib,
   pkgs,
+  unstablePkgs,
   ...
 }:
 let
@@ -57,7 +58,10 @@ in
     DO_POLLING_INTERVAL=60
   '';
 
-  services.tailscale.enable = true;
+  services.tailscale = {
+    enable = true;
+    package = unstablePkgs.tailscale;
+  };
 
   system.stateVersion = "25.05";
 }

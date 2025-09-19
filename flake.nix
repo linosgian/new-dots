@@ -47,6 +47,7 @@
       nixosConfigurations = {
         okeanos = nixpkgs.lib.nixosSystem {
           inherit system;
+          specialArgs = { inherit self unstablePkgs; };
           modules = [
             ./hosts/okeanos
             sops-nix.nixosModules.sops
@@ -67,6 +68,7 @@
         };
         headscale = nixpkgs.lib.nixosSystem {
           inherit system;
+          specialArgs = { inherit self unstablePkgs; };
           modules = [
             ./hosts/headscale
           ];
