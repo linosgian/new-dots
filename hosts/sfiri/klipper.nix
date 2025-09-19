@@ -48,7 +48,7 @@
   };
   systemd.services.moonraker.serviceConfig.SupplementaryGroups = "klipper";
 
-  services.fluidd = {
+  services.mainsail = {
     enable = true;
     nginx = {
       useACMEHost = "sfiri.lgian.com";
