@@ -308,6 +308,28 @@
             };
           in
           openwrt-imagebuilder.lib.build config;
+        mr600v2 =
+          let
+            pkgs = nixpkgs.legacyPackages.x86_64-linux;
+
+            profiles = openwrt-imagebuilder.lib.profiles {
+              inherit pkgs;
+              release = "24.10.2";
+            };
+            config = profiles.identifyProfile "tplink_mr600-v2-eu" // {
+              packages = [
+                "tcpdump"
+                "dnsmasq"
+                "openssh-server"
+                "openssh-sftp-server"
+                "htop"
+                "luci-ssl"
+                "zsh"
+                "vim"
+              ];
+            };
+          in
+          openwrt-imagebuilder.lib.build config;
       };
     };
 }
