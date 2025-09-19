@@ -7,12 +7,14 @@
 {
   imports = [
     ../../blueprints/server.nix
+    ../../modules/alloy.nix
     ./cups.nix
     ./klipper.nix
     ./hardware-configuration.nix
   ];
   networking.hostName = "sfiri";
 
+  lg.alloy.enable = true;
   sops = {
     defaultSopsFile = ../../secrets/home/secrets.yaml;
     secrets.digitalocean_api_token = { };
