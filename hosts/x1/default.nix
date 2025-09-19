@@ -31,6 +31,14 @@
   };
   nix = {
     settings = {
+      substituters = [
+        "https://cache.nixos.org/"
+        "http://hopper.util.eu-central-1a.ec2.cfl:8080"
+      ];
+      trusted-public-keys = [
+        "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY="
+        "hopper.contextflow.com:SFmCtdTVjWmZMZF57tBaTE035L02qMP/iZrcVI6iHdI="
+      ];
       extra-sandbox-paths = [
         "/etc/skopeo/auth.json=/etc/nix/skopeo/auth.json?"
       ];
@@ -40,7 +48,12 @@
   networking.hostName = "x1";
   services.thinkfan = {
     enable = true;
-    #sensor = "/sys/devices/virtual/thermal/thermal_zone0/temp";
+    sensors = [
+      {
+        type = "hwmon";
+        query = "/sys/devices/virtual/thermal/thermal_zone6/temp";
+      }
+    ];
     levels = [
       [
         0
@@ -172,6 +185,7 @@
             "192.168.129.206/24"
             "192.168.131.0/24"
             "192.168.130.214/24"
+            "192.168.140.200/24"
             "10.100.0.0/16"
             "10.250.0.0/16"
             "10.200.0.0/16"
