@@ -54,7 +54,8 @@ in
           "exec kitty -o allow_remote_control=yes --single-instance --listen-on unix:@mykitty";
         "Mod1+d" =
           "exec --no-startup-id rofi -auto-select -dpi 120 -sorting-method fzf -sort -matching fuzzy -modi drun -show drun -show-icons -drun-match-fields name";
-        "Mod1+o" = "exec --no-startup-id bash switcher.sh";
+        "Mod1+o" =
+          "exec --no-startup-id bash switcher.sh --exact --ignore 'Cannon Point-LP High Definition Audio Controller HDMI / DisplayPort 3 Output' --ignore 'Cannon Point-LP High Definition Audio Controller HDMI / DisplayPort 2 Output' --ignore 'Cannon Point-LP High Definition Audio Controller HDMI / DisplayPort 1 Output' --ignore 'USB Audio Pro 1' --ignore 'Cannon Point-LP High Definition Audio Controller Headphones'";
 
         # Screenshots
         "Insert" = "exec bash screenshot.sh";
