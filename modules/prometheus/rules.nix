@@ -7,6 +7,32 @@ in
     yamlFormat.generate "rules.yml" {
       groups = [
         {
+          name = "unbound_alerts";
+          rules = [
+            {
+              alert = "UnboundHighServfailRatio";
+              expr = ''
+                (
+                  sum by (instance) (increase(unbound_answer_rcodes_total{rcode="SERVFAIL"}[1m]))
+                  /
+                  sum by (instance) (increase(unbound_answer_rcodes_total[1m]))
+                ) > 0.2
+                and
+                (sum by (instance) (increase(unbound_answer_rcodes_total[1m])) > 10)
+              '';
+              for = "2m";
+              labels.severity = "warning";
+              annotations = {
+                summary = "Unbound SERVFAIL ratio too high";
+                description = ''
+                  In the last 2 minutes, {{ $value | humanizePercentage }} of Unbound responses were SERVFAIL.
+                  This may indicate upstream DNS issues or resolver misconfiguration.
+                '';
+              };
+            }
+          ];
+        }
+        {
           name = "nut_alerts";
           rules = [
             {
