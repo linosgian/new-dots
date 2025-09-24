@@ -47,6 +47,8 @@
   };
   boot.binfmt.emulatedSystems = [ "aarch64-linux" ];
   networking.hostName = "x1";
+
+  systemd.services.nix-daemon.environment.TMPDIR = "/var/tmp";
   services.thinkfan = {
     enable = true;
     sensors = [
