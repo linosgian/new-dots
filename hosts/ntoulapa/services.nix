@@ -79,10 +79,6 @@ in
         port = 9007;
         host = "movies";
       };
-      jackett = {
-        port = 9008;
-        host = "jackett";
-      };
       transmission = {
         port = 9009;
         host = "torrents";
@@ -107,6 +103,10 @@ in
         port = 9093;
         host = "alerts";
       };
+      indexer = {
+        port = 9095;
+        host = "indexer";
+      };
       immich = {
         port = 9012;
         host = "immich";
@@ -130,40 +130,17 @@ in
     ../../modules/services/livesync.nix
     ../../modules/services/sonarr.nix
     ../../modules/services/radarr.nix
-    ../../modules/services/jackett.nix
     ../../modules/services/transmission.nix
     ../../modules/services/ntfy-sh.nix
     ../../modules/services/jellyfin.nix
     ../../modules/services/immich.nix
     ../../modules/services/deluge.nix
+    ../../modules/services/indexer.nix
   ];
   config = {
     services.nginx = {
       enable = true;
-      virtualHosts = lib.mkMerge (
-        lib.mapAttrsToList mkVhost cfg.defs
-        ++ [
-          {
-            # TODO: remove this once all services are migrated over to NixOS
-            "lgian.com" = {
-              locations."/" = {
-                proxyPass = "https://192.168.2.3:9443";
-                extraConfig = ''
-                  proxy_set_header Host $host;
-                  proxy_set_header X-Real-IP $remote_addr;
-                  proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-                  proxy_set_header X-Forwarded-Proto https;
-                '';
-              };
-              default = true;
-              serverName = "*.lgian.com";
-              forceSSL = true;
-              enableACME = false;
-              useACMEHost = "lgian.com";
-            };
-          }
-        ]
-      );
+      virtualHosts = lib.mkMerge (lib.mapAttrsToList mkVhost cfg.defs);
     };
     users.users.nginx.extraGroups = [ "acme" ];
     # Used by sonarr, bazarr, torrent client and jellyfin.
