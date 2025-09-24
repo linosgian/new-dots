@@ -10,6 +10,7 @@
     ../../blueprints/workstation.nix
     ../../blueprints/laptop.nix
     ./hardware-configuration.nix
+    ./throttled.nix
   ];
 
   hardware.sane = {
@@ -51,6 +52,10 @@
     sensors = [
       {
         type = "hwmon";
+        query = "/sys/devices/virtual/thermal/thermal_zone0/temp";
+      }
+      {
+        type = "hwmon";
         query = "/sys/devices/virtual/thermal/thermal_zone6/temp";
       }
     ];
@@ -58,21 +63,46 @@
       [
         0
         0
+        41
+      ]
+      [
+        1
+        38
+        51
+      ]
+      [
+        2
+        45
+        56
+      ]
+      [
+        3
+        51
+        61
+      ]
+      [
+        4
         55
+        64
       ]
       [
-        "level auto"
-        53
-        87
+        5
+        60
+        66
       ]
       [
-        "level full-speed"
-        85
-        95
+        6
+        63
+        68
       ]
       [
-        "level disengaged"
-        93
+        7
+        65
+        74
+      ]
+      [
+        127
+        70
         32767
       ]
     ];
