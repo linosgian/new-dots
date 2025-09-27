@@ -316,7 +316,7 @@
 
             profiles = openwrt-imagebuilder.lib.profiles {
               inherit pkgs;
-              release = "24.10.2";
+              release = "24.10.3";
             };
             config = profiles.identifyProfile "tplink_mr600-v2-eu" // {
               packages = [
@@ -325,7 +325,10 @@
                 "openssh-server"
                 "openssh-sftp-server"
                 "htop"
+                "iperf3"
                 "luci-ssl"
+                "tc-full"
+                "qmi-utils"
                 "zsh"
                 "vim"
               ];
