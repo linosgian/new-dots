@@ -62,6 +62,10 @@
           "okeanos" = {
             hostname = "snf-76883.ok-kno.grnetcloud.net";
           };
+          "ap" = {
+            hostname = "ap.lgian.com";
+            user = "root";
+          };
           "strovilos" = {
             hostname = "strovilos.gr";
             port = 3000;
