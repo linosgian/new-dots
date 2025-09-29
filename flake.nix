@@ -291,7 +291,7 @@
 
             profiles = openwrt-imagebuilder.lib.profiles {
               inherit pkgs;
-              release = "24.10.0";
+              release = "24.10.3";
             };
             config = profiles.identifyProfile "xiaomi_mi-router-4a-100m" // {
               packages = [
