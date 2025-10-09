@@ -182,7 +182,7 @@ in
             }
             {
               alert = "HostUnusualDiskReadLatency";
-              expr = "rate(node_disk_read_time_seconds_total[1m]) / rate(node_disk_reads_completed_total[1m]) > 0.2 and rate(node_disk_reads_completed_total[1m]) > 0";
+              expr = ''rate(node_disk_read_time_seconds_total{instance!="sfiri"}[1m]) / rate(node_disk_reads_completed_total{instance!="sfiri"}[1m]) > 0.2 and rate(node_disk_reads_completed_total{instance!="sfiri"}[1m]) > 0'';
               for = "2m";
               labels.severity = "warning";
               annotations = {
@@ -192,7 +192,7 @@ in
             }
             {
               alert = "HostUnusualDiskWriteLatency";
-              expr = "rate(node_disk_write_time_seconds_total[1m]) / rate(node_disk_writes_completed_total[1m]) > 0.2 and rate(node_disk_writes_completed_total[1m]) > 0";
+              expr = ''rate(node_disk_write_time_seconds_total{instance!="sfiri"}[1m]) / rate(node_disk_writes_completed_total{instance!="sfiri"}[1m]) > 0.2 and rate(node_disk_writes_completed_total{instance!="sfiri"}[1m]) > 0'';
               for = "2m";
               labels.severity = "warning";
               annotations = {
