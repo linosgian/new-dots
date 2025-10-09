@@ -41,21 +41,6 @@
   '';
 
   networking.networkmanager.enable = false;
-  networking.interfaces."wlan0".useDHCP = true;
-  networking.wireless = {
-    enable = true;
-    interfaces = [ "wlan0" ];
-    secretsFile = config.sops.templates."psk".path;
-    networks."TENTA_5G" = {
-      pskRaw = "ext:tenta";
-      priority = 5;
-    };
-    networks."TENTA" = {
-      pskRaw = "ext:tenta";
-      priority = 100;
-    };
-    extraConfig = "ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=wheel";
-  };
   networking.firewall.allowedTCPPorts = [
     22
     80
