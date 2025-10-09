@@ -107,6 +107,10 @@ in
         port = 9095;
         host = "indexer";
       };
+      jellyseerr = {
+        port = 9098;
+        host = "imdb";
+      };
       immich = {
         port = 9012;
         host = "immich";
@@ -136,6 +140,7 @@ in
     ../../modules/services/immich.nix
     ../../modules/services/deluge.nix
     ../../modules/services/indexer.nix
+    ../../modules/services/jellyseerr.nix
   ];
   config = {
     services.nginx = {
