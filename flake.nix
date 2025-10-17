@@ -73,6 +73,14 @@
             ./hosts/headscale
           ];
         };
+        cflow-dell = nixpkgs.lib.nixosSystem {
+          specialArgs = { inherit self unstablePkgs; };
+          inherit system;
+          modules = [
+            ./hosts/dell
+            home-manager.nixosModules.home-manager
+          ];
+        };
         cflow = nixpkgs.lib.nixosSystem {
           specialArgs = { inherit self unstablePkgs; };
           inherit system;

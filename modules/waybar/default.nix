@@ -155,7 +155,7 @@ let
     # Temperature module settings
     temperature = {
       interval = 2;
-      thermal-zone = 6; # pkg temperature
+      thermal-zone = 11; # pkg temperature
       critical-threshold = 80;
       format = "{temperatureC}°C {icon}";
       format-icons = [
