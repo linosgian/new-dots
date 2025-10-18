@@ -301,6 +301,13 @@ in
           blur enable
           corner_radius 20
       }
+      font pango:monospace 0.01
+      titlebar_border_thickness 1
+      titlebar_padding 1
+      client.focused          #3a3a3a #3a3a3a #3a3a3a #3a3a3a #3a3a3a
+      client.focused_inactive #3a3a3a #3a3a3a #3a3a3a #3a3a3a #3a3a3a
+      client.unfocused        #3a3a3a #3a3a3a #3a3a3a #3a3a3a #3a3a3a
+      client.urgent           #3a3a3a #3a3a3a #3a3a3a #3a3a3a #3a3a3a
     '';
   };
 }
