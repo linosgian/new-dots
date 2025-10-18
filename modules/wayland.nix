@@ -44,7 +44,7 @@ in
     gnome-polkit-authentication-agent
     glib
     dbus
-    rofi-wayland
+    rofi
     shikane
     arc-theme
     gtk3
