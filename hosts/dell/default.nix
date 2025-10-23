@@ -162,5 +162,46 @@
       "/937DE1F752050623115CE038A346EA0E.gr7.eu-central-1.eks.amazonaws.com/10.100.0.2"
     ];
   };
+
+  home-manager.users.lgian.services.kanshi.settings = [
+    {
+      profile.name = "default";
+      profile.outputs = [
+        {
+          criteria = "AU Optronics 0x8AB8 Unknown";
+          status = "enable";
+          mode = "1920x1080@60.000999Hz";
+          position = "0,0";
+        }
+      ];
+    }
+    {
+      profile.exec = [
+        ''${pkgs.sway}/bin/swaymsg workspace 3, move workspace to '"BNQ BenQ EL2870U W4M06094SL0"' ''
+        ''${pkgs.sway}/bin/swaymsg workspace 5, move workspace to '"BNQ BenQ EL2870U W4M06094SL0"' ''
+      ];
+      profile.name = "docked";
+      profile.outputs = [
+        {
+          criteria = "AU Optronics 0x8AB8 Unknown";
+          status = "disable";
+        }
+        {
+          criteria = "Dell Inc. DELL S2721DGF CTPGZ83";
+          status = "enable";
+          mode = "2560x1440@59.951Hz";
+          position = "0,0";
+          scale = 1.0;
+        }
+        {
+          criteria = "BNQ BenQ EL2870U W4M06094SL0";
+          status = "enable";
+          mode = "2560x1440@59.951Hz";
+          position = "2560,0";
+          scale = 1.0;
+        }
+      ];
+    }
+  ];
   system.stateVersion = "25.05";
 }
