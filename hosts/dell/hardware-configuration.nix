@@ -46,6 +46,14 @@
     { device = "/dev/disk/by-uuid/396ced73-a2ea-4221-a3d7-988a7e447bce"; }
   ];
 
+  boot.kernelParams = [
+    "resume=/dev/nvme0n1p3"
+    "resume_delay=5"
+    "i915.enable_psr=0"
+  ];
+
+  boot.initrd.systemd.enable = true;
+
   # Enables DHCP on each ethernet and wireless interface. In case of scripted networking
   # (the default) this is the recommended approach. When using systemd-networkd it's
   # still possible to use this option, but it's recommended to use it in conjunction
