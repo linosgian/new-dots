@@ -291,8 +291,6 @@ in
     "/zfs/immich/uploads/:/usr/src/app/upload"
     "/ssd-new/immich-thumbs/thumbs:/usr/src/app/upload/thumbs"
     "/zfs/immich/config/:/config"
-  ];
-  systemd.services.immich-server.serviceConfig.BindReadOnlyPaths = [
     "/zfs/nextcloud/root/data/lgian/files/linos/:/immich-storage/lgian"
     "/zfs/nextcloud/root/data/ilektra/files/p30/:/immich-storage/ilektra/p30"
     "/zfs/nextcloud/root/data/ilektra/files/camera_only/:/immich-storage/ilektra/camera_only"
