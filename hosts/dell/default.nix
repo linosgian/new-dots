@@ -54,6 +54,7 @@
   systemd.services.nix-daemon.environment.TMPDIR = "/var/tmp";
   services.irqbalance.enable = true;
   environment.systemPackages = with pkgs; [
+    skopeo
     aws-vault
     awscli2
     python3
