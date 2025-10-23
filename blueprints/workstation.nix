@@ -75,6 +75,28 @@
     wireplumber = {
       enable = true;
       extraConfig = {
+        "98-switch-to-bt" = {
+          monitor.bluez.rules = [
+            {
+              matches = [
+                {
+                  # Match all bluetooth devices
+                  device.name = "~bluez_card.*";
+                }
+              ];
+              actions = {
+                update-props = {
+                  bluez5.auto-connect = [
+                    "hfp_hf"
+                    "hsp_hs"
+                    "a2dp_sink"
+                  ];
+                  device.profile.switch-on-connect = true;
+                };
+              };
+            }
+          ];
+        };
         "99-disable-suspend" = {
           "monitor.alsa.rules" = [
             {
