@@ -22,6 +22,40 @@ in
   services.network-manager-applet = {
     enable = true;
   };
+  services = {
+    swayidle = {
+      enable = true;
+      package = pkgs.swayidle;
+      timeouts = [
+        {
+          timeout = 1800;
+          command = "${pkgs.libnotify}/bin/notify-send 'Locking in 5 seconds' -t 5000";
+        }
+
+        {
+          timeout = 1850;
+          command = "${pkgs.swaylock}/bin/swaylock";
+        }
+
+        {
+          timeout = 1900;
+          command = "${pkgs.sway}/bin/swaymsg 'output * dpms off'";
+          resumeCommand = "${pkgs.sway}/bin/swaymsg 'output * dpms on'";
+        }
+
+        {
+          timeout = 1950;
+          command = "${pkgs.systemd}/bin/systemctl hibernate";
+        }
+      ];
+      events = [
+        {
+          event = "before-sleep";
+          command = "${pkgs.swaylock}/bin/swaylock";
+        }
+      ];
+    };
+  };
 
   programs.swaylock = {
     enable = true;
