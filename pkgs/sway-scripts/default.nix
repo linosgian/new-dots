@@ -7,7 +7,7 @@ pkgs.stdenv.mkDerivation {
 
   installPhase = ''
     mkdir -p $out/bin
-    cp scratch.sh screenshot.sh exit.sh switcher.sh volcontrol.sh $out/bin/
+    cp scratch.sh screenshot.sh switcher.sh volcontrol.sh $out/bin/
     chmod +x $out/bin/*
 
     mkdir -p $out/share/sounds

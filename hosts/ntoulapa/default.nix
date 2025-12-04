@@ -12,6 +12,7 @@
     ../../modules/alloy.nix
     ../../modules/prometheus/default.nix
     ../../modules/prometheus/ntfy.nix
+    ../../modules/nostos
     ./hardware-configuration.nix
     ./disko.nix
     ./exporters.nix
