@@ -103,6 +103,7 @@ ${git_info}]\
 source kube_ps1.sh
 PROMPT='$(kube_ps1)'$PROMPT
 kubeoff
+source ~/.zshrc_local
 
 eval "$(fzf --zsh)"
 eval "$(direnv hook zsh)"
