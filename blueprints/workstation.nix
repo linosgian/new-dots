@@ -51,6 +51,7 @@
     ghostscript
     unzip
     zip
+    vlc
   ];
   services.udisks2.enable = true;
   services.avahi = {
