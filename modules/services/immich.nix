@@ -37,6 +37,7 @@ in
   };
 
   services.immich = {
+    package = unstablePkgs.immich;
     enable = true;
     port = cfg.defs.immich.port;
     host = "127.0.0.1";
@@ -133,6 +134,9 @@ in
         smartSearch = {
           concurrency = 4;
         };
+        ocr = {
+          concurrency = 1;
+        };
         thumbnailGeneration = {
           concurrency = 3;
         };
@@ -176,6 +180,14 @@ in
         urls = [
           "http://localhost:3003"
         ];
+
+        ocr = {
+          enabled = true;
+          maxResolution = 736;
+          minDetectionScore = 0.5;
+          minRecognitionScore = 0.8;
+          modelName = "PP-OCRv5_server";
+        };
       };
 
       map = {
@@ -191,7 +203,7 @@ in
       };
 
       newVersionCheck = {
-        enabled = true;
+        enabled = false;
       };
 
       nightlyTasks = {
