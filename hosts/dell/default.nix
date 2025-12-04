@@ -97,6 +97,10 @@
     };
   };
 
+  networking.nat.enable = true;
+  networking.nat.internalInterfaces = [ "ve-+" ];
+  networking.nat.externalInterface = "enp59s0u2u4";
+
   networking.wg-quick.interfaces = {
     wg0 = {
       autostart = true;
