@@ -233,25 +233,10 @@ let
       };
       on-click = "pavucontrol";
     };
-
-    # Custom media module settings
-    "custom/media" = {
-      format = "{0} {2}";
-      return-type = "json";
-      max-length = 100;
-      format-icons = {
-        spotify = " ";
-        default = "🎜 ";
-      };
-      exec = "waybar-mediaplayer.py 2> /dev/null";
-    };
   };
 in
 {
   programs.waybar = {
-    package = pkgs.waybar.override {
-      withMediaPlayer = true;
-    };
     enable = true;
     style = builtins.readFile ./style.css;
     settings = [
