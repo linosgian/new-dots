@@ -81,15 +81,6 @@
             home-manager.nixosModules.home-manager
           ];
         };
-        cflow = nixpkgs.lib.nixosSystem {
-          specialArgs = { inherit self unstablePkgs; };
-          inherit system;
-          modules = [
-            ./hosts/x1
-            hardware.nixosModules.lenovo-thinkpad-x1-7th-gen
-            home-manager.nixosModules.home-manager
-          ];
-        };
         desktop = nixpkgs.lib.nixosSystem {
           inherit system;
           modules = [
