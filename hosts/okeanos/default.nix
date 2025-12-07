@@ -12,6 +12,7 @@ in
   imports = [
     ./hardware-configuration.nix
     ../../blueprints/server.nix
+    ../../modules/athinorama
   ];
   sops = {
     defaultSopsFile = ../../secrets/digitalocean/secrets.yaml;
@@ -47,6 +48,12 @@ in
     extraDomainNames = [
       "lgian.com"
     ];
+    dnsProvider = "digitalocean";
+    dnsPropagationCheck = true;
+    environmentFile = config.sops.templates."acme-do-opts".path;
+  };
+
+  security.acme.certs."cinema.lgian.com" = {
     dnsProvider = "digitalocean";
     dnsPropagationCheck = true;
     environmentFile = config.sops.templates."acme-do-opts".path;

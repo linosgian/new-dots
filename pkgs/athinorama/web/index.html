@@ -1,0 +1,1327 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cinema Screenings - Today</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: #e0e0e0;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            padding: 40px 20px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+            margin-bottom: 40px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+
+        h1 {
+            font-size: 3em;
+            font-weight: 700;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
+        }
+
+        h1::before {
+            content: "🎬 ";
+            -webkit-text-fill-color: initial;
+            background: none;
+            -webkit-background-clip: initial;
+            background-clip: initial;
+        }
+
+        .date-navigation {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        .date-display {
+            font-size: 1.3em;
+            color: #ffffff;
+            font-weight: 600;
+            min-width: 300px;
+            text-align: center;
+        }
+
+        .nav-button {
+            background: rgba(102, 126, 234, 0.3);
+            border: 1px solid rgba(102, 126, 234, 0.5);
+            color: #ffffff;
+            padding: 12px 20px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 1.1em;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .nav-button:hover {
+            background: rgba(102, 126, 234, 0.5);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .nav-button:active {
+            transform: translateY(0);
+        }
+
+        .today-button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+        }
+
+        .today-button:hover {
+            background: linear-gradient(135deg, #7c8df0 0%, #8b5bb8 100%);
+        }
+
+        .date-picker-wrapper {
+            position: relative;
+        }
+
+        .date-picker {
+            background: rgba(26, 26, 46, 0.95);
+            border: 1px solid rgba(102, 126, 234, 0.5);
+            color: #ffffff;
+            padding: 12px 16px;
+            border-radius: 12px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .date-picker:hover {
+            border-color: rgba(102, 126, 234, 0.8);
+            background: rgba(26, 26, 46, 1);
+        }
+
+        .date-picker:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2);
+        }
+
+        .date-picker::-webkit-calendar-picker-indicator {
+            filter: invert(1);
+            cursor: pointer;
+        }
+
+        /* Filter Banner */
+        .filter-banner {
+            display: none;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.2) 0%, rgba(118, 75, 162, 0.2) 100%);
+            border: 2px solid rgba(102, 126, 234, 0.4);
+            border-radius: 15px;
+            padding: 20px 30px;
+            margin-bottom: 30px;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .filter-banner.active {
+            display: flex;
+        }
+
+        .filter-info {
+            flex: 1;
+            min-width: 250px;
+        }
+
+        .filter-label {
+            font-size: 0.9em;
+            color: #b8c5f0;
+            margin-bottom: 5px;
+        }
+
+        .filter-movie-title {
+            font-size: 1.5em;
+            font-weight: 700;
+            color: #ffffff;
+        }
+
+        .filter-movie-subtitle {
+            font-size: 1em;
+            color: #a0a0a0;
+            font-style: italic;
+            margin-top: 3px;
+        }
+
+        .clear-filter-button {
+            background: rgba(244, 67, 54, 0.3);
+            border: 1px solid rgba(244, 67, 54, 0.5);
+            color: #ffffff;
+            padding: 12px 24px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .clear-filter-button:hover {
+            background: rgba(244, 67, 54, 0.5);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(244, 67, 54, 0.4);
+        }
+
+        /* Movie Hero Section */
+        .movie-hero {
+            display: none;
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 20px;
+            padding: 40px;
+            margin-bottom: 40px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(102, 126, 234, 0.3);
+        }
+
+        .movie-hero.active {
+            display: block;
+        }
+
+        .movie-hero-title {
+            font-size: 2.5em;
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 10px;
+        }
+
+        .movie-hero-subtitle {
+            font-size: 1.3em;
+            color: #a0a0a0;
+            font-style: italic;
+            margin-bottom: 25px;
+        }
+
+        .movie-hero-description {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 20px;
+            border-radius: 12px;
+            border-left: 4px solid rgba(102, 126, 234, 0.5);
+            margin-bottom: 25px;
+            line-height: 1.6;
+            font-size: 1.05em;
+        }
+
+        .movie-hero-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-bottom: 25px;
+        }
+
+        .hero-meta-item {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .hero-meta-label {
+            font-size: 0.85em;
+            color: #a0a0a0;
+            text-transform: uppercase;
+        }
+
+        .hero-meta-value {
+            font-size: 1.2em;
+            color: #ffffff;
+            font-weight: 600;
+        }
+
+        .hero-actions {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .hero-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 14px 28px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 1.05em;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .hero-link:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.5);
+        }
+
+        .hero-link:active {
+            transform: translateY(-1px);
+        }
+
+        .hero-link-icon {
+            font-size: 1.2em;
+            filter: grayscale(0);
+        }
+
+        .loading {
+            text-align: center;
+            padding: 60px;
+            font-size: 1.5em;
+            color: #667eea;
+        }
+
+        .error {
+            background: rgba(244, 67, 54, 0.1);
+            border: 2px solid rgba(244, 67, 54, 0.3);
+            border-radius: 15px;
+            padding: 30px;
+            text-align: center;
+            color: #ff5252;
+            margin: 40px auto;
+            max-width: 600px;
+        }
+
+        .area-section {
+            margin-bottom: 50px;
+        }
+
+        .area-title {
+            font-size: 2em;
+            font-weight: 600;
+            color: #667eea;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 3px solid rgba(102, 126, 234, 0.3);
+            text-transform: capitalize;
+        }
+
+        .cinema-card {
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .cinema-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(102, 126, 234, 0.3);
+            border-color: rgba(102, 126, 234, 0.5);
+        }
+
+        .cinema-header {
+            margin-bottom: 25px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .cinema-name {
+            font-size: 1.8em;
+            font-weight: 600;
+            color: #ffffff;
+            margin-bottom: 12px;
+        }
+
+        .cinema-name a {
+            color: #ffffff;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            display: inline-block;
+        }
+
+        .cinema-name a:hover {
+            color: #667eea;
+            transform: translateX(5px);
+        }
+
+        .cinema-address {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #b8c5f0;
+            font-size: 1.05em;
+            margin-top: 8px;
+        }
+
+        .cinema-address a {
+            color: #b8c5f0;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .cinema-address a:hover {
+            color: #667eea;
+            transform: translateX(3px);
+        }
+
+        .movies-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .movie-item {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            padding: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            cursor: pointer;
+        }
+
+        .movie-item:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(102, 126, 234, 0.4);
+            transform: translateY(-3px);
+        }
+
+        .movie-header {
+            flex: 1;
+            margin-bottom: 15px;
+        }
+
+        .movie-title {
+            font-size: 1.2em;
+            font-weight: 600;
+            color: #ffffff;
+            margin-bottom: 5px;
+            line-height: 1.4;
+        }
+
+        .movie-original-title {
+            font-size: 0.95em;
+            color: #a0a0a0;
+            margin-bottom: 10px;
+            font-style: italic;
+        }
+
+        .movie-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .meta-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 4px 10px;
+            background: rgba(102, 126, 234, 0.2);
+            border-radius: 12px;
+            font-size: 0.85em;
+            color: #b8c5f0;
+        }
+
+        .rating-badge {
+            background: rgba(255, 193, 7, 0.2);
+            color: #ffd54f;
+        }
+
+        .movie-actions {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .details-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 8px 12px;
+            background: rgba(102, 126, 234, 0.3);
+            color: #b8c5f0;
+            text-decoration: none;
+            border-radius: 10px;
+            font-size: 0.9em;
+            transition: all 0.3s ease;
+        }
+
+        .details-link:hover {
+            background: rgba(102, 126, 234, 0.5);
+            color: #ffffff;
+            transform: translateY(-2px);
+        }
+
+        .showtimes {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .showtime {
+            padding: 8px 16px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 1em;
+            transition: all 0.3s ease;
+        }
+
+        .showtime:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.5);
+        }
+
+        .no-screenings {
+            text-align: center;
+            padding: 60px;
+            font-size: 1.3em;
+            color: #a0a0a0;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            margin: 40px 0;
+        }
+
+        /* Movie Detail Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            z-index: 1000;
+            overflow-y: auto;
+            padding: 20px;
+        }
+
+        .modal.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 700px;
+            width: 100%;
+            position: relative;
+            border: 1px solid rgba(102, 126, 234, 0.3);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            color: white;
+            font-size: 1.5em;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .modal-close:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: rotate(90deg);
+        }
+
+        .modal-title {
+            font-size: 2em;
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 10px;
+        }
+
+        .modal-original-title {
+            font-size: 1.2em;
+            color: #a0a0a0;
+            margin-bottom: 20px;
+            font-style: italic;
+        }
+
+        .modal-description {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 20px;
+            border-radius: 12px;
+            border-left: 4px solid rgba(102, 126, 234, 0.5);
+            margin-bottom: 25px;
+            line-height: 1.6;
+            color: #e0e0e0;
+        }
+
+        .modal-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .modal-meta-item {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .modal-meta-label {
+            font-size: 0.85em;
+            color: #a0a0a0;
+            text-transform: uppercase;
+        }
+
+        .modal-meta-value {
+            font-size: 1.1em;
+            color: #ffffff;
+            font-weight: 600;
+        }
+
+        .modal-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 24px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 12px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            margin-top: 20px;
+        }
+
+        .modal-link:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.5);
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .cinema-card {
+            animation: fadeIn 0.5s ease forwards;
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+
+            header {
+                padding: 20px 15px;
+                margin-bottom: 20px;
+            }
+
+            h1 {
+                font-size: 1.8em;
+                margin-bottom: 15px;
+            }
+
+            h1::before {
+                content: "🎬 ";
+            }
+
+            .date-navigation {
+                gap: 10px;
+                margin-top: 15px;
+            }
+
+            .date-display {
+                font-size: 1em;
+                min-width: auto;
+                width: 100%;
+                order: -1;
+                margin-bottom: 10px;
+            }
+
+            .nav-button {
+                padding: 10px 16px;
+                font-size: 0.95em;
+                flex: 1;
+            }
+
+            .nav-button span {
+                display: none;
+            }
+
+            .today-button {
+                flex: 0 0 auto;
+                min-width: 80px;
+            }
+
+            .date-picker-wrapper {
+                display: none;
+            }
+
+            .filter-banner {
+                padding: 15px;
+                gap: 15px;
+            }
+
+            .filter-movie-title {
+                font-size: 1.1em;
+            }
+
+            .filter-movie-subtitle {
+                font-size: 0.9em;
+            }
+
+            .clear-filter-button {
+                padding: 10px 18px;
+                font-size: 0.9em;
+                width: 100%;
+            }
+
+            .movie-hero {
+                padding: 20px 15px;
+                margin-bottom: 20px;
+            }
+
+            .movie-hero-title {
+                font-size: 1.6em;
+            }
+
+            .movie-hero-subtitle {
+                font-size: 1em;
+            }
+
+            .movie-hero-description {
+                padding: 15px;
+                font-size: 0.95em;
+            }
+
+            .hero-link {
+                padding: 12px 20px;
+                font-size: 0.95em;
+                width: 100%;
+                justify-content: center;
+            }
+
+            .area-title {
+                font-size: 1.4em;
+                margin-bottom: 15px;
+            }
+
+            .cinema-card {
+                padding: 20px 15px;
+                margin-bottom: 20px;
+            }
+
+            .cinema-name {
+                font-size: 1.3em;
+            }
+
+            .cinema-address {
+                font-size: 0.9em;
+            }
+
+            .movies-grid {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+
+            .movie-item {
+                padding: 15px;
+            }
+
+            .movie-title {
+                font-size: 1.1em;
+            }
+
+            .modal-content {
+                padding: 25px 20px;
+            }
+
+            .modal-title {
+                font-size: 1.4em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Cinema Screenings</h1>
+            <div class="date-navigation">
+                <button class="nav-button" onclick="changeDate(-1)">
+                    ← Προηγούμενη
+                </button>
+                
+                <div class="date-picker-wrapper">
+                    <input type="date" id="datePicker" class="date-picker" onchange="onDatePickerChange()">
+                </div>
+                
+                <button class="nav-button today-button" onclick="goToToday()">
+                    📅 Σήμερα
+                </button>
+                
+                <button class="nav-button" onclick="changeDate(1)">
+                    Επόμενη →
+                </button>
+            </div>
+            <div class="date-display" id="dateDisplay"></div>
+        </header>
+
+        <!-- Filter Banner -->
+        <div class="filter-banner" id="filterBanner">
+            <div class="filter-info">
+                <div class="filter-label">Φιλτράρισμα για:</div>
+                <div class="filter-movie-title" id="filterMovieTitle"></div>
+                <div class="filter-movie-subtitle" id="filterMovieSubtitle"></div>
+            </div>
+            <button class="clear-filter-button" onclick="clearMovieFilter()">
+                ✕ Καθαρισμός Φίλτρου
+            </button>
+        </div>
+
+        <!-- Movie Hero Section -->
+        <div class="movie-hero" id="movieHero"></div>
+
+        <div id="content">
+            <div class="loading">Loading screenings...</div>
+        </div>
+    </div>
+
+    <!-- Movie Detail Modal -->
+    <div id="movieModal" class="modal">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeModal()">×</button>
+            <div id="modalBody"></div>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = '/api/schedule';
+        let currentDate = new Date();
+        let currentMovieFilter = null;
+        let allScheduleData = null;
+        let isNavigatingHistory = false;
+
+        function formatDateForDisplay(date) {
+            const days = ['Κυριακή', 'Δευτέρα', 'Τρίτη', 'Τετάρτη', 'Πέμπτη', 'Παρασκευή', 'Σάββατο'];
+            const months = ['Ιανουαρίου', 'Φεβρουαρίου', 'Μαρτίου', 'Απριλίου', 'Μαΐου', 'Ιουνίου', 
+                          'Ιουλίου', 'Αυγούστου', 'Σεπτεμβρίου', 'Οκτωβρίου', 'Νοεμβρίου', 'Δεκεμβρίου'];
+            
+            const dayName = days[date.getDay()];
+            const day = date.getDate();
+            const month = months[date.getMonth()];
+            const year = date.getFullYear();
+            
+            return `${dayName}, ${day} ${month} ${year}`;
+        }
+
+        function formatDateForAPI(date) {
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const day = String(date.getDate()).padStart(2, '0');
+            return `${year}-${month}-${day}`;
+        }
+
+        function updateDateDisplay() {
+            const dateDisplay = document.getElementById('dateDisplay');
+            const datePicker = document.getElementById('datePicker');
+            
+            dateDisplay.textContent = formatDateForDisplay(currentDate);
+            datePicker.value = formatDateForAPI(currentDate);
+        }
+
+        function updateURL() {
+            if (isNavigatingHistory) return;
+            
+            const params = new URLSearchParams();
+            params.set('date', formatDateForAPI(currentDate));
+            if (currentMovieFilter) {
+                params.set('movie', currentMovieFilter);
+            }
+            
+            const newURL = `${window.location.pathname}?${params.toString()}`;
+            window.history.pushState({ date: formatDateForAPI(currentDate), movie: currentMovieFilter }, '', newURL);
+        }
+
+        function loadFromURL() {
+            const params = new URLSearchParams(window.location.search);
+            
+            const dateParam = params.get('date');
+            if (dateParam) {
+                currentDate = new Date(dateParam + 'T00:00:00');
+            }
+            
+            const movieParam = params.get('movie');
+            if (movieParam) {
+                currentMovieFilter = movieParam;
+            }
+            
+            updateDateDisplay();
+        }
+
+        window.addEventListener('popstate', function(event) {
+            isNavigatingHistory = true;
+            
+            if (event.state) {
+                if (event.state.date) {
+                    currentDate = new Date(event.state.date + 'T00:00:00');
+                }
+                currentMovieFilter = event.state.movie || null;
+            } else {
+                loadFromURL();
+            }
+            
+            updateDateDisplay();
+            fetchSchedule().then(() => {
+                isNavigatingHistory = false;
+            });
+        });
+
+        function changeDate(days) {
+            currentDate = new Date(currentDate);
+            currentDate.setDate(currentDate.getDate() + days);
+            updateDateDisplay();
+            updateURL();
+            fetchSchedule();
+        }
+
+        function goToToday() {
+            currentDate = new Date();
+            updateDateDisplay();
+            updateURL();
+            fetchSchedule();
+        }
+
+        function onDatePickerChange() {
+            const datePicker = document.getElementById('datePicker');
+            const selectedDate = new Date(datePicker.value + 'T00:00:00');
+            currentDate = selectedDate;
+            updateDateDisplay();
+            updateURL();
+            fetchSchedule();
+        }
+
+        function formatAreaName(area) {
+            return area.replace(/_/g, ' ').replace(/-/g, ', ').split(' ')
+                .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+                .join(' ');
+        }
+
+        function filterByMovie(movieTitle) {
+            currentMovieFilter = movieTitle;
+            updateURL();
+            updateFilterUI();
+            renderSchedule(allScheduleData);
+            
+            // Scroll to top immediately after filter is applied
+            setTimeout(() => {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }, 0);
+        }
+
+        function clearMovieFilter() {
+            currentMovieFilter = null;
+            updateURL();
+            updateFilterUI();
+            renderSchedule(allScheduleData);
+        }
+
+        function updateFilterUI() {
+            const filterBanner = document.getElementById('filterBanner');
+            const movieHero = document.getElementById('movieHero');
+            
+            if (currentMovieFilter && allScheduleData) {
+                // Find the movie in the data
+                let movieData = null;
+                let allTimes = [];
+                
+                for (const [area, schedule] of Object.entries(allScheduleData)) {
+                    if (!schedule.cinemas) continue;
+                    
+                    for (const cinema of schedule.cinemas) {
+                        for (const movie of cinema.movies) {
+                            const title = movie.movie.greek_title || movie.movie.title;
+                            if (title === currentMovieFilter) {
+                                movieData = movie.movie;
+                                allTimes = allTimes.concat(movie.times);
+                            }
+                        }
+                    }
+                }
+                
+                if (movieData) {
+                    // Update filter banner
+                    document.getElementById('filterMovieTitle').textContent = movieData.greek_title || movieData.title;
+                    document.getElementById('filterMovieSubtitle').textContent = movieData.original_title ? `(${movieData.original_title})` : '';
+                    filterBanner.classList.add('active');
+                    
+                    // Update movie hero
+                    const uniqueTimes = [...new Set(allTimes)].sort();
+                    let heroHTML = `
+                        <div class="movie-hero-title">${movieData.greek_title || movieData.title}</div>
+                        ${movieData.original_title ? `<div class="movie-hero-subtitle">(${movieData.original_title})</div>` : ''}
+                        
+                        ${movieData.description ? `<div class="movie-hero-description">${movieData.description}</div>` : ''}
+                        
+                        <div class="movie-hero-meta">
+                            ${movieData.year ? `
+                                <div class="hero-meta-item">
+                                    <div class="hero-meta-label">Έτος</div>
+                                    <div class="hero-meta-value">${movieData.year}</div>
+                                </div>
+                            ` : ''}
+                            ${movieData.duration ? `
+                                <div class="hero-meta-item">
+                                    <div class="hero-meta-label">Διάρκεια</div>
+                                    <div class="hero-meta-value">${movieData.duration} λεπτά</div>
+                                </div>
+                            ` : ''}
+                            ${movieData.rating ? `
+                                <div class="hero-meta-item">
+                                    <div class="hero-meta-label">Βαθμολογία</div>
+                                    <div class="hero-meta-value">⭐ ${movieData.rating}</div>
+                                </div>
+                            ` : ''}
+                            ${movieData.genre ? `
+                                <div class="hero-meta-item">
+                                    <div class="hero-meta-label">Είδος</div>
+                                    <div class="hero-meta-value">${movieData.genre}</div>
+                                </div>
+                            ` : ''}
+                            ${movieData.director ? `
+                                <div class="hero-meta-item">
+                                    <div class="hero-meta-label">Σκηνοθεσία</div>
+                                    <div class="hero-meta-value">${movieData.director}</div>
+                                </div>
+                            ` : ''}
+                            ${uniqueTimes.length > 0 ? `
+                                <div class="hero-meta-item">
+                                    <div class="hero-meta-label">Συνολικές Προβολές</div>
+                                    <div class="hero-meta-value">${uniqueTimes.length} προβολές</div>
+                                </div>
+                            ` : ''}
+                        </div>
+
+                        ${movieData.url ? `
+                            <div class="hero-actions">
+                                <a href="${movieData.url}" target="_blank" rel="noopener noreferrer" class="hero-link">
+                                    <span class="hero-link-icon">🎬</span>
+                                    <span>Δες Πλήρεις Πληροφορίες στο Athinorama</span>
+                                    <span>→</span>
+                                </a>
+                            </div>
+                        ` : ''}
+                    `;
+                    
+                    movieHero.innerHTML = heroHTML;
+                    movieHero.classList.add('active');
+                } else {
+                    filterBanner.classList.remove('active');
+                    movieHero.classList.remove('active');
+                }
+            } else {
+                filterBanner.classList.remove('active');
+                movieHero.classList.remove('active');
+            }
+        }
+
+        function openMovieDetails(movieData) {
+            const modal = document.getElementById('movieModal');
+            const modalBody = document.getElementById('modalBody');
+            
+            const movie = movieData.movie;
+            const times = movieData.times;
+
+            let html = `
+                <div class="modal-title">${movie.greek_title || movie.title}</div>
+                ${movie.original_title ? `<div class="modal-original-title">(${movie.original_title})</div>` : ''}
+                
+                ${movie.description ? `<div class="modal-description">${movie.description}</div>` : ''}
+                
+                <div class="modal-meta">
+                    ${movie.year ? `
+                        <div class="modal-meta-item">
+                            <div class="modal-meta-label">Έτος</div>
+                            <div class="modal-meta-value">${movie.year}</div>
+                        </div>
+                    ` : ''}
+                    ${movie.duration ? `
+                        <div class="modal-meta-item">
+                            <div class="modal-meta-label">Διάρκεια</div>
+                            <div class="modal-meta-value">${movie.duration} λεπτά</div>
+                        </div>
+                    ` : ''}
+                    ${movie.rating ? `
+                        <div class="modal-meta-item">
+                            <div class="modal-meta-label">Βαθμολογία</div>
+                            <div class="modal-meta-value">⭐ ${movie.rating}</div>
+                        </div>
+                    ` : ''}
+                    ${movie.genre ? `
+                        <div class="modal-meta-item">
+                            <div class="modal-meta-label">Είδος</div>
+                            <div class="modal-meta-value">${movie.genre}</div>
+                        </div>
+                    ` : ''}
+                    ${movie.director ? `
+                        <div class="modal-meta-item">
+                            <div class="modal-meta-label">Σκηνοθεσία</div>
+                            <div class="modal-meta-value">${movie.director}</div>
+                        </div>
+                    ` : ''}
+                </div>
+
+                <div style="margin-top: 25px;">
+                    <div class="modal-meta-label" style="margin-bottom: 10px;">Προβολές Σε Αυτόν Τον Κινηματογράφο</div>
+                    <div class="showtimes">
+                        ${times.sort().map(time => `<span class="showtime">${time}</span>`).join('')}
+                    </div>
+                </div>
+
+                ${movie.url ? `
+                    <a href="${movie.url}" target="_blank" rel="noopener noreferrer" class="modal-link">
+                        Δες περισσότερα στο Athinorama →
+                    </a>
+                ` : ''}
+            `;
+
+            modalBody.innerHTML = html;
+            modal.classList.add('active');
+        }
+
+        function closeModal() {
+            document.getElementById('movieModal').classList.remove('active');
+        }
+
+        document.getElementById('movieModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeModal();
+            }
+        });
+
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeModal();
+            }
+        });
+
+        function renderSchedule(data) {
+            allScheduleData = data;
+            const content = document.getElementById('content');
+            
+            if (!data || Object.keys(data).length === 0) {
+                content.innerHTML = '<div class="no-screenings">Δεν υπάρχουν προβολές σήμερα 😔</div>';
+                updateFilterUI();
+                return;
+            }
+
+            let html = '';
+            let hasResults = false;
+
+            for (const [area, schedule] of Object.entries(data)) {
+                if (!schedule.cinemas || schedule.cinemas.length === 0) continue;
+
+                let areaHTML = '';
+                let cinemaCount = 0;
+
+                schedule.cinemas.forEach((cinema, index) => {
+                    const cinemaUrl = cinema.cinema_url || '#';
+                    const cinemaAddress = cinema.cinema_address || '';
+                    
+                    // Deduplicate movies by title and merge their times
+                    const movieMap = new Map();
+                    cinema.movies.forEach((movieData) => {
+                        const movie = movieData.movie;
+                        const key = movie.greek_title || movie.title;
+
+                        if (!movieMap.has(key)) {
+                            movieMap.set(key, {
+                                movie: movie,
+                                times: [...new Set(movieData.times)]
+                            });
+                        } else {
+                            const existing = movieMap.get(key);
+                            existing.times = [...new Set([...existing.times, ...movieData.times])];
+                        }
+                    });
+                    
+                    // Filter by selected movie if active
+                    let sortedMovies = Array.from(movieMap.values());
+                    if (currentMovieFilter) {
+                        sortedMovies = sortedMovies.filter(movieData => {
+                            const title = movieData.movie.greek_title || movieData.movie.title;
+                            return title === currentMovieFilter;
+                        });
+                    }
+
+                    // Skip cinema if no matching movies
+                    if (sortedMovies.length === 0) return;
+
+                    // Sort movies
+                    sortedMovies.sort((a, b) => {
+                        const titleA = a.movie.greek_title || a.movie.title;
+                        const titleB = b.movie.greek_title || b.movie.title;
+                        return titleA.localeCompare(titleB, 'el');
+                    });
+                    
+                    areaHTML += `
+                        <div class="cinema-card" style="animation-delay: ${cinemaCount * 0.1}s">
+                            <div class="cinema-header">
+                                <div>
+                                    <div class="cinema-name">
+                                        <a href="${cinemaUrl}" target="_blank" rel="noopener noreferrer">
+                                            ${cinema.cinema_name} →
+                                        </a>
+                                    </div>
+                                    ${cinemaAddress ? `
+                                        <div class="cinema-address">
+                                            <a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(cinemaAddress)}" target="_blank" rel="noopener noreferrer">
+                                                <span>📍</span>
+                                                <span>${cinemaAddress}</span>
+                                            </a>
+                                        </div>
+                                    ` : ''}
+                                </div>
+                            </div>
+                            <div class="movies-grid">
+                    `;
+
+                    sortedMovies.forEach(movieData => {
+                        const movie = movieData.movie;
+                        const times = movieData.times;
+                        const displayTitle = movie.greek_title || movie.title;
+                        const originalTitle = movie.original_title;
+                        const movieDataJson = JSON.stringify(movieData).replace(/"/g, '&quot;');
+                        const movieTitleForFilter = displayTitle.replace(/'/g, "\\'");
+
+                        areaHTML += `
+                            <div class="movie-item" onclick="event.preventDefault(); filterByMovie('${movieTitleForFilter}')">
+                                <div class="movie-header">
+                                    <div class="movie-title">${displayTitle}</div>
+                                    ${originalTitle ? `<div class="movie-original-title">(${originalTitle})</div>` : ''}
+                                    <div class="movie-meta">
+                                        ${movie.duration ? `<span class="meta-badge">⏱️ ${movie.duration}'</span>` : ''}
+                                        ${movie.rating ? `<span class="meta-badge rating-badge">⭐ ${movie.rating}</span>` : ''}
+                                    </div>
+                                </div>
+                                <div class="movie-actions">
+                                    <a href="#" class="details-link" onclick="event.stopPropagation(); event.preventDefault(); openMovieDetails(${movieDataJson})">
+                                        ℹ️ Λεπτομέρειες
+                                    </a>
+                                </div>
+                                <div class="showtimes">
+                        `;
+
+                        times.sort().forEach(time => {
+                            areaHTML += `<span class="showtime">${time}</span>`;
+                        });
+
+                        areaHTML += `
+                                </div>
+                            </div>
+                        `;
+                    });
+
+                    areaHTML += `
+                            </div>
+                        </div>
+                    `;
+                    cinemaCount++;
+                    hasResults = true;
+                });
+
+                if (areaHTML) {
+                    html += `<div class="area-section">`;
+                    html += `<h2 class="area-title">${formatAreaName(area)}</h2>`;
+                    html += areaHTML;
+                    html += `</div>`;
+                }
+            }
+
+            if (!hasResults) {
+                if (currentMovieFilter) {
+                    html = `<div class="no-screenings">Δεν βρέθηκαν προβολές για "${currentMovieFilter}" σήμερα 😔</div>`;
+                } else {
+                    html = '<div class="no-screenings">Δεν υπάρχουν προβολές σήμερα 😔</div>';
+                }
+            }
+
+            content.innerHTML = html;
+            updateFilterUI();
+        }
+
+        async function fetchSchedule() {
+            const apiUrlWithDate = `${API_URL}?date=${formatDateForAPI(currentDate)}`;
+
+            try {
+                const response = await fetch(apiUrlWithDate);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const data = await response.json();
+                renderSchedule(data);
+            } catch (error) {
+                console.error('Error fetching schedule:', error);
+                document.getElementById('content').innerHTML = `
+                    <div class="error">
+                        <h2>⚠️ Error Loading Schedule</h2>
+                        <p>${error.message}</p>
+                        <p style="margin-top: 15px;">Please make sure the server is running.</p>
+                    </div>
+                `;
+            }
+        }
+
+        // Initialize
+        loadFromURL();
+        updateURL();
+        fetchSchedule();
+        
+        // Refresh every 5 minutes
+        setInterval(fetchSchedule, 5 * 60 * 1000);
+    </script>
+</body>
+</html>
