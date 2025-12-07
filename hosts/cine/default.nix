@@ -36,15 +36,13 @@
 
   services.tailscale = {
     enable = true;
-    # NOTE: Remove this once https://github.com/NixOS/nixpkgs/issues/438765 is fixed on 25.05
-    package = unstablePkgs.tailscale;
     interfaceName = "userspace-networking";
   };
 
   services.jellyfin = {
     enable = true;
     dataDir = "/var/lib/jellyfin/data";
-    cacheDir = "/var/lib/jellyfin/cache";
+    cacheDir = "/var/lib/jellyfin/cache-dir";
     configDir = "/var/lib/jellyfin/config";
   };
 
