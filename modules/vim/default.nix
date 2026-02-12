@@ -16,6 +16,11 @@ in
   };
 
   environment.systemPackages = with pkgs; [
+    go
+    gotools
+    gopls
+    delve
+    golangci-lint
     ((vim-full.override { }).customize {
       name = "vim";
       vimrcConfig.packages.myplugins = with pkgs.vimPlugins; {
