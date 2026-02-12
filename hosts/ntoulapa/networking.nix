@@ -30,7 +30,10 @@
 
   networking.wg-quick.interfaces = {
     wg0 = {
-      address = [ "10.192.123.1/24" ];
+      address = [
+        "10.192.123.1/24"
+        "fd42:cafe:beef::1/64"
+      ];
       listenPort = 51820;
       privateKeyFile = "/zfs/wg-privkey";
 
@@ -38,22 +41,34 @@
         {
           # work-lapton
           publicKey = "oxynuj7S/TeyRvcnBcNOMfwmlFxSLBVwGX5KggUoSic=";
-          allowedIPs = [ "10.192.123.2/32" ];
+          allowedIPs = [
+            "10.192.123.2/32"
+            "fd42:cafe:beef::2/128"
+          ];
         }
         {
           # mobile
           publicKey = "+my/01kg+R8Dza1Ge3jiapKXu5Eo+CFGoxrZRXhW0g0=";
-          allowedIPs = [ "10.192.123.3/32" ];
+          allowedIPs = [
+            "10.192.123.3/32"
+            "fd42:cafe:beef::3/128"
+          ];
         }
         {
           # ilektraphon
           publicKey = "ow8UIpVPsV0BcnZ/6d0VRWjgwvgpxYg7Du38WfQPli8=";
-          allowedIPs = [ "10.192.123.5/32" ];
+          allowedIPs = [
+            "10.192.123.5/32"
+            "fd42:cafe:beef::5/128"
+          ];
         }
         {
           # Ipad
           publicKey = "mzdCqfAIY4cxFoIu9L7l9fACWwyKHldOBccpPUiB7Go=";
-          allowedIPs = [ "10.192.123.6/32" ];
+          allowedIPs = [
+            "10.192.123.6/32"
+            "fd42:cafe:beef::6/128"
+          ];
         }
       ];
     };
