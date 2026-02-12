@@ -43,6 +43,10 @@ in
           root = "${athinorama-frontend}";
           tryFiles = "$uri $uri/ /index.html";
         };
+        "/favicon.png" = {
+          root = "${athinorama-frontend}";
+          tryFiles = "$uri $uri/ /favicon.png";
+        };
       };
     };
   };

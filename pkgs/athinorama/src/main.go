@@ -59,12 +59,10 @@ type Cinema struct {
 	Movies  []Movie `json:"movies"`
 }
 
-// MovieSearchResult represents all screenings for a specific movie across all areas
-type MovieSearchResult struct {
-	Movie      *Movie          `json:"movie"`
-	TotalShows int             `json:"total_shows"`
-	Areas      []MovieAreaInfo `json:"areas"`
-	UpdatedAt  time.Time       `json:"updated_at"`
+// Area represents a cinema area with its slug and display name
+type Area struct {
+	Slug string `json:"slug"`
+	Name string `json:"name"`
 }
 
 // MovieAreaInfo represents screenings in a specific area
@@ -120,6 +118,42 @@ type CinemaCrawler struct {
 	area    string
 }
 
+// FetchCinemaAreas scrapes the cinema areas from athinorama.gr
+func FetchCinemaAreas() ([]Area, error) {
+	var areas []Area
+
+	c := colly.NewCollector(
+		colly.AllowedDomains("www.athinorama.gr", "athinorama.gr"),
+	)
+
+	c.OnHTML("ul.ajax-areas li a", func(e *colly.HTMLElement) {
+		href := e.Attr("href")
+		name := strings.TrimSpace(e.Text)
+
+		// Extract slug from URL like "/cinema/guide/kentro_-_kolonaki/cinemas/"
+		// Remove prefix and suffix to get just "kentro_-_kolonaki"
+		slug := strings.TrimPrefix(href, "/cinema/guide/")
+		slug = strings.TrimSuffix(slug, "/cinemas/")
+
+		if slug != "" && name != "" {
+			areas = append(areas, Area{
+				Slug: slug,
+				Name: name,
+			})
+		}
+	})
+
+	c.OnError(func(r *colly.Response, err error) {
+		log.Printf("Failed to fetch cinema areas: %v", err)
+	})
+
+	err := c.Visit("https://www.athinorama.gr/cinema")
+	if err != nil {
+		return nil, err
+	}
+
+	return areas, nil
+}
 func NewCinemaCrawler(area string) *CinemaCrawler {
 	return &CinemaCrawler{
 		baseURL: "https://www.athinorama.gr",
@@ -633,10 +667,19 @@ func (s *Schedule) GetScheduleForDate(targetDate time.Time) *TodaySchedule {
 	return todaySchedule
 }
 func dayInRange(target, start, end DayOfWeek) bool {
-	days := []DayOfWeek{"Δευ", "Τρι", "Τετ", "Πεμ", "Παρ", "Σαβ", "Κυρ"}
+	// Normalize all inputs to canonical forms for comparison
+	target = normalizeDayName(string(target))
+	start = normalizeDayName(string(start))
+	end = normalizeDayName(string(end))
+
+	days := []DayOfWeek{Monday, Tuesday, Wednesday, Thursday, Friday, Saturday, Sunday}
 	startIdx := indexOf(days, start)
 	endIdx := indexOf(days, end)
 	targetIdx := indexOf(days, target)
+
+	if startIdx == -1 || endIdx == -1 || targetIdx == -1 {
+		return false
+	}
 
 	if startIdx <= endIdx {
 		return targetIdx >= startIdx && targetIdx <= endIdx
@@ -742,11 +785,17 @@ func runAllAreas(areas []string) {
 var latestSchedule *MultiAreaSchedule
 
 func main() {
-	areas := []string{
-		"marousi-_kifisia",
-		"xalandri",
-		"irakleio",
+	areas, err := FetchCinemaAreas()
+	if err != nil {
+		log.Printf("Failed to fetch cinema areas: %v. Using fallback areas.", err)
+		// Fallback to hardcoded areas if fetch fails
+		areas = []Area{
+			{Slug: "marousi-_kifisia", Name: "ΜΑΡΟΥΣΙ- ΚΗΦΙΣΙΑ"},
+			{Slug: "xalandri", Name: "ΧΑΛΑΝΔΡΙ"},
+			{Slug: "irakleio", Name: "ΗΡΑΚΛΕΙΟ"},
+		}
 	}
+
 	interval := 6 * time.Hour
 
 	// Start crawler in background
@@ -763,7 +812,7 @@ func main() {
 }
 
 // Run crawler and update the global variable in the background
-func RunMultiAreaCrawlerBackground(areas []string, interval time.Duration) {
+func RunMultiAreaCrawlerBackground(areas []Area, interval time.Duration) {
 	ticker := time.NewTicker(interval)
 	defer ticker.Stop()
 
@@ -773,20 +822,20 @@ func RunMultiAreaCrawlerBackground(areas []string, interval time.Duration) {
 	}
 }
 
-func updateSchedule(areas []string) {
+func updateSchedule(areas []Area) {
 	allSchedule := &MultiAreaSchedule{
 		Areas:     make(map[string][]Cinema),
 		UpdatedAt: time.Now(),
 	}
 
 	for _, area := range areas {
-		crawler := NewCinemaCrawler(area)
+		crawler := NewCinemaCrawler(area.Slug)
 		schedule, err := crawler.Crawl()
 		if err != nil {
 			log.Printf("Error crawling area %s: %v\n", area, err)
 			continue
 		}
-		allSchedule.Areas[area] = schedule.Cinemas
+		allSchedule.Areas[area.Name] = schedule.Cinemas
 	}
 
 	latestSchedule = allSchedule
