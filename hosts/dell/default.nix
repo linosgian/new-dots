@@ -59,7 +59,6 @@
     simple-scan
     darktable
     unstablePkgs.cura-appimage
-    jellyfin-media-player
   ];
 
   home-manager.users.lgian.programs.ssh = {
