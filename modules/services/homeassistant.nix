@@ -2,6 +2,7 @@
   config,
   lib,
   pkgs,
+  unstablePkgs,
   ...
 }:
 let
@@ -10,15 +11,23 @@ in
 {
   services.home-assistant = {
     enable = true;
+    # Remove after 2025.12.3 version is on stable
+    package = unstablePkgs.home-assistant;
     configDir = "/zfs/homeassistant-nixos";
     extraComponents = [
-      "roborock"
       "radio_browser"
       "tasmota"
       "mobile_app"
       "github"
     ];
+
+    extraPackages =
+      python3Packages: with python3Packages; [
+        python-roborock
+      ];
     config = {
+      mobile_app = { };
+      default_config = { };
       http = {
         use_x_forwarded_for = true;
         trusted_proxies = [
