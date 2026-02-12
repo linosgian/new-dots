@@ -29,12 +29,6 @@
       EOF
     '';
   };
-  # TODO: Remove these once 25.11 is out
-  # They are required for sound to work.
-  boot.kernelPackages = pkgs.linuxPackages_latest;
-  hardware.firmware = [ unstablePkgs.linux-firmware ];
-  services.pipewire.package = unstablePkgs.pipewire;
-  services.pipewire.wireplumber.package = unstablePkgs.wireplumber;
   nix = {
     settings = {
       substituters = [
