@@ -66,8 +66,10 @@ in
   services.dbus.implementation = "broker";
 
   services.libinput.enable = true;
-  services.logind.killUserProcesses = true;
-  services.logind.lidSwitch = "ignore";
+  services.logind.settings.Login = {
+    killUserProcesses = true;
+    HandleLidSwitch = "ignore";
+  };
   services.displayManager = {
     defaultSession = "sway";
   };
@@ -77,7 +79,7 @@ in
     enable = true;
     user = "lgian";
   };
-  services.xserver.displayManager = {
+  services.displayManager = {
     gdm.enable = true;
     gdm.wayland = true;
   };
@@ -94,7 +96,7 @@ in
       dejavu_fonts
       dina-font
       noto-fonts
-      noto-fonts-emoji
+      noto-fonts-color-emoji
       nerd-fonts.ubuntu
       powerline-fonts
       font-awesome_5
