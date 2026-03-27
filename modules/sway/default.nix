@@ -152,6 +152,8 @@ in
         "XF86AudioMute" = "exec --no-startup-id bash volcontrol.sh mute";
         "XF86MonBrightnessUp" = "exec brightnessctl set +5%";
         "XF86MonBrightnessDown" = "exec brightnessctl set 5%-";
+        "XF86AudioPlay" = "exec playerctl play-pause";
+        "XF86AudioPause" = "exec playerctl pause";
       };
 
       input = {
