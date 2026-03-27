@@ -14,6 +14,7 @@
     ../modules/wayland.nix
   ];
   environment.systemPackages = with pkgs; [
+    go-task
     geeqie
     gnome-keyring
     linuxPackages.cpupower
