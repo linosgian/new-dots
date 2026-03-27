@@ -36,12 +36,6 @@
       JustWorksRepairing = "always";
       Privacy = "device";
       MultiProfile = "multiple";
-      Experimental = true;
-      KernelExperimental = true;
-    };
-    Policy = {
-      AutoEnable = true;
-      ResumeDelay = 2;
     };
   };
 
