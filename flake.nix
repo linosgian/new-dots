@@ -79,6 +79,8 @@
           modules = [
             ./hosts/dell
             home-manager.nixosModules.home-manager
+            hardware.nixosModules.common-cpu-intel
+            hardware.nixosModules.common-pc-laptop
           ];
         };
         desktop = nixpkgs.lib.nixosSystem {
