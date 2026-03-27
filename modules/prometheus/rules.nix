@@ -7,6 +7,21 @@ in
     yamlFormat.generate "rules.yml" {
       groups = [
         {
+          name = "zigbee_alerts";
+          rules = [
+            {
+              alert = "WaterLeakDetected";
+              expr = ''mqtt_water_leak{topic="zigbee2mqtt_neroxitis"} == 1'';
+              for = "0m";
+              labels.severity = "critical";
+              annotations = {
+                summary = "Water leak detected at {{ $labels.topic }}";
+                description = "Water leak detected by sensor '{{ $labels.topic }}'. Immediate attention required.";
+              };
+            }
+          ];
+        }
+        {
           name = "unbound_alerts";
           rules = [
             {

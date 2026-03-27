@@ -57,6 +57,7 @@
           {"__address__" = "127.0.0.1:9167", "exporter" = "unbound"},
           {"__address__" = "127.0.0.1:9633", "exporter" = "smartctl"},
           {"__address__" = "127.0.0.1:9753", "exporter" = "restic"},
+          {"__address__" = "127.0.0.1:9992", "exporter" = "zigbee2mqtt"},
         ]
         forward_to      = [prometheus.relabel.global_labels.receiver]
         scrape_interval = "10s"

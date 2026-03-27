@@ -12,6 +12,7 @@
     ../../modules/alloy.nix
     ../../modules/prometheus/default.nix
     ../../modules/prometheus/ntfy.nix
+    ../../modules/zigbee
     ../../modules/nostos
     ./hardware-configuration.nix
     ./disko.nix
@@ -37,6 +38,8 @@
     secrets.ntfy_user_password = { };
     secrets.deluge_admin_password = { };
     secrets.deluge_user_password = { };
+    secrets.mqtt_homeassistant_password = { };
+    secrets.mqtt_zigbee_password = { };
   };
 
   sops.templates."alertmanager-ntfy".content = ''
