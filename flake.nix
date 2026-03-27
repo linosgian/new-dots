@@ -135,9 +135,9 @@
       packages.x86_64-linux = {
         newrouter =
           let
-            pkgs = nixpkgs.legacyPackages.x86_64-linux;
+            pkgs = unstable.legacyPackages.x86_64-linux;
 
-            lib = nixpkgs.lib;
+            lib = unstable.lib;
             mkPackageEntry = filename: {
               filename = filename;
               file = builtins.path {
@@ -145,26 +145,26 @@
                 name = filename;
               };
               depends = [ ];
-              provides = null;
+              provides = [ ];
               type = "real";
             };
 
             localPackages =
               let
-                ipkFiles = lib.filter (lib.hasSuffix ".ipk") (
+                apkFiles = lib.filter (lib.hasSuffix ".apk") (
                   builtins.attrNames (builtins.readDir ./pkgs/prebuilt-openwrt)
                 );
 
                 toPackageAttr = filename: {
-                  name = lib.removeSuffix ".ipk" filename;
+                  name = lib.removeSuffix ".apk" filename;
                   value = mkPackageEntry filename;
                 };
               in
-              builtins.listToAttrs (map toPackageAttr ipkFiles);
+              builtins.listToAttrs (map toPackageAttr apkFiles);
 
             profiles = openwrt-imagebuilder.lib.profiles {
               inherit pkgs;
-              release = "24.10.2";
+              release = "25.12.2";
             };
             config = profiles.identifyProfile "asus_tuf-ax4200" // {
               disabledServices = [ "dnsmasq" ];
@@ -223,13 +223,13 @@
             };
           in
           openwrt-imagebuilder.lib.build config;
-        oldrouter =
+        tilda =
           let
-            pkgs = nixpkgs-master.legacyPackages.x86_64-linux;
+            pkgs = unstable.legacyPackages.x86_64-linux;
 
             profiles = openwrt-imagebuilder.lib.profiles {
               inherit pkgs;
-              release = "25.12.0";
+              release = "25.12.2";
             };
 
             config = profiles.identifyProfile "xiaomi_redmi-router-ax6s" // {
@@ -271,11 +271,11 @@
           openwrt-imagebuilder.lib.build config;
         ap =
           let
-            pkgs = nixpkgs.legacyPackages.x86_64-linux;
+            pkgs = unstable.legacyPackages.x86_64-linux;
 
             profiles = openwrt-imagebuilder.lib.profiles {
               inherit pkgs;
-              release = "24.10.3";
+              release = "25.12.2";
             };
             config = profiles.identifyProfile "xiaomi_mi-router-4a-100m" // {
               packages = [
@@ -296,11 +296,11 @@
           openwrt-imagebuilder.lib.build config;
         mr600v2 =
           let
-            pkgs = nixpkgs.legacyPackages.x86_64-linux;
+            pkgs = unstable.legacyPackages.x86_64-linux;
 
             profiles = openwrt-imagebuilder.lib.profiles {
               inherit pkgs;
-              release = "24.10.3";
+              release = "25.12.2";
             };
             config = profiles.identifyProfile "tplink_mr600-v2-eu" // {
               packages = [
