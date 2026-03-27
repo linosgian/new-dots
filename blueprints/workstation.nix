@@ -14,6 +14,7 @@
     ../modules/wayland.nix
   ];
   environment.systemPackages = with pkgs; [
+    lazygit
     go-task
     geeqie
     gnome-keyring
