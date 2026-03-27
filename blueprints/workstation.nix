@@ -62,7 +62,6 @@
   virtualisation.docker.enable = true;
   security.rtkit.enable = true;
   programs.ssh = {
-    enableAskPassword = true;
   };
   services.printing = {
     enable = true;

@@ -13,6 +13,9 @@
 
     [core]
       sshCommand = "ssh -i ~/.ssh/work"
+    [credential]
+        helper = cache --timeout 21600
+        helper = oauth
   '';
   programs.git = {
     enable = true;

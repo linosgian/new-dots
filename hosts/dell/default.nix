@@ -59,8 +59,10 @@
     simple-scan
     darktable
     unstablePkgs.cura-appimage
+    git-credential-oauth
   ];
 
+  home-manager.users.lgian.programs.git-credential-oauth.enable = true;
   home-manager.users.lgian.programs.ssh = {
     enable = true;
     matchBlocks = {
