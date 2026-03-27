@@ -23,13 +23,11 @@ in
     ];
     extensions =
       ps: with ps; [
-        pgvecto-rs
         vectorchord
         pgvector
       ];
     settings = {
       shared_preload_libraries = [
-        "vectors.so"
         "vchord.so"
       ];
       search_path = "\"$user\", public, vectors";
@@ -42,8 +40,7 @@ in
     port = cfg.defs.immich.port;
     host = "127.0.0.1";
     database.createDB = false;
-    settings = {
-    };
+    database.enableVectors = false;
     accelerationDevices = [
       "/dev/dri/renderD128"
     ];
