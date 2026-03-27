@@ -175,6 +175,40 @@
       ];
     }
     {
+      profile.name = "tilda2";
+      profile.outputs = [
+        {
+          criteria = "AU Optronics 0x8AB8 Unknown";
+          status = "disable";
+        }
+        {
+          criteria = "Hewlett Packard HP 2311gt 3CQ208NPY6";
+          status = "enable";
+          mode = "1920x1080@60.000000Hz";
+          position = "0,0";
+          scale = 1.0;
+        }
+
+      ];
+    }
+    {
+      profile.name = "tilda";
+      profile.outputs = [
+        {
+          criteria = "AU Optronics 0x8AB8 Unknown";
+          status = "disable";
+        }
+        {
+          criteria = "Lenovo Group Limited LEN T2324pA V1H70807";
+          status = "enable";
+          mode = "1920x1080@60.000000Hz";
+          position = "0,0";
+          scale = 1.0;
+        }
+
+      ];
+    }
+    {
       profile.exec = [
         ''${pkgs.sway}/bin/swaymsg workspace 3, move workspace to '"BNQ BenQ EL2870U W4M06094SL0"' ''
         ''${pkgs.sway}/bin/swaymsg workspace 5, move workspace to '"BNQ BenQ EL2870U W4M06094SL0"' ''

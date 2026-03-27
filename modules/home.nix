@@ -24,7 +24,11 @@
             "Dell Inc. DELL S2721DGF CTPGZ83"
             "BNQ BenQ EL2870U W4M06094SL0"
           ];
-          smaller-bar-screens = [ "eDP-1" ];
+          smaller-bar-screens = [
+            "eDP-1"
+            "Lenovo Group Limited LEN T2324pA V1H70807"
+            "Hewlett Packard HP 2311gt 3CQ208NPY6"
+          ];
         })
       ];
 
