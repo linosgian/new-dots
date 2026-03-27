@@ -68,7 +68,7 @@ in
   services.libinput.enable = true;
   services.logind.settings.Login = {
     killUserProcesses = true;
-    HandleLidSwitch = "ignore";
+    HandleLidSwitchDocked = "ignore";
   };
   services.displayManager = {
     defaultSession = "sway";
