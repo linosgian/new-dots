@@ -1,3 +1,3 @@
 /result
-/pkgs/openwrt-custom-packages/*
+/pkgs/prebuilt-openwrt/*
 *.qcow2
