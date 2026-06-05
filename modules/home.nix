@@ -40,6 +40,7 @@
         tmux
       ];
 
+      services.easyeffects.enable = true;
       services.ssh-agent = {
         enable = true;
       };
