@@ -207,6 +207,8 @@
                 "prometheus-node-exporter-lua-openwrt"
                 "prometheus-node-exporter-lua-wifi"
                 "prometheus-node-exporter-lua-wifi_stations"
+                "prometheus-node-exporter-lua-thermal"
+                "prometheus-node-exporter-lua-hwmon"
                 "qosify"
                 "ss"
                 "tc-full"
