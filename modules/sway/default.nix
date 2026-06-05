@@ -50,6 +50,10 @@ in
       ];
       events = [
         {
+          event = "lock";
+          command = "${pkgs.swaylock}/bin/swaylock -fF";
+        }
+        {
           event = "before-sleep";
           command = "${pkgs.swaylock}/bin/swaylock";
         }
@@ -79,6 +83,7 @@ in
       modifier = "Mod1";
       floating.modifier = "Mod1";
       workspaceLayout = "stacking";
+      bindkeysToCode = true;
 
       keybindings = {
         "Mod1+r" = "exec --no-startup-id rofi -show power-menu -modi power-menu:rofi-power-menu";
