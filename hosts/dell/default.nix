@@ -1,8 +1,9 @@
-{ lib
-, config
-, pkgs
-, unstablePkgs
-, ...
+{
+  lib,
+  config,
+  pkgs,
+  unstablePkgs,
+  ...
 }:
 {
   imports = [
@@ -172,7 +173,6 @@
         {
           criteria = "AU Optronics 0x8AB8 Unknown";
           status = "enable";
-          mode = "1920x1080@60.000999Hz";
           position = "0,0";
         }
       ];
