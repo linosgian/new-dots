@@ -5,6 +5,7 @@
     80
     443
     514
+    5201
   ];
   networking.firewall.interfaces."enp2s0".allowedUDPPorts = [ 51820 ];
 
