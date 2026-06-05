@@ -1,10 +1,14 @@
 package main
 
 import (
+	"crypto/md5"
 	"encoding/json"
 	"fmt"
+	"io"
 	"log"
 	"net/http"
+	"os"
+	"path/filepath"
 	"regexp"
 	"strings"
 	"time"
@@ -41,10 +45,12 @@ type Movie struct {
 	OriginalTitle string      `json:"original_title,omitempty"`
 	GreekTitle    string      `json:"greek_title,omitempty"`
 	Director      string      `json:"director,omitempty"`
+	Cast          []string    `json:"cast,omitempty"`
 	Genre         string      `json:"genre,omitempty"`
 	Duration      string      `json:"duration,omitempty"`
 	Year          string      `json:"year,omitempty"`
 	URL           string      `json:"url,omitempty"`
+	ImageURL      string      `json:"image_url,omitempty"`
 	Rating        string      `json:"rating,omitempty"`
 	Description   string      `json:"description,omitempty"`
 	Screenings    []Screening `json:"screenings"`
@@ -257,21 +263,9 @@ func normalizeDuration(raw string) string {
 	return num
 }
 
-// CrawlMovieDetails fetches additional movie info from the movie detail page
-func CrawlMovieDetails(movieURL string) (string, string, string, string, string, string, string, string, error) {
+func CrawlMovieDetails(movieURL string) (description, greekTitle, originalTitle, year, duration, genre, director, rating, imageURL string, cast []string, err error) {
 	c := colly.NewCollector(
 		colly.AllowedDomains("www.athinorama.gr", "athinorama.gr"),
-	)
-
-	var (
-		originalTitle string
-		year          string
-		duration      string
-		genre         string
-		director      string
-		greekTitle    string
-		rating        string
-		description   string
 	)
 
 	c.OnHTML("ul.review-details", func(e *colly.HTMLElement) {
@@ -280,7 +274,6 @@ func CrawlMovieDetails(movieURL string) (string, string, string, string, string,
 		duration = normalizeDuration(strings.TrimSpace(e.ChildText("span.duration")))
 		rating = strings.TrimSpace(e.ChildText("span.rating-value"))
 		genre = strings.TrimSpace(e.ChildText("span.genre"))
-		director = strings.TrimSpace(e.ChildText("span.director"))
 	})
 
 	c.OnHTML("div.review-title h1", func(e *colly.HTMLElement) {
@@ -291,16 +284,38 @@ func CrawlMovieDetails(movieURL string) (string, string, string, string, string,
 		description = strings.TrimSpace(e.Text)
 	})
 
+	// Full-res image: swap the thumbnail dimensions path for the 1200x630 variant
+	c.OnHTML("div.review-cover img", func(e *colly.HTMLElement) {
+		src := e.Attr("src")
+		// The site serves thumbnails at e.g. /250x300/pad/both/...
+		// Full resolution is available at /1200x630/pad/both/...
+		imageURL = regexp.MustCompile(`/\d+x\d+/`).ReplaceAllString(src, "/1200x630/")
+		if !strings.HasPrefix(imageURL, "http") {
+			imageURL = "https://www.athinorama.gr" + imageURL
+		}
+	})
+
+	c.OnHTML("div.cast-crew div.cast-crew-item", func(e *colly.HTMLElement) {
+		header := strings.TrimSpace(e.ChildText("h4"))
+		switch header {
+		case "Σκηνοθεσία:":
+			director = strings.TrimSpace(e.ChildText("nav"))
+		case "Με τους:":
+			e.ForEach("nav a", func(_ int, a *colly.HTMLElement) {
+				name := strings.TrimSpace(a.Text)
+				if name != "" {
+					cast = append(cast, name)
+				}
+			})
+		}
+	})
+
 	c.OnError(func(r *colly.Response, err error) {
 		log.Printf("Movie detail request failed: %v", err)
 	})
 
-	err := c.Visit(movieURL)
-	if err != nil {
-		return "", "", "", "", "", "", "", "", err
-	}
-
-	return description, greekTitle, originalTitle, year, duration, genre, director, rating, nil
+	err = c.Visit(movieURL)
+	return
 }
 
 // Check if today is within day range
@@ -345,7 +360,7 @@ func (cc *CinemaCrawler) Crawl() (*Schedule, error) {
 			}
 
 			// 🎯 FETCH EXTRA MOVIE DATA HERE
-			description, greekTitle, original, year, duration, genre, director, rating, err := CrawlMovieDetails(movieURL)
+			description, greekTitle, original, year, duration, genre, director, rating, imageURL, cast, err := CrawlMovieDetails(movieURL)
 			if err == nil {
 				movie.OriginalTitle = original
 				movie.Year = year
@@ -355,12 +370,22 @@ func (cc *CinemaCrawler) Crawl() (*Schedule, error) {
 				movie.GreekTitle = greekTitle
 				movie.Rating = rating
 				movie.Description = description
+				movie.ImageURL = imageURL
+				movie.Cast = cast
 			} else {
 				log.Println("Failed to fetch movie details:", err)
 			}
 
 			// Parse screening times
-			scheduleText := strings.TrimSpace(movieEl.Text)
+			// With:
+			var timeParts []string
+			movieEl.ForEach("span.time", func(_ int, span *colly.HTMLElement) {
+				t := strings.TrimSpace(span.Text)
+				if t != "" {
+					timeParts = append(timeParts, t)
+				}
+			})
+			scheduleText := strings.TrimSpace(strings.Join(timeParts, " "))
 			parsedScreenings, err := parseScreeningTimes(scheduleText)
 			if err == nil {
 				movie.Screenings = append(movie.Screenings, parsedScreenings...)
@@ -428,81 +453,54 @@ func normalizeDayName(day string) DayOfWeek {
 	return DayOfWeek(day)
 }
 
-// Replace the parseScreeningTimes function with this improved version
-func parseScreeningTimes(scheduleStr string) ([]Screening, error) {
-	scheduleStr = strings.TrimSpace(scheduleStr)
+// parseScreeningEntry handles a single schedule entry like:
+// "Παρ., Κυρ.-Τετ.: 17.40/ 20.00/ 22.20"
+// and returns screenings for all days/ranges + times
+func parseScreeningEntry(daysStr, timesStr string) []Screening {
 	var screenings []Screening
-	if scheduleStr == "" {
-		return screenings, nil
+
+	timesStr = strings.TrimSuffix(timesStr, "μεταγλ.")
+	timesStr = strings.TrimSuffix(timesStr, "μεταγλ")
+	timesStr = strings.TrimSpace(timesStr)
+
+	// Split times by /
+	timeParts := strings.Split(timesStr, "/")
+	var cleanTimes []string
+	timeRe := regexp.MustCompile(`^\d{1,2}\.\d{2}$`)
+	for _, t := range timeParts {
+		t = strings.TrimSpace(t)
+		if timeRe.MatchString(t) {
+			cleanTimes = append(cleanTimes, t)
+		}
 	}
 
-	// Normalize whitespace
-	scheduleStr = strings.ReplaceAll(scheduleStr, "\n", " ")
-	scheduleStr = regexp.MustCompile(`\s+`).ReplaceAllString(scheduleStr, " ")
+	if len(cleanTimes) == 0 {
+		return screenings
+	}
 
-	// Track already processed segments to avoid duplicates
-	processedRanges := make([]struct{ start, end int }, 0)
+	// Split by comma to get individual day tokens (e.g. "Παρ.", "Κυρ.-Τετ.")
+	dayTokens := strings.Split(daysStr, ",")
+	for _, token := range dayTokens {
+		token = strings.TrimSpace(token)
+		if token == "" {
+			continue
+		}
 
-	isProcessed := func(start, end int) bool {
-		for _, pr := range processedRanges {
-			// Check if there's any overlap
-			if start < pr.end && end > pr.start {
-				return true
+		// Check if it's a range (contains "-" between two day names)
+		if strings.Contains(token, "-") {
+			parts := strings.SplitN(token, "-", 2)
+			start := normalizeDayName(parts[0])
+			end := normalizeDayName(parts[1])
+			for _, t := range cleanTimes {
+				screenings = append(screenings, Screening{
+					Time:     t,
+					DayStart: start,
+					DayEnd:   end,
+					IsToday:  isTodayInRange(start, end),
+				})
 			}
-		}
-		return false
-	}
-
-	markProcessed := func(start, end int) {
-		processedRanges = append(processedRanges, struct{ start, end int }{start, end})
-	}
-
-	dayPattern := `[ΔΤΠΣΚ][α-ωά-ώ]*\.?`
-
-	// Pattern 1: Comma-separated list of days followed by times
-	// Example: "Πέμ., Παρ., Δευτ., Τρ., Τετ.: 17.50"
-	listPattern := fmt.Sprintf(`((?:%s\s*,\s*)+%s)\s*:?\s*([\d.:/ ]+(?:\s*μεταγλ\.?)?)`, dayPattern, dayPattern)
-	listRe := regexp.MustCompile(listPattern)
-	listMatches := listRe.FindAllStringSubmatchIndex(scheduleStr, -1)
-
-	for _, match := range listMatches {
-		if len(match) < 6 {
-			continue
-		}
-
-		if isProcessed(match[0], match[1]) {
-			continue
-		}
-		markProcessed(match[0], match[1])
-
-		daysStr := scheduleStr[match[2]:match[3]]
-		timesPart := strings.TrimSpace(scheduleStr[match[4]:match[5]])
-
-		if timesPart == "" {
-			continue
-		}
-
-		// Clean up times
-		timesPart = strings.TrimSuffix(timesPart, "μεταγλ.")
-		timesPart = strings.TrimSuffix(timesPart, "μεταγλ")
-		timesPart = strings.TrimSpace(timesPart)
-
-		// Split times by / or :
-		times := regexp.MustCompile(`[/:]+`).Split(timesPart, -1)
-		var cleanTimes []string
-		for _, t := range times {
-			t = strings.TrimSpace(t)
-			if regexp.MustCompile(`^\d{1,2}\.\d{2}$`).MatchString(t) {
-				cleanTimes = append(cleanTimes, t)
-			}
-		}
-
-		// Split days by comma
-		dayParts := strings.Split(daysStr, ",")
-		for _, dayStr := range dayParts {
-			dayStr = strings.TrimSpace(dayStr)
-			day := normalizeDayName(dayStr)
-
+		} else {
+			day := normalizeDayName(token)
 			for _, t := range cleanTimes {
 				screenings = append(screenings, Screening{
 					Time:     t,
@@ -514,100 +512,107 @@ func parseScreeningTimes(scheduleStr string) ([]Screening, error) {
 		}
 	}
 
-	// Pattern 2: Day ranges with times
-	// Example: "Πέμ.-Σάβ.: 19.10"
-	rangePattern := fmt.Sprintf(`(%s)\s*-\s*(%s)\s*:?\s*([\d.:/ ]+(?:\s*μεταγλ\.?)?)`, dayPattern, dayPattern)
-	rangeRe := regexp.MustCompile(rangePattern)
-	rangeMatches := rangeRe.FindAllStringSubmatchIndex(scheduleStr, -1)
+	return screenings
+}
+func parseScreeningTimes(scheduleStr string) ([]Screening, error) {
+	scheduleStr = strings.TrimSpace(scheduleStr)
+	if scheduleStr == "" {
+		return nil, nil
+	}
 
-	for _, match := range rangeMatches {
-		if len(match) < 8 {
+	scheduleStr = strings.ReplaceAll(scheduleStr, "\n", " ")
+	scheduleStr = regexp.MustCompile(`\s+`).ReplaceAllString(scheduleStr, " ")
+
+	var screenings []Screening
+
+	dayRe := regexp.MustCompile(`^[ΔΤΠΣΚ][α-ωά-ώΑ-ΩΆ-Ώ]*\.?$`)
+	timeRe := regexp.MustCompile(`^\d{1,2}\.\d{2}$`)
+	rangeRe := regexp.MustCompile(`^([ΔΤΠΣΚ][α-ωά-ώΑ-ΩΆ-Ώ]*\.?)-([ΔΤΠΣΚ][α-ωά-ώΑ-ΩΆ-Ώ]*\.?)$`)
+
+	type segment struct {
+		days  []string
+		times []string
+	}
+
+	var segments []segment
+	var pendingDays []string
+
+	rawTokens := strings.Split(scheduleStr, ",")
+
+	for _, token := range rawTokens {
+		token = strings.TrimSpace(token)
+		if token == "" {
 			continue
 		}
 
-		if isProcessed(match[0], match[1]) {
-			continue
-		}
-		markProcessed(match[0], match[1])
+		// Strip μεταγλ suffix but keep the rest intact for time parsing
+		token = strings.TrimSuffix(token, " μεταγλ.")
+		token = strings.TrimSuffix(token, " μεταγλ")
+		token = strings.TrimSpace(token)
 
-		startDay := scheduleStr[match[2]:match[3]]
-		endDay := scheduleStr[match[4]:match[5]]
-		timesPart := strings.TrimSpace(scheduleStr[match[6]:match[7]])
+		// Replace colon with space so "Πέμ.: 19.30" and "Πέμ. 19.30" are handled the same
+		token = strings.ReplaceAll(token, ":", " ")
+		token = strings.TrimSpace(token)
 
-		if timesPart == "" {
-			continue
-		}
-
-		// Clean up times
-		timesPart = strings.TrimSuffix(timesPart, "μεταγλ.")
-		timesPart = strings.TrimSuffix(timesPart, "μεταγλ")
-		timesPart = strings.TrimSpace(timesPart)
-
-		times := regexp.MustCompile(`[/:]+`).Split(timesPart, -1)
-		var cleanTimes []string
-		for _, t := range times {
-			t = strings.TrimSpace(t)
-			if regexp.MustCompile(`^\d{1,2}\.\d{2}$`).MatchString(t) {
-				cleanTimes = append(cleanTimes, t)
+		// Split by whitespace first, then further split each part by "/"
+		// This handles "19.10/ 21.45" (slash attached) and "19.00 / 21.30" (slash separate)
+		spaceParts := regexp.MustCompile(`\s+`).Split(token, -1)
+		var parts []string
+		for _, sp := range spaceParts {
+			// Split by slash, keeping non-empty results
+			slashParts := strings.Split(sp, "/")
+			for _, slp := range slashParts {
+				slp = strings.TrimSpace(slp)
+				if slp != "" {
+					parts = append(parts, slp)
+				}
 			}
 		}
 
-		start, end, _ := parseDayRange(startDay + "-" + endDay)
-		for _, t := range cleanTimes {
-			screenings = append(screenings, Screening{
-				Time:     t,
-				DayStart: start,
-				DayEnd:   end,
-				IsToday:  isTodayInRange(start, end),
-			})
+		var dayParts []string
+		var timeParts []string
+		inTimes := false
+
+		for _, part := range parts {
+			if timeRe.MatchString(part) {
+				inTimes = true
+				timeParts = append(timeParts, part)
+			} else if !inTimes {
+				if rangeRe.MatchString(part) || dayRe.MatchString(part) {
+					dayParts = append(dayParts, part)
+				}
+			}
+			// after times start, ignore non-time parts (e.g. stray characters)
+		}
+
+		if len(timeParts) > 0 {
+			allDays := append(pendingDays, dayParts...)
+			segments = append(segments, segment{days: allDays, times: timeParts})
+			pendingDays = nil
+		} else {
+			pendingDays = append(pendingDays, dayParts...)
 		}
 	}
 
-	// Pattern 3: Single day with times (not already processed)
-	// Example: "Κυρ. 13.00" or "Πέμ.: 19.30"
-	singlePattern := fmt.Sprintf(`(%s)\s*:?\s*([\d.:/ ]+(?:\s*μεταγλ\.?)?)`, dayPattern)
-	singleRe := regexp.MustCompile(singlePattern)
-	singleMatches := singleRe.FindAllStringSubmatchIndex(scheduleStr, -1)
-
-	for _, match := range singleMatches {
-		if len(match) < 6 {
-			continue
-		}
-
-		if isProcessed(match[0], match[1]) {
-			continue
-		}
-		markProcessed(match[0], match[1])
-
-		dayStr := scheduleStr[match[2]:match[3]]
-		timesPart := strings.TrimSpace(scheduleStr[match[4]:match[5]])
-
-		if timesPart == "" {
-			continue
-		}
-
-		// Clean up times
-		timesPart = strings.TrimSuffix(timesPart, "μεταγλ.")
-		timesPart = strings.TrimSuffix(timesPart, "μεταγλ")
-		timesPart = strings.TrimSpace(timesPart)
-
-		times := regexp.MustCompile(`[/:]+`).Split(timesPart, -1)
-		var cleanTimes []string
-		for _, t := range times {
-			t = strings.TrimSpace(t)
-			if regexp.MustCompile(`^\d{1,2}\.\d{2}$`).MatchString(t) {
-				cleanTimes = append(cleanTimes, t)
+	for _, seg := range segments {
+		for _, dayToken := range seg.days {
+			match := rangeRe.FindStringSubmatch(dayToken)
+			var start, end DayOfWeek
+			if match != nil {
+				start = normalizeDayName(match[1])
+				end = normalizeDayName(match[2])
+			} else {
+				start = normalizeDayName(dayToken)
+				end = start
 			}
-		}
-
-		day := normalizeDayName(dayStr)
-		for _, t := range cleanTimes {
-			screenings = append(screenings, Screening{
-				Time:     t,
-				DayStart: day,
-				DayEnd:   day,
-				IsToday:  isTodayInRange(day, day),
-			})
+			for _, t := range seg.times {
+				screenings = append(screenings, Screening{
+					Time:     t,
+					DayStart: start,
+					DayEnd:   end,
+					IsToday:  isTodayInRange(start, end),
+				})
+			}
 		}
 	}
 
@@ -784,6 +789,58 @@ func runAllAreas(areas []string) {
 // Global variable to hold the latest schedule
 var latestSchedule *MultiAreaSchedule
 
+const imageCacheDir = "./image_cache"
+
+func cacheImage(imageURL string) (string, error) {
+	if imageURL == "" {
+		return "", nil
+	}
+
+	// Generate a stable filename from the URL
+	hash := fmt.Sprintf("%x", md5.Sum([]byte(imageURL)))
+	ext := filepath.Ext(strings.Split(imageURL, "?")[0])
+	if ext == "" {
+		ext = ".jpg"
+	}
+	filename := hash + ext
+	localPath := filepath.Join(imageCacheDir, filename)
+	servedPath := "/images/" + filename
+
+	// Return cached path if already downloaded
+	if _, err := os.Stat(localPath); err == nil {
+		return servedPath, nil
+	}
+
+	// Download and save
+	resp, err := http.Get(imageURL)
+	if err != nil {
+		return "", err
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		return "", fmt.Errorf("bad status: %s", resp.Status)
+	}
+
+	f, err := os.Create(localPath)
+	if err != nil {
+		return "", err
+	}
+	defer f.Close()
+
+	_, err = io.Copy(f, resp.Body)
+	if err != nil {
+		os.Remove(localPath) // clean up partial file
+		return "", err
+	}
+
+	return servedPath, nil
+}
+
+func init() {
+	os.MkdirAll(imageCacheDir, 0755)
+}
+
 func main() {
 	areas, err := FetchCinemaAreas()
 	if err != nil {
@@ -806,6 +863,7 @@ func main() {
 	// HTTP server
 	http.HandleFunc("/api/schedule", handleScheduleForDate)
 	http.Handle("/", http.FileServer(http.Dir("../web"))) // serve web app
+	http.Handle("/images/", http.StripPrefix("/images/", http.FileServer(http.Dir(imageCacheDir))))
 
 	log.Println("Server running on http://localhost:8080")
 	log.Fatal(http.ListenAndServe(":8080", nil))
@@ -835,6 +893,22 @@ func updateSchedule(areas []Area) {
 			log.Printf("Error crawling area %s: %v\n", area, err)
 			continue
 		}
+
+		// Cache all movie images
+		for ci := range schedule.Cinemas {
+			for mi := range schedule.Cinemas[ci].Movies {
+				movie := &schedule.Cinemas[ci].Movies[mi]
+				if movie.ImageURL != "" {
+					localPath, err := cacheImage(movie.ImageURL)
+					if err != nil {
+						log.Printf("Failed to cache image for %s: %v", movie.Title, err)
+					} else {
+						movie.ImageURL = localPath
+					}
+				}
+			}
+		}
+
 		allSchedule.Areas[area.Name] = schedule.Cinemas
 	}
 

@@ -35,6 +35,10 @@ in
       enableACME = false;
       useACMEHost = "cinema.lgian.com";
       locations = {
+        "/images/" = {
+          proxyPass = "http://127.0.0.1:8080";
+          proxyWebsockets = true;
+        };
         "/api/" = {
           proxyPass = "http://127.0.0.1:8080";
           proxyWebsockets = true;

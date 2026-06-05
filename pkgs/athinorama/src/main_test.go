@@ -54,13 +54,11 @@ func TestParseScreeningTimes(t *testing.T) {
 				dayStart DayOfWeek
 				dayEnd   DayOfWeek
 			}{
-				// First: comma-separated days "Κυρ., Τρ., Τετ. 20.30"
-				{"20.30", "Κυρ", "Κυρ"},
-				{"20.30", "Τρι", "Τρι"},
-				{"20.30", "Τετ", "Τετ"},
-				// Then: day range "Πέμ.-Σάβ.: 19.10/ 21.45"
-				{"19.10", "Πεμ", "Σαβ"},
-				{"21.45", "Πεμ", "Σαβ"},
+				{"19.10", Thursday, Saturday},
+				{"21.45", Thursday, Saturday},
+				{"20.30", Sunday, Sunday},
+				{"20.30", Tuesday, Tuesday},
+				{"20.30", Wednesday, Wednesday},
 			},
 		},
 		{
@@ -107,12 +105,10 @@ func TestParseScreeningTimes(t *testing.T) {
 				dayStart DayOfWeek
 				dayEnd   DayOfWeek
 			}{
-				// First: comma-separated days "Δευτ., Τρι. 20.30"
-				{"20.30", "Δευτ", "Δευτ"},
-				{"20.30", "Τρι", "Τρι"},
-				// Then: day range "Πέμ.-Κυρ.: 18.00/ 20.30 μεταγλ."
-				{"18.00", "Πεμ", "Κυρ"},
-				{"20.30", "Πεμ", "Κυρ"},
+				{"18.00", Thursday, Sunday},
+				{"20.30", Thursday, Sunday},
+				{"20.30", Monday, Monday},
+				{"20.30", Tuesday, Tuesday},
 			},
 		},
 		{
@@ -157,16 +153,14 @@ func TestParseScreeningTimes(t *testing.T) {
 				dayStart DayOfWeek
 				dayEnd   DayOfWeek
 			}{
-				// First: comma-separated days "Σάβ., Τρ., Τετ. 18.40"
-				{"18.40", "Σαβ", "Σαβ"},
-				{"18.40", "Τρι", "Τρι"},
-				{"18.40", "Τετ", "Τετ"},
-				// Then: single days
-				{"17.30", "Πεμ", "Πεμ"},
-				{"22.15", "Πεμ", "Πεμ"},
-				{"21.10", "Παρ", "Παρ"},
-				{"16.00", "Κυρ", "Κυρ"},
-				{"22.00", "Δευτ", "Δευτ"},
+				{"17.30", Thursday, Thursday},
+				{"22.15", Thursday, Thursday},
+				{"21.10", Friday, Friday},
+				{"18.40", Saturday, Saturday},
+				{"18.40", Tuesday, Tuesday},
+				{"18.40", Wednesday, Wednesday},
+				{"16.00", Sunday, Sunday},
+				{"22.00", Monday, Monday},
 			},
 		},
 	}

@@ -181,6 +181,243 @@
             font-size: 1.05em;
             margin-bottom: 4px;
         }
+	.movie-item-expanded {
+	    grid-column: 1 / -1;  /* span full grid width when expanded */
+	    border-color: rgba(102, 126, 234, 0.5);
+	    background: rgba(255, 255, 255, 0.1);
+	}
+
+	.expanded-top {
+	    display: flex;
+	    gap: 24px;
+	    align-items: flex-start;
+	    margin-bottom: 20px;
+	}
+
+	.expanded-poster-wrapper {
+	    width: 160px;
+	    flex-shrink: 0;
+	    border-radius: 12px;
+	    overflow: hidden;
+	    background: #0e0d0d;
+	}
+
+	.expanded-poster {
+	    width: 100%;
+	    height: auto;
+	    display: block;
+	    object-fit: cover;
+	    object-position: center top;
+	}
+
+	.expanded-poster-placeholder {
+	    width: 160px;
+	    height: 220px;
+	    background: rgba(102, 126, 234, 0.1);
+	    border-radius: 12px;
+	    display: flex;
+	    align-items: center;
+	    justify-content: center;
+	    font-size: 2.5em;
+	    color: rgba(102, 126, 234, 0.3);
+	}
+
+	.expanded-info {
+	    flex: 1;
+	    min-width: 0;
+	}
+
+	.expanded-meta {
+	    display: flex;
+	    flex-direction: column;
+	    gap: 8px;
+	    margin-top: 12px;
+	}
+
+	.expanded-meta-item {
+	    display: flex;
+	    gap: 10px;
+	    align-items: baseline;
+	}
+
+	.expanded-meta-label {
+	    font-size: 0.8em;
+	    color: #a0a0a0;
+	    text-transform: uppercase;
+	    min-width: 90px;
+	    flex-shrink: 0;
+	}
+
+	.expanded-meta-value {
+	    font-size: 1em;
+	    color: #ffffff;
+	    font-weight: 500;
+	}
+
+	.expanded-description {
+	    background: rgba(255, 255, 255, 0.05);
+	    padding: 16px;
+	    border-radius: 12px;
+	    border-left: 4px solid rgba(102, 126, 234, 0.5);
+	    line-height: 1.6;
+	    font-size: 0.95em;
+	    margin-bottom: 16px;
+	}
+
+	.movie-cast {
+	    margin-top: 16px;
+	}
+
+	.movie-cast-label {
+	    font-size: 0.8em;
+	    color: #a0a0a0;
+	    text-transform: uppercase;
+	    margin-bottom: 8px;
+	}
+
+	.movie-cast-list {
+	    display: flex;
+	    flex-wrap: wrap;
+	    gap: 8px;
+	}
+
+	.action-chip {
+	    display: inline-flex;
+	    align-items: center;
+	    gap: 6px;
+	    padding: 8px 16px;
+	    background: rgba(102, 126, 234, 0.2);
+	    border: 1px solid rgba(102, 126, 234, 0.4);
+	    border-radius: 20px;
+	    color: #b8c5f0;
+	    font-size: 0.9em;
+	    cursor: pointer;
+	    text-decoration: none;
+	    transition: all 0.2s ease;
+	}
+
+	.action-chip:hover {
+	    background: rgba(102, 126, 234, 0.4);
+	    color: #ffffff;
+	}
+
+	@media (max-width: 768px) {
+	    .expanded-top {
+		flex-direction: column;
+		gap: 16px;
+	    }
+
+	    .expanded-poster-wrapper {
+		width: 100%;
+		max-width: 200px;
+	    }
+
+	    .movie-item-expanded {
+		grid-column: 1;  /* mobile is already 1 col */
+	    }
+	}
+	.movie-item {
+	    /* add to existing rule */
+	    overflow: hidden;
+	}
+
+	.movie-poster {
+	    width: 100%;
+	    height: 200px;
+	    object-fit: cover;
+	    object-position: center top;
+	    border-radius: 10px 10px 0 0;  /* only round top corners, flush with card edge */
+	    margin-bottom: 12px;
+	    display: block;
+	    /* remove any background color that shows through */
+	}
+
+	.modal-poster-wrapper {
+	    width: 140px;
+	    height: 200px;
+	    flex-shrink: 0;
+	    border-radius: 12px;
+	    overflow: hidden;  /* clips the image to the wrapper bounds */
+	    background: #0e0d0d;
+	}
+
+	.movie-poster-placeholder {
+	    width: 100%;
+	    height: 200px;
+	    background: rgba(102, 126, 234, 0.1);
+	    border-radius: 10px 10px 0 0;
+	    margin-bottom: 12px;
+	    display: flex;
+	    align-items: center;
+	    justify-content: center;
+	    font-size: 2.5em;
+	    color: rgba(102, 126, 234, 0.3);
+	}
+
+
+	.modal-poster {
+	    width: 100%;
+	    height: 100%;
+	    object-fit: cover;
+	    object-position: center top;
+	    display: block;
+	}
+
+	.modal-header-row {
+	    display: flex;
+	    gap: 24px;
+	    margin-bottom: 25px;
+	    align-items: flex-start;
+	}
+
+	.modal-header-text {
+	    flex: 1;
+	    min-width: 0;
+	}
+
+	.modal-cast {
+	    margin-top: 20px;
+	}
+
+	.modal-cast-label {
+	    font-size: 0.85em;
+	    color: #a0a0a0;
+	    text-transform: uppercase;
+	    margin-bottom: 10px;
+	}
+
+	.modal-cast-list {
+	    display: flex;
+	    flex-wrap: wrap;
+	    gap: 8px;
+	}
+
+	.cast-chip {
+	    padding: 5px 12px;
+	    background: rgba(102, 126, 234, 0.15);
+	    border: 1px solid rgba(102, 126, 234, 0.3);
+	    border-radius: 20px;
+	    font-size: 0.9em;
+	    color: #b8c5f0;
+	}
+
+	@media (max-width: 768px) {
+	   .modal-poster-wrapper {
+		width: 100px;
+		height: 144px;
+	    }
+	    .movie-poster {
+		height: 130px;
+	    }
+
+	    .modal-header-row {
+		gap: 16px;
+	    }
+
+	    .movie-poster-placeholder {
+		height: 130px;
+	    }
+	}
 
         .search-result-subtitle {
             color: #a0a0a0;
@@ -576,7 +813,21 @@
             display: flex;
             flex-direction: column;
             cursor: pointer;
+	    overflow: hidden;
+	    padding: 0;  /* remove padding so image goes edge-to-edge */
         }
+	.movie-header,
+	.movie-actions,
+	.showtimes {
+	    padding: 0 20px;
+	}
+	.movie-header {
+	    padding-top: 15px;
+	}
+
+	.showtimes {
+	    padding-bottom: 20px;
+	}
 
         .movie-item:hover {
             background: rgba(255, 255, 255, 0.08);
@@ -720,6 +971,7 @@
             right: 20px;
             background: rgba(255, 255, 255, 0.1);
             border: none;
+	    z-index: 10;
             color: white;
             font-size: 1.5em;
             width: 40px;
@@ -739,6 +991,7 @@
             font-weight: 700;
             color: #ffffff;
             margin-bottom: 10px;
+	    padding-right: 50px;
         }
 
         .modal-original-title {
@@ -1089,6 +1342,11 @@
                 font-size: 1.1em;
             }
 
+            .modal.active {
+                align-items: flex-start;
+                padding-top: 10px;
+            }
+
             .modal-content {
                 padding: 25px 20px;
             }
@@ -1113,6 +1371,7 @@
 
             .modal-title {
                 font-size: 1.4em;
+		padding-right: 50px;
             }
 
             .date-picker-wrapper {
@@ -1216,6 +1475,8 @@
         let allScheduleData = null;
         let isNavigatingHistory = false;
         let selectedAreas = new Set();
+	let movieDataStore = new Map();
+	let movieDataCounter = 0;
         const AREAS_STORAGE_KEY = 'cinema_selected_areas';
         let searchTimeout = null;
 
@@ -1277,6 +1538,15 @@
         }
 
         window.addEventListener('popstate', function(event) {
+	    if (document.getElementById('movieModal').classList.contains('active')) {
+		closeModal();
+		return;
+	    }
+	    if (document.getElementById('settingsModal').classList.contains('active')) {
+		closeSettingsModal();
+		return;
+	    }
+
             isNavigatingHistory = true;
             
             if (event.state) {
@@ -1605,6 +1875,25 @@
                     // Update movie hero
                     const uniqueTimes = [...new Set(allTimes)].sort();
                     let heroHTML = `
+${movieData.image_url ? `
+    <div style="
+        width: 100%;
+        border-radius: 14px;
+        overflow: hidden;
+        margin-bottom: 25px;
+        background: rgba(0,0,0,0.3);
+    ">
+        <img 
+            src="${movieData.image_url}" 
+            alt="${movieData.greek_title || movieData.title}"
+            style="
+                width: 100%;
+                height: auto;
+                display: block;
+            "
+        >
+    </div>
+` : ''}
                         <div class="movie-hero-title">${movieData.greek_title || movieData.title}</div>
                         ${movieData.original_title ? `<div class="movie-hero-subtitle">(${movieData.original_title})</div>` : ''}
                         
@@ -1641,6 +1930,14 @@
                                     <div class="hero-meta-value">${movieData.director}</div>
                                 </div>
                             ` : ''}
+				${movieData.cast && movieData.cast.length > 0 ? ` 
+				    <div class="hero-meta-item" style="width: 100%;">
+					<div class="hero-meta-label">Ηθοποιοί</div>
+					<div class="movie-cast-list" style="margin-top: 6px;">
+					    ${movieData.cast.map(name => `<span class="cast-chip">${name}</span>`).join('')}
+					</div>
+				    </div>
+				` : ''}     
                             ${uniqueTimes.length > 0 ? `
                                 <div class="hero-meta-item">
                                     <div class="hero-meta-label">Συνολικές Προβολές</div>
@@ -1672,69 +1969,104 @@
             }
         }
 
-        function openMovieDetails(movieData) {
-            const modal = document.getElementById('movieModal');
-            const modalBody = document.getElementById('modalBody');
-            
-            const movie = movieData.movie;
-            const times = movieData.times;
+	function openMovieDetails(movieId) {
+	    const movieData = movieDataStore.get(movieId);
+	    if (!movieData) return;
+	    window.history.pushState({ modal: true }, '');
 
-            let html = `
-                <div class="modal-title">${movie.greek_title || movie.title}</div>
-                ${movie.original_title ? `<div class="modal-original-title">(${movie.original_title})</div>` : ''}
-                
-                ${movie.description ? `<div class="modal-description">${movie.description}</div>` : ''}
-                
-                <div class="modal-meta">
-                    ${movie.year ? `
-                        <div class="modal-meta-item">
-                            <div class="modal-meta-label">Έτος</div>
-                            <div class="modal-meta-value">${movie.year}</div>
-                        </div>
-                    ` : ''}
-                    ${movie.duration ? `
-                        <div class="modal-meta-item">
-                            <div class="modal-meta-label">Διάρκεια</div>
-                            <div class="modal-meta-value">${movie.duration} λεπτά</div>
-                        </div>
-                    ` : ''}
-                    ${movie.rating ? `
-                        <div class="modal-meta-item">
-                            <div class="modal-meta-label">Βαθμολογία</div>
-                            <div class="modal-meta-value">⭐ ${movie.rating}</div>
-                        </div>
-                    ` : ''}
-                    ${movie.genre ? `
-                        <div class="modal-meta-item">
-                            <div class="modal-meta-label">Είδος</div>
-                            <div class="modal-meta-value">${movie.genre}</div>
-                        </div>
-                    ` : ''}
-                    ${movie.director ? `
-                        <div class="modal-meta-item">
-                            <div class="modal-meta-label">Σκηνοθεσία</div>
-                            <div class="modal-meta-value">${movie.director}</div>
-                        </div>
-                    ` : ''}
-                </div>
+	    const modal = document.getElementById('movieModal');
+	    const modalBody = document.getElementById('modalBody');
+	    
+	    const movie = movieData.movie;
+	    const times = movieData.times;
 
-                <div style="margin-top: 25px;">
-                    <div class="modal-meta-label" style="margin-bottom: 10px;">Προβολές Σε Αυτόν Τον Κινηματογράφο</div>
-                    <div class="showtimes">
-                        ${times.sort().map(time => `<span class="showtime">${time}</span>`).join('')}
-                    </div>
-                </div>
+	    const castHTML = movie.cast && movie.cast.length > 0 ? `
+		<div class="modal-cast">
+		    <div class="modal-cast-label">Ηθοποιοί</div>
+		    <div class="modal-cast-list">
+			${movie.cast.map(name => `<span class="cast-chip">${name}</span>`).join('')}
+		    </div>
+		</div>
+	    ` : '';
 
-                ${movie.url ? `
-                    <a href="${movie.url}" target="_blank" rel="noopener noreferrer" class="modal-link">
-                        Δες περισσότερα στο Athinorama →
-                    </a>
-                ` : ''}
-            `;
+	    const posterHTML = movie.image_url ? `
+		<div class="modal-poster-wrapper">
+		    <img class="modal-poster" src="${movie.image_url}" 
+			 alt="${movie.greek_title || movie.title}" 
+			 loading="lazy" 
+			 onerror="this.parentElement.style.display='none'">
+		</div>
+	    ` : '';
 
-            modalBody.innerHTML = html;
-            modal.classList.add('active');
-        }
+	    let html = `
+		<div class="modal-header-row">
+		    ${posterHTML}
+		    <div class="modal-header-text">
+			<div class="modal-title">${movie.greek_title || movie.title}</div>
+			${movie.original_title ? `<div class="modal-original-title">(${movie.original_title})</div>` : ''}
+			<div class="modal-meta" style="margin-top: 15px;">
+			    ${movie.year ? `
+				<div class="modal-meta-item">
+				    <div class="modal-meta-label">Έτος</div>
+				    <div class="modal-meta-value">${movie.year}</div>
+				</div>
+			    ` : ''}
+			    ${movie.duration ? `
+				<div class="modal-meta-item">
+				    <div class="modal-meta-label">Διάρκεια</div>
+				    <div class="modal-meta-value">${movie.duration} λεπτά</div>
+				</div>
+			    ` : ''}
+			    ${movie.rating ? `
+				<div class="modal-meta-item">
+				    <div class="modal-meta-label">Βαθμολογία</div>
+				    <div class="modal-meta-value">⭐ ${movie.rating}</div>
+				</div>
+			    ` : ''}
+			    ${movie.genre ? `
+				<div class="modal-meta-item">
+				    <div class="modal-meta-label">Είδος</div>
+				    <div class="modal-meta-value">${movie.genre}</div>
+				</div>
+			    ` : ''}
+			    ${movie.director ? `
+				<div class="modal-meta-item">
+				    <div class="modal-meta-label">Σκηνοθεσία</div>
+				    <div class="modal-meta-value">${movie.director}</div>
+				</div>
+			    ` : ''}
+			    ${movie.cast && movie.cast.length > 0 ? `
+			    <div class="hero-meta-item" style="width: 100%;">
+				<div class="hero-meta-label">Ηθοποιοί</div>
+				<div class="movie-cast-list" style="margin-top: 6px;">
+				    ${movie.cast.map(name => `<span class="cast-chip">${name}</span>`).join('')}
+				</div>
+			    </div>
+			` : ''}
+			</div>
+		    </div>
+		</div>
+
+		${movie.description ? `<div class="modal-description">${movie.description}</div>` : ''}
+		${castHTML}
+
+		<div style="margin-top: 25px;">
+		    <div class="modal-meta-label" style="margin-bottom: 10px;">Προβολές Σε Αυτόν Τον Κινηματογράφο</div>
+		    <div class="showtimes">
+			${times.sort().map(time => `<span class="showtime">${time}</span>`).join('')}
+		    </div>
+		</div>
+
+		${movie.url ? `
+		    <a href="${movie.url}" target="_blank" rel="noopener noreferrer" class="modal-link">
+			Δες περισσότερα στο Athinorama →
+		    </a>
+		` : ''}
+	    `;
+
+	    modalBody.innerHTML = html;
+	    modal.classList.add('active');
+	}
 
         function closeModal() {
             document.getElementById('movieModal').classList.remove('active');
@@ -1752,8 +2084,11 @@
             }
         });
 
-        function renderSchedule(data) {
-            allScheduleData = data;
+	function renderSchedule(data) {
+	    movieDataStore.clear();
+	    movieDataCounter = 0;
+	    allScheduleData = data;
+	    expandedMovieId = null;
             const content = document.getElementById('content');
             
             if (!data || Object.keys(data).length === 0) {
@@ -1841,42 +2176,53 @@
                             <div class="movies-grid">
                     `;
 
-                    sortedMovies.forEach(movieData => {
-                        const movie = movieData.movie;
-                        const times = movieData.times;
-                        const displayTitle = movie.greek_title || movie.title;
-                        const originalTitle = movie.original_title;
-                        const movieDataJson = JSON.stringify(movieData).replace(/"/g, '&quot;');
-                        const movieTitleForFilter = displayTitle.replace(/'/g, "\\'");
+sortedMovies.forEach(movieData => {
+    const movie = movieData.movie;
+    const times = movieData.times;
+    const displayTitle = movie.greek_title || movie.title;
+    const originalTitle = movie.original_title;
 
-                        areaHTML += `
-                            <div class="movie-item" onclick="event.preventDefault(); filterByMovie('${movieTitleForFilter}')">
-                                <div class="movie-header">
-                                    <div class="movie-title">${displayTitle}</div>
-                                    ${originalTitle ? `<div class="movie-original-title">(${originalTitle})</div>` : ''}
-                                    <div class="movie-meta">
-                                        ${movie.duration ? `<span class="meta-badge">⏱️ ${movie.duration}'</span>` : ''}
-                                        ${movie.rating ? `<span class="meta-badge rating-badge">⭐ ${movie.rating}</span>` : ''}
-                                    </div>
-                                </div>
-                                <div class="movie-actions">
-                                    <a href="#" class="details-link" onclick="event.stopPropagation(); event.preventDefault(); openMovieDetails(${movieDataJson})">
-                                        ℹ️ Λεπτομέρειες
-                                    </a>
-                                </div>
-                                <div class="showtimes">
-                        `;
+    const movieId = movieDataCounter++;
+    movieDataStore.set(movieId, movieData);
 
-                        times.sort().forEach(time => {
-                            areaHTML += `<span class="showtime">${time}</span>`;
-                        });
+    const movieTitleForFilter = displayTitle.replace(/'/g, "\\'");
 
-                        areaHTML += `
-                                </div>
-                            </div>
-                        `;
-                    });
+    const posterHTML = movie.image_url
+        ? `<img class="movie-poster" src="${movie.image_url}" alt="${displayTitle}" loading="lazy" onerror="this.parentElement.innerHTML='<div class=\\'movie-poster-placeholder\\'>🎬</div>'">`
+        : `<div class="movie-poster-placeholder">🎬</div>`;
 
+    const castHTML = movie.cast && movie.cast.length > 0
+        ? `<div class="movie-cast">
+               <div class="movie-cast-label">Ηθοποιοί</div>
+               <div class="movie-cast-list">
+                   ${movie.cast.map(name => `<span class="cast-chip">${name}</span>`).join('')}
+               </div>
+           </div>`
+        : '';
+
+		areaHTML += `
+		    <div class="movie-item" onclick="event.preventDefault(); filterByMovie('${movieTitleForFilter}')">
+			${posterHTML}
+			<div class="movie-header">
+			    <div class="movie-title">${displayTitle}</div>
+			    ${originalTitle ? `<div class="movie-original-title">(${originalTitle})</div>` : ''}
+			    <div class="movie-meta">
+				${movie.duration ? `<span class="meta-badge">⏱️ ${movie.duration}'</span>` : ''}
+				${movie.rating ? `<span class="meta-badge rating-badge">⭐ ${movie.rating}</span>` : ''}
+				${movie.genre ? `<span class="meta-badge">${movie.genre}</span>` : ''}
+			    </div>
+			</div>
+			<div class="movie-actions">
+			    <a href="#" class="details-link" onclick="event.stopPropagation(); event.preventDefault(); openMovieDetails(${movieId})">
+				ℹ️ Λεπτομέρειες
+			    </a>
+			</div>
+			<div class="showtimes">
+			    ${times.sort().map(time => `<span class="showtime">${time}</span>`).join('')}
+			</div>
+		    </div>
+		`;
+		});
                     areaHTML += `
                             </div>
                         </div>
@@ -1905,6 +2251,39 @@
             updateFilterUI();
         }
 
+	let expandedMovieId = null;
+
+	function toggleMovieExpand(movieId, event) {
+	    const card = document.getElementById(`movie-card-${movieId}`);
+	    const collapsed = card.querySelector('.movie-collapsed');
+	    const expanded = card.querySelector('.movie-expanded');
+
+	    if (expandedMovieId === movieId) {
+		// Collapse
+		expanded.style.display = 'none';
+		collapsed.style.display = '';
+		card.classList.remove('movie-item-expanded');
+		expandedMovieId = null;
+	    } else {
+		// Collapse previously expanded card
+		if (expandedMovieId !== null) {
+		    const prevCard = document.getElementById(`movie-card-${expandedMovieId}`);
+		    if (prevCard) {
+			prevCard.querySelector('.movie-expanded').style.display = 'none';
+			prevCard.querySelector('.movie-collapsed').style.display = '';
+			prevCard.classList.remove('movie-item-expanded');
+		    }
+		}
+		// Expand this card
+		collapsed.style.display = 'none';
+		expanded.style.display = '';
+		card.classList.add('movie-item-expanded');
+		expandedMovieId = movieId;
+
+		// Scroll card into view smoothly
+		setTimeout(() => card.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 50);
+	    }
+	}
         async function fetchSchedule() {
             const apiUrlWithDate = `${API_URL}?date=${formatDateForAPI(currentDate)}`;
 
