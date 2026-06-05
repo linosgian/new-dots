@@ -1,9 +1,8 @@
-{
-  lib,
-  config,
-  pkgs,
-  unstablePkgs,
-  ...
+{ lib
+, config
+, pkgs
+, unstablePkgs
+, ...
 }:
 {
   imports = [
@@ -16,6 +15,7 @@
     enable = true;
     openFirewall = true;
   };
+
   # Override pixma.conf in sane.configDir
   environment.etc."sane-config" = lib.mkForce {
     source = pkgs.runCommand "custom-sane-config" { } ''
@@ -127,6 +127,7 @@
           endpoint = "cf-wg-eu-90544ccb5a9cb155.elb.eu-central-1.amazonaws.com:55442";
         }
       ];
+      mtu = 1080;
     };
 
     wg1 = {
@@ -143,6 +144,8 @@
           endpoint = "hm.lgian.com:51820";
         }
       ];
+
+      mtu = 1080;
     };
   };
 
