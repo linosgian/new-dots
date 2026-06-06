@@ -60,7 +60,7 @@
             ./hosts/headscale
           ];
         };
-        cflow-dell = nixpkgs.lib.nixosSystem {
+        dell = nixpkgs.lib.nixosSystem {
           specialArgs = { inherit self unstablePkgs; };
           inherit system;
           modules = [
@@ -83,12 +83,6 @@
           inherit system;
           modules = [
             ./hosts/cine
-          ];
-        };
-        mutual = nixpkgs.lib.nixosSystem {
-          inherit system;
-          modules = [
-            ./hosts/mutual
           ];
         };
         sfiri = nixpkgs.lib.nixosSystem {

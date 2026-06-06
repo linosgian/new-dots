@@ -14,6 +14,8 @@
     ../modules/wayland.nix
   ];
   environment.systemPackages = with pkgs; [
+    gcc
+    opencode
     lazygit
     go-task
     geeqie
