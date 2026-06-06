@@ -6,7 +6,7 @@ pkgs.stdenv.mkDerivation rec {
   src = builtins.fetchGit {
     url = "https://github.com/linosgian/ehlo";
     ref = "tmp";
-    rev = "fb96e33c67800e6fe91fae5e16c6843c70739572";
+    rev = "1a760557b47eb9589769d46bfca7114f39f6e458";
   };
 
   nativeBuildInputs = [ pkgs.hugo ];

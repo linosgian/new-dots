@@ -39,10 +39,10 @@ in
           delimitMate
           vim-bufkill
           nerdtree
-          Tabular
+          tabular
           vim-toml
           vim-markdown
-          Tagbar
+          tagbar
           vim-hcl
           jsonc-vim
           ale

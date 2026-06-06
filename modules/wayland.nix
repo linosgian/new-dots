@@ -54,7 +54,7 @@ in
     grim
     gucharmap
     slurp
-    xorg.xev
+    xev
   ];
 
   environment.sessionVariables.NIXOS_OZONE_WL = "1";
@@ -81,7 +81,6 @@ in
   };
   services.displayManager = {
     gdm.enable = true;
-    gdm.wayland = true;
   };
   systemd.services."getty@tty1".enable = false;
   systemd.services."autovt@tty1".enable = false;

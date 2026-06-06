@@ -38,7 +38,7 @@
     ripgrep
     bashInteractive
     nixpkgs-fmt
-    nixfmt-rfc-style
+    nixfmt
     nix-output-monitor
     nixd
     screen

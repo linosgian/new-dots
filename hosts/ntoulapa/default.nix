@@ -34,6 +34,9 @@
     secrets.restic_password = { };
     secrets.restic_password = { };
     secrets.grafana_oidc_secret = { };
+    secrets.grafana_secret_key = {
+      owner = "grafana";
+    };
     secrets.keycloak_db_password = { };
     secrets.ntfy_user_password = { };
     secrets.deluge_admin_password = { };

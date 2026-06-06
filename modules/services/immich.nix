@@ -40,7 +40,6 @@ in
     port = cfg.defs.immich.port;
     host = "127.0.0.1";
     database.createDB = false;
-    database.enableVectors = false;
     accelerationDevices = [
       "/dev/dri/renderD128"
     ];

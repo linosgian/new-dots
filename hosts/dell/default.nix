@@ -16,7 +16,23 @@
     enable = true;
     openFirewall = true;
   };
-
+  systemd.services.bt-pcie-reset = {
+    description = "Reset Intel Bluetooth PCIe device at boot";
+    after = [
+      "bluetooth.service"
+      "systemd-udev-settle.service"
+    ];
+    serviceConfig = {
+      Type = "oneshot";
+      RemainAfterExit = true;
+      ExecStart = pkgs.writeShellScript "bt-reset" ''
+        echo 1 > /sys/bus/pci/devices/0000:00:14.7/remove
+        sleep 1
+        echo 1 > /sys/bus/pci/rescan
+        sleep 2
+      '';
+    };
+  };
   # Override pixma.conf in sane.configDir
   environment.etc."sane-config" = lib.mkForce {
     source = pkgs.runCommand "custom-sane-config" { } ''

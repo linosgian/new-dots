@@ -48,16 +48,10 @@ in
           command = "${pkgs.systemd}/bin/systemctl suspend";
         }
       ];
-      events = [
-        {
-          event = "lock";
-          command = "${pkgs.swaylock}/bin/swaylock -fF";
-        }
-        {
-          event = "before-sleep";
-          command = "${pkgs.swaylock}/bin/swaylock";
-        }
-      ];
+      events = {
+        lock = "${pkgs.swaylock}/bin/swaylock -fF";
+        before-sleep = "${pkgs.swaylock}/bin/swaylock";
+      };
     };
   };
 

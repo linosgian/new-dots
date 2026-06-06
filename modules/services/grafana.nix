@@ -30,6 +30,9 @@ in
         # Maps roles to Grafana roles
         role_attribute_path = "contains(roles[*], 'admin') && 'Admin' || contains(realm_access.roles[*], 'editor') && 'Editor' || 'Viewer'";
       };
+      security = {
+        secret_key = "$__file{${config.sops.secrets.grafana_secret_key.path}}";
+      };
       server = {
         root_url = "https://grafana.lgian.com";
         http_port = cfg.defs.grafana.port;
