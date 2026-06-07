@@ -24,6 +24,7 @@
     cmake
     wl-clipboard
     wlr-randr
+    gphoto2
     bluez-tools
     bluez
     blueman

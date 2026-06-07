@@ -80,7 +80,16 @@ in
     user = "lgian";
   };
   services.displayManager = {
-    gdm.enable = true;
+    gdm.enable = false;
+  };
+  services.greetd = {
+    enable = true;
+    settings = {
+      default_session = {
+        command = "sway --unsupported-gpu";
+        user = "lgian";
+      };
+    };
   };
   systemd.services."getty@tty1".enable = false;
   systemd.services."autovt@tty1".enable = false;

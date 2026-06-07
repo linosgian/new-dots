@@ -32,12 +32,9 @@
   };
 
   fileSystems."/" = {
-    device = "/dev/disk/by-uuid/4a31456f-9db9-42ac-9266-3e42a4647273";
+    device = "/dev/disk/by-uuid/1a1486cc-b7b9-4f48-9ae6-5c48f5ca188f";
     fsType = "ext4";
   };
-
-  boot.initrd.luks.devices."luks-67e0262f-3a75-43f2-8a2f-2e1d98f7a1e1".device =
-    "/dev/disk/by-uuid/67e0262f-3a75-43f2-8a2f-2e1d98f7a1e1";
 
   fileSystems."/boot" = {
     device = "/dev/disk/by-uuid/0710-00DE";
@@ -58,7 +55,14 @@
     ];
   };
 
-  services.xserver.videoDrivers = [ "nouveau" ];
+  services.xserver.displayManager.gdm.wayland = false;
+  services.xserver.videoDrivers = [ "nvidia" ];
+
+  hardware.nvidia = {
+    modesetting.enable = true;
+    powerManagement.enable = true;
+    open = false; # or true if using newer open kernel module
+  };
 
   nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
   hardware.cpu.amd.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;

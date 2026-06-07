@@ -24,8 +24,13 @@
     })
   ];
   environment.systemPackages = with pkgs; [
-    masterPkgs.signal-desktop-bin
+    masterPkgs.signal-desktop
     masterPkgs.cura-appimage
+    masterPkgs.rapidraw
+  ];
+
+  programs.sway.extraOptions = [
+    "--unsupported-gpu"
   ];
   networking.hostName = "desktop";
   boot.binfmt.emulatedSystems = [ "aarch64-linux" ];
