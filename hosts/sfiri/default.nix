@@ -20,7 +20,7 @@
     secrets.digitalocean_api_token = { };
     secrets.tenta = { };
   };
-
+  boot.kernelPackages = pkgs.linuxPackages;
   security.acme.defaults.email = "linosgian00@gmail.com";
   security.acme.acceptTerms = true;
   security.acme.certs."sfiri.lgian.com" = {

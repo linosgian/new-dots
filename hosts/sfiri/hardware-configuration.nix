@@ -13,7 +13,6 @@
   imports = [
     (modulesPath + "/installer/scan/not-detected.nix")
   ];
-  boot.kernelPackages = pkgs.linuxKernel.packages.linux_rpi4;
   boot.initrd.availableKernelModules = [ "xhci_pci" ];
   boot.initrd.kernelModules = [ ];
   boot.kernelModules = [ ];

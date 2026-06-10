@@ -3,7 +3,7 @@
     nixpkgs.url = "github:nixos/nixpkgs/nixos-26.05";
     unstable.url = "github:nixos/nixpkgs/nixos-unstable";
     nixpkgs-master.url = "github:nixos/nixpkgs/master";
-    hardware.url = "github:nixos/nixos-hardware";
+    hardware.url = "github:nixos/nixos-hardware/master";
 
     openwrt-imagebuilder.url = "github:astro/nix-openwrt-imagebuilder";
     home-manager.url = "github:nix-community/home-manager/release-26.05";
@@ -87,17 +87,19 @@
         };
         sfiri = nixpkgs.lib.nixosSystem {
           system = "aarch64-linux";
+
+          specialArgs = { inherit self unstablePkgs; };
+
           modules = [
-            # "${nixpkgs}/nixos/modules/installer/sd-card/sd-image-aarch64.nix"
+            hardware.nixosModules.raspberry-pi-4
             ./hosts/sfiri
             sops-nix.nixosModules.sops
+
             {
-              # sdImage.compressImage = false;
               nixpkgs.hostPlatform = "aarch64-linux";
             }
           ];
         };
-
         ntoulapa = nixpkgs.lib.nixosSystem {
           inherit system;
           specialArgs = {

@@ -47,7 +47,12 @@
 
       programs.ssh = {
         enable = true;
-        matchBlocks = {
+        enableDefaultConfig = false;
+        settings = {
+          "*" = {
+            hashKnownHosts = true;
+            sendEnv = "LANG LC_*";
+          };
           "blog" = {
             hostname = "snf-24475.ok-kno.grnetcloud.net";
           };

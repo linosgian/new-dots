@@ -32,7 +32,7 @@ in
     5201
     5202
   ];
-
+  boot.binfmt.emulatedSystems = [ "aarch64-linux" ];
   services.nginx.enable = true;
   services.nginx.virtualHosts."blog.lgian.com" = {
     forceSSL = true;

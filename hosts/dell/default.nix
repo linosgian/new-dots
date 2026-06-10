@@ -82,7 +82,7 @@
   home-manager.users.lgian.programs.git-credential-oauth.enable = true;
   home-manager.users.lgian.programs.ssh = {
     enable = true;
-    matchBlocks = {
+    settings = {
       "gitlab-mgr.cf" = {
         hostname = "gitlab-runner-manager.util.eu-central-1a.ec2.cfl";
       };

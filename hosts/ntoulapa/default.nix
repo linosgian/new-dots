@@ -24,7 +24,26 @@
     ./containers.nix
   ];
 
+  boot.zfs.forceImportRoot = false;
+
   networking.hostName = "ntoulapa";
+  #https://github.com/NixOS/nixpkgs/pull/526476/changes
+  # TODO: remove once this ^ lands in stable
+  security.polkit = {
+    enable = true;
+    # fwupd-refresh.service has no seat, so polkit denies these actions.
+    # Upstream's TrustedUids needs a static uid which we only allocate at
+    # activation time, so grant access via a rule on the user name instead.
+    extraConfig = ''
+      polkit.addRule(function(action, subject) {
+        if ((action.id == "org.freedesktop.fwupd.get-remotes" ||
+             action.id == "org.freedesktop.fwupd.refresh-remote") &&
+            subject.user == "fwupd-refresh") {
+          return polkit.Result.YES;
+        }
+      });
+    '';
+  };
 
   sops = {
     defaultSopsFile = ../../secrets/ntoulapa/secrets.yaml;
