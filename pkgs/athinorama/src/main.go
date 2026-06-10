@@ -4,6 +4,7 @@ import (
 	"crypto/md5"
 	"encoding/json"
 	"fmt"
+	"html"
 	"io"
 	"log"
 	"net/http"
@@ -12,6 +13,7 @@ import (
 	"regexp"
 	"strings"
 	"time"
+	"unicode"
 
 	"github.com/gocolly/colly/v2"
 )
@@ -784,6 +786,122 @@ func runAllAreas(areas []string) {
 	}
 }
 
+// ------------------ SOCIAL SHARING (OG TAGS) ------------------
+
+func slugify(s string) string {
+	var result strings.Builder
+	for _, r := range strings.ToLower(strings.TrimSpace(s)) {
+		if unicode.IsLetter(r) || unicode.IsDigit(r) {
+			result.WriteRune(r)
+		} else if r == ' ' || r == '-' || r == '_' {
+			result.WriteRune('-')
+		}
+	}
+	slug := result.String()
+	slug = regexp.MustCompile(`-+`).ReplaceAllString(slug, "-")
+	slug = strings.Trim(slug, "-")
+	return slug
+}
+
+func findMovieBySlug(slug string) *Movie {
+	if latestSchedule == nil {
+		return nil
+	}
+	for _, cinemas := range latestSchedule.Areas {
+		for ci := range cinemas {
+			for mi := range cinemas[ci].Movies {
+				movie := &cinemas[ci].Movies[mi]
+				displayTitle := movie.GreekTitle
+				if displayTitle == "" {
+					displayTitle = movie.Title
+				}
+				if slugify(displayTitle) == slug {
+					return movie
+				}
+			}
+		}
+	}
+	return nil
+}
+
+func handleMoviePage(w http.ResponseWriter, r *http.Request) {
+	slug := strings.TrimPrefix(r.URL.Path, "/movie/")
+	slug = strings.TrimSuffix(slug, "/")
+
+	if slug == "" {
+		http.NotFound(w, r)
+		return
+	}
+
+	movie := findMovieBySlug(slug)
+	if movie == nil {
+		http.NotFound(w, r)
+		return
+	}
+
+	displayTitle := movie.GreekTitle
+	if displayTitle == "" {
+		displayTitle = movie.Title
+	}
+
+	description := movie.Description
+	if len(description) > 300 {
+		description = description[:300] + "..."
+	}
+
+	scheme := r.Header.Get("X-Forwarded-Proto")
+	if scheme == "" {
+		scheme = "http"
+		if r.TLS != nil {
+			scheme = "https"
+		}
+	}
+	host := r.Header.Get("X-Forwarded-Host")
+	if host == "" {
+		host = r.Host
+	}
+
+	imageURL := movie.ImageURL
+	if imageURL != "" && !strings.HasPrefix(imageURL, "http") {
+		imageURL = fmt.Sprintf("%s://%s%s", scheme, host, imageURL)
+	}
+
+	pageURL := fmt.Sprintf("%s://%s/movie/%s", scheme, host, slug)
+
+	// Preserve original query params in the redirect URL
+	q := r.URL.Query()
+	q.Set("movie", displayTitle)
+	redirectTo := "/?" + q.Encode()
+
+	escapedTitle := html.EscapeString(displayTitle)
+	escapedDescription := html.EscapeString(description)
+	escapedImage := html.EscapeString(imageURL)
+	escapedPageURL := html.EscapeString(pageURL)
+	escapedRedirect := html.EscapeString(redirectTo)
+
+	htmlContent := fmt.Sprintf(`<!DOCTYPE html>
+<html lang="el">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>%s | Cinema Screenings</title>
+    <meta property="og:title" content="%s">
+    <meta property="og:description" content="%s">
+    <meta property="og:image" content="%s">
+    <meta property="og:type" content="video.movie">
+    <meta property="og:url" content="%s">
+    <meta name="twitter:card" content="summary_large_image">
+    <script>window.location.replace("%s");</script>
+</head>
+<body>
+    <p><a href="%s">%s</a></p>
+</body>
+</html>`, escapedTitle, escapedTitle, escapedDescription, escapedImage, escapedPageURL, escapedRedirect, escapedRedirect, escapedTitle)
+
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+	w.Write([]byte(htmlContent))
+}
+
 // ------------------ MAIN ------------------
 
 // Global variable to hold the latest schedule
@@ -862,7 +980,8 @@ func main() {
 
 	// HTTP server
 	http.HandleFunc("/api/schedule", handleScheduleForDate)
-	http.Handle("/", http.FileServer(http.Dir("../web"))) // serve web app
+	http.HandleFunc("/movie/", handleMoviePage)             // social sharing (OG tags) + redirect
+	http.Handle("/", http.FileServer(http.Dir("../web")))   // serve web app
 	http.Handle("/images/", http.StripPrefix("/images/", http.FileServer(http.Dir(imageCacheDir))))
 
 	log.Println("Server running on http://localhost:8080")

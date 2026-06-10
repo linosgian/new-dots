@@ -4,6 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cinema Screenings - Today</title>
+    <meta property="og:title" content="Cinema Screenings - Today">
+    <meta property="og:description" content="Find cinema screenings in Athens">
+    <meta property="og:type" content="website">
+    <meta name="twitter:card" content="summary">
     <link rel="icon" type="image/svg+xml" href="/favicon.svg">
     <link rel="alternate icon" href="/favicon.ico">
     <style>
@@ -1518,6 +1522,13 @@
         let currentDate = new Date();
         let currentMovieFilter = null;
         let allScheduleData = null;
+
+        function slugify(s) {
+            return s.toLowerCase().trim()
+                .replace(/[^\p{L}\p{N}]/gu, '-')
+                .replace(/-+/g, '-')
+                .replace(/^-|-$/g, '');
+        }
         let isNavigatingHistory = false;
         let selectedAreas = new Set();
 	let movieDataStore = new Map();
@@ -1560,17 +1571,21 @@
             
             const params = new URLSearchParams();
             params.set('date', formatDateForAPI(currentDate));
-            if (currentMovieFilter) {
-                params.set('movie', currentMovieFilter);
-            }
             if (currentCinemaFilter) {
                 params.set('cinema', currentCinemaFilter);
             }
             if (currentScreeningTime) {
                 params.set('time', currentScreeningTime);
             }
+
+            let path;
+            if (currentMovieFilter) {
+                path = '/movie/' + slugify(currentMovieFilter);
+            } else {
+                path = '/';
+            }
             
-            const newURL = `${window.location.pathname}?${params.toString()}`;
+            const newURL = path + '?' + params.toString();
             window.history.pushState({
                 date: formatDateForAPI(currentDate),
                 movie: currentMovieFilter,

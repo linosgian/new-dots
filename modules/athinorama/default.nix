@@ -37,15 +37,22 @@ in
       locations = {
         "/images/" = {
           proxyPass = "http://127.0.0.1:8080";
-          proxyWebsockets = true;
         };
-        "/api/" = {
+        "/movie/" = {
           proxyPass = "http://127.0.0.1:8080";
-          proxyWebsockets = true;
+          extraConfig = ''
+            proxy_set_header Host $host;
+            proxy_set_header X-Forwarded-Proto $scheme;
+            proxy_set_header X-Forwarded-Host $host;
+          '';
         };
         "/" = {
           root = "${athinorama-frontend}";
           tryFiles = "$uri $uri/ /index.html";
+        };
+        "/api/" = {
+          proxyPass = "http://127.0.0.1:8080";
+          proxyWebsockets = true;
         };
         "/favicon.png" = {
           root = "${athinorama-frontend}";
