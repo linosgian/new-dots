@@ -873,11 +873,14 @@ func handleMoviePage(w http.ResponseWriter, r *http.Request) {
 	q.Set("movie", displayTitle)
 	redirectTo := "/?" + q.Encode()
 
+	// For JS context (script tag): JSON-escape to keep & as-is (html.Entities are NOT decoded in script tags)
+	redirectJS, _ := json.Marshal(redirectTo)
+	// For HTML context (meta tags, href): HTML-escape
 	escapedTitle := html.EscapeString(displayTitle)
 	escapedDescription := html.EscapeString(description)
 	escapedImage := html.EscapeString(imageURL)
 	escapedPageURL := html.EscapeString(pageURL)
-	escapedRedirect := html.EscapeString(redirectTo)
+	escapedHref := html.EscapeString(redirectTo)
 
 	htmlContent := fmt.Sprintf(`<!DOCTYPE html>
 <html lang="el">
@@ -891,12 +894,12 @@ func handleMoviePage(w http.ResponseWriter, r *http.Request) {
     <meta property="og:type" content="video.movie">
     <meta property="og:url" content="%s">
     <meta name="twitter:card" content="summary_large_image">
-    <script>window.location.replace("%s");</script>
+    <script>window.location.replace(%s);</script>
 </head>
 <body>
     <p><a href="%s">%s</a></p>
 </body>
-</html>`, escapedTitle, escapedTitle, escapedDescription, escapedImage, escapedPageURL, escapedRedirect, escapedRedirect, escapedTitle)
+</html>`, escapedTitle, escapedTitle, escapedDescription, escapedImage, escapedPageURL, string(redirectJS), escapedHref, escapedTitle)
 
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	w.Write([]byte(htmlContent))
