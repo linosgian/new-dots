@@ -65,6 +65,7 @@
   systemd.services.nix-daemon.environment.TMPDIR = "/var/tmp";
   services.irqbalance.enable = true;
   environment.systemPackages = with pkgs; [
+    jellyfin-desktop
     skopeo
     aws-vault
     awscli2
