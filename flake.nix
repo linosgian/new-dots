@@ -153,13 +153,11 @@
 
             profiles = openwrt-imagebuilder.lib.profiles {
               inherit pkgs;
-              release = "25.12.2";
+              release = "25.12.5";
             };
             config = profiles.identifyProfile "asus_tuf-ax4200" // {
-              disabledServices = [ "dnsmasq" ];
               extraPackages = localPackages;
               packages = [
-                "-odhcpd-ipv6only"
                 "odhcpd"
                 "tcpdump"
                 "dnsmasq"
@@ -188,8 +186,6 @@
                 "zsh"
                 "vim-fuller"
                 "netcat"
-                "unbound-control"
-                "unbound-daemon"
                 "lm-sensors"
                 "lua-cjson"
                 "prometheus-node-exporter-lua"
@@ -202,7 +198,6 @@
                 "ss"
                 "tc-full"
                 "smokeping_prober"
-                "unbound_exporter"
                 "prometheus-node-exporter-lua-sqm"
               ];
               files = pkgs.runCommand "image-files" { } ''
@@ -266,7 +261,7 @@
 
             profiles = openwrt-imagebuilder.lib.profiles {
               inherit pkgs;
-              release = "25.12.2";
+              release = "25.12.5";
             };
             config = profiles.identifyProfile "xiaomi_mi-router-4a-100m" // {
               packages = [
@@ -281,23 +276,27 @@
                 "acme-acmesh-dnsapi"
                 "zsh"
                 "vim"
+                "ss"
+                "curl"
               ];
             };
           in
           openwrt-imagebuilder.lib.build config;
-        mr600v2 =
+        lte =
           let
             pkgs = unstable.legacyPackages.x86_64-linux;
 
             profiles = openwrt-imagebuilder.lib.profiles {
               inherit pkgs;
-              release = "25.12.2";
+              release = "25.12.5";
             };
             config = profiles.identifyProfile "tplink_mr600-v2-eu" // {
               packages = [
                 "tcpdump"
                 "dnsmasq"
+                "curl"
                 "openssh-server"
+                "ss"
                 "openssh-sftp-server"
                 "htop"
                 "iperf3"
