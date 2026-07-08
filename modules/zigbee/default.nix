@@ -86,6 +86,18 @@
       "--prometheus-prefix mqtt_"
     ];
   };
+  systemd.services.prometheus-mqtt-exporter = {
+    after = [ "mosquitto.service" ];
+    wants = [ "mosquitto.service" ];
+
+    serviceConfig = {
+      Restart = "on-failure";
+      RestartSec = "5s";
+    };
+
+    startLimitIntervalSec = 300;
+    startLimitBurst = 20;
+  };
   services.zigbee2mqtt = {
     enable = true;
     settings = {
