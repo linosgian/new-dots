@@ -66,6 +66,7 @@
   services.irqbalance.enable = true;
   environment.systemPackages = with pkgs; [
     jellyfin-desktop
+    claude-code
     skopeo
     aws-vault
     awscli2
