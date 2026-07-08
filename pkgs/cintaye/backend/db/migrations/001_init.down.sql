@@ -1,0 +1,12 @@
+DROP TABLE IF EXISTS comments;
+DROP TABLE IF EXISTS recipe_tags;
+DROP TABLE IF EXISTS tags;
+DROP TABLE IF EXISTS instructions;
+DROP TABLE IF EXISTS ingredients;
+DROP TABLE IF EXISTS recipe_sections;
+DROP TABLE IF EXISTS recipes;
+DROP TABLE IF EXISTS sessions;
+DROP TABLE IF EXISTS household_invites;
+DROP TABLE IF EXISTS household_members;
+DROP TABLE IF EXISTS households;
+DROP TABLE IF EXISTS users;

@@ -1,0 +1,50 @@
+.container {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.label {
+  font-weight: 500;
+  font-size: 0.875rem;
+  color: var(--color-text-muted);
+}
+
+.presets {
+  display: flex;
+  gap: 0.25rem;
+}
+
+.preset {
+  padding: 0.2rem 0.5rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  background: var(--color-surface);
+  font-size: 0.8125rem;
+  color: var(--color-text);
+}
+
+.preset:hover {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+}
+
+.preset.active {
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+  color: white;
+}
+
+.custom {
+  width: 70px;
+  padding: 0.2rem 0.4rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  font-size: 0.875rem;
+}
+
+.servings {
+  font-size: 0.875rem;
+  color: var(--color-text-muted);
+}

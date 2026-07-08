@@ -1,0 +1,6 @@
+./data/*
+frontend/dist/
+backend/cintaye-backend
+backend/cintaye.db
+backend/cintaye.db-shm
+backend/cintaye.db-wal

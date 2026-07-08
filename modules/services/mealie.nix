@@ -19,6 +19,7 @@ in
       RECIPE_LANDSCAPE_VIEW = true;
       RECIPE_DISABLE_COMMENTS = false;
       RECIPE_DISABLE_AMOUNT = false;
+      BASE_URL="https://recipes.lgian.com";
       DATA_DIR = "/zfs/mealie";
     };
   };

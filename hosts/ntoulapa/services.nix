@@ -125,6 +125,7 @@ in
     description = "Custom service definitions shared across modules.";
   };
   imports = [
+    ../../modules/cintaye/default.nix
     ../../modules/services/vaultwarden.nix
     ../../modules/services/mealie.nix
     ../../modules/services/audiobookshelf.nix

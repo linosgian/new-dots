@@ -1,0 +1,192 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.section {
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+
+.sectionHeader {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  background: #f7f7f5;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.kindBadge {
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--color-primary);
+  white-space: nowrap;
+}
+
+.titleInput {
+  flex: 1;
+  border: none;
+  background: transparent;
+  outline: none;
+  font-size: 0.9375rem;
+  font-weight: 500;
+}
+
+.sectionControls {
+  display: flex;
+  gap: 0.25rem;
+  margin-left: auto;
+}
+
+.sectionControls button {
+  background: none;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  width: 26px;
+  height: 26px;
+  font-size: 0.875rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-text-muted);
+}
+
+.sectionControls button:hover:not(:disabled) {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+}
+
+.sectionControls button:disabled {
+  opacity: 0.3;
+}
+
+.removeBtn {
+  color: var(--color-danger) !important;
+  border-color: var(--color-danger) !important;
+}
+
+.rows {
+  padding: 0.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+}
+
+.ingHeader {
+  display: flex;
+  gap: 0.5rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding-bottom: 0.25rem;
+}
+
+.ingRow {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.cell {
+  padding: 0.375rem 0.5rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  background: var(--color-bg);
+  font-size: 0.875rem;
+  outline: none;
+}
+
+.cell:focus {
+  border-color: var(--color-primary);
+}
+
+.instRow {
+  display: flex;
+  gap: 0.5rem;
+  align-items: flex-start;
+}
+
+.stepNum {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--color-primary);
+  color: white;
+  font-size: 0.75rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-top: 0.375rem;
+}
+
+.instTextarea {
+  flex: 1;
+  padding: 0.375rem 0.5rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  background: var(--color-bg);
+  font-size: 0.875rem;
+  outline: none;
+  resize: vertical;
+}
+
+.instTextarea:focus {
+  border-color: var(--color-primary);
+}
+
+.removeRow {
+  background: none;
+  border: none;
+  font-size: 1.1rem;
+  color: var(--color-text-muted);
+  padding: 0 0.25rem;
+  flex-shrink: 0;
+}
+
+.removeRow:hover {
+  color: var(--color-danger);
+}
+
+.addRow {
+  align-self: flex-start;
+  background: none;
+  border: 1px dashed var(--color-border);
+  border-radius: var(--radius);
+  padding: 0.3rem 0.75rem;
+  font-size: 0.8125rem;
+  color: var(--color-text-muted);
+  margin-top: 0.25rem;
+}
+
+.addRow:hover {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+}
+
+.addButtons {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.addBtn {
+  padding: 0.5rem 1rem;
+  border: 1px dashed var(--color-border);
+  border-radius: var(--radius);
+  background: var(--color-surface);
+  font-size: 0.875rem;
+  color: var(--color-text-muted);
+}
+
+.addBtn:hover {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+}

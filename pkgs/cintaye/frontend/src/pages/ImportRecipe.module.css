@@ -1,0 +1,254 @@
+.container {
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.heading {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 0.25rem;
+}
+
+.hint {
+  color: var(--color-text-muted);
+  margin-bottom: 1.5rem;
+  font-size: 0.9375rem;
+}
+
+.labelHint {
+  font-weight: 400;
+  color: var(--color-text-muted);
+  font-size: 0.8125rem;
+}
+
+.tabs {
+  display: flex;
+  gap: 0;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  margin-bottom: 1.25rem;
+  width: fit-content;
+}
+
+.tab {
+  padding: 0.5rem 1.25rem;
+  background: var(--color-surface);
+  border: none;
+  font-size: 0.875rem;
+  color: var(--color-text-muted);
+  border-right: 1px solid var(--color-border);
+}
+
+.tab:last-child {
+  border-right: none;
+}
+
+.tab:hover {
+  background: #f7f7f5;
+  color: var(--color-text);
+}
+
+.tab.active {
+  background: var(--color-primary);
+  color: white;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.input {
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  outline: none;
+  background: var(--color-surface);
+}
+
+.input:focus {
+  border-color: var(--color-primary);
+}
+
+.textarea {
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  outline: none;
+  resize: vertical;
+  font-family: monospace;
+  font-size: 0.8125rem;
+  background: var(--color-surface);
+}
+
+.textarea:focus {
+  border-color: var(--color-primary);
+}
+
+.error {
+  color: var(--color-danger);
+  font-size: 0.875rem;
+}
+
+.btnPrimary {
+  align-self: flex-start;
+  padding: 0.5rem 1.25rem;
+  background: var(--color-primary);
+  color: white;
+  border: none;
+  border-radius: var(--radius);
+  font-size: 0.9375rem;
+  font-weight: 500;
+}
+
+.btnPrimary:hover:not(:disabled) {
+  background: var(--color-primary-hover);
+}
+
+.btnPrimary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.btnOutline {
+  padding: 0.5rem 1.25rem;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  font-size: 0.9375rem;
+  color: var(--color-text);
+}
+
+.btnOutline:hover {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+}
+
+.preview {
+  margin-top: 2rem;
+  padding: 1.25rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  background: var(--color-surface);
+}
+
+.previewTitle {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 0.375rem;
+}
+
+.previewDesc {
+  color: var(--color-text-muted);
+  font-size: 0.9375rem;
+  margin-bottom: 0.75rem;
+}
+
+.previewMeta {
+  display: flex;
+  gap: 1rem;
+  font-size: 0.875rem;
+  color: var(--color-text-muted);
+  margin-bottom: 0.75rem;
+}
+
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.375rem;
+  margin-bottom: 1rem;
+}
+
+.tag {
+  background: #f0f0ec;
+  color: var(--color-text-muted);
+  padding: 0.1rem 0.5rem;
+  border-radius: 999px;
+  font-size: 0.8125rem;
+}
+
+.previewActions {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.results {
+  margin-top: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.resultItem {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  border-radius: var(--radius);
+  border: 1px solid;
+}
+
+.resultSuccess {
+  border-color: #a5d6a7;
+  background: #f1f8f2;
+}
+
+.resultError {
+  border-color: #fca5a5;
+  background: #fff8f8;
+}
+
+.resultIcon {
+  font-size: 0.875rem;
+  font-weight: 700;
+  flex-shrink: 0;
+  margin-top: 0.1rem;
+}
+
+.resultSuccess .resultIcon {
+  color: var(--color-primary);
+}
+
+.resultError .resultIcon {
+  color: var(--color-danger);
+}
+
+.resultBody {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  min-width: 0;
+}
+
+.resultTitle {
+  font-weight: 500;
+  color: var(--color-text);
+  text-decoration: none;
+  font-size: 0.9375rem;
+}
+
+.resultTitle:hover {
+  color: var(--color-primary);
+  text-decoration: underline;
+}
+
+.resultUrl {
+  font-size: 0.8125rem;
+  color: var(--color-text-muted);
+  word-break: break-all;
+}
+
+.resultErrorMsg {
+  font-size: 0.8125rem;
+  color: var(--color-danger);
+}

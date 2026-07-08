@@ -1,3 +1,6 @@
 /result
 /pkgs/prebuilt-openwrt/*
 *.qcow2
+/**/node_modules
+/pkgs/cintaye/frontend/data/*
+/pkgs/cintaye/data/*
