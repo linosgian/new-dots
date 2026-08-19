@@ -28,6 +28,21 @@
   font-size: 0.875rem;
 }
 
+.themeToggle {
+  background: none;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  padding: 0.2rem 0.5rem;
+  font-size: 1rem;
+  color: var(--color-text-muted);
+  line-height: 1;
+}
+
+.themeToggle:hover {
+  border-color: var(--color-text-muted);
+  color: var(--color-text);
+}
+
 .logoutBtn {
   background: none;
   border: 1px solid var(--color-border);

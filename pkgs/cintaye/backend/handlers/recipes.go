@@ -62,10 +62,11 @@ func (h *RecipeHandler) List(w http.ResponseWriter, r *http.Request) {
 	tag := r.URL.Query().Get("tag")
 
 	rows, err := h.db.QueryContext(r.Context(), `
-		SELECT r.id, r.household_id, r.title, r.description,
+		SELECT r.id, r.household_id, hh.name, r.title, r.description,
 		       r.prep_time_minutes, r.cook_time_minutes, r.total_time_minutes,
 		       r.servings, r.image_path, r.source_url, r.created_by, r.created_at, r.updated_at
 		FROM recipes r
+		JOIN households hh ON hh.id = r.household_id
 		WHERE (
 			r.household_id = (
 				SELECT household_id FROM household_members WHERE user_id = ? ORDER BY ROWID LIMIT 1
@@ -91,12 +92,21 @@ func (h *RecipeHandler) List(w http.ResponseWriter, r *http.Request) {
 
 	recipes := []models.Recipe{}
 	for rows.Next() {
-		r, err := scanRecipeRow(rows)
-		if err != nil {
+		var rec models.Recipe
+		var imagePath, sourceURL, description sql.NullString
+		if err := rows.Scan(
+			&rec.ID, &rec.HouseholdID, &rec.HouseholdName, &rec.Title, &description,
+			&rec.PrepTimeMinutes, &rec.CookTimeMinutes, &rec.TotalTimeMinutes,
+			&rec.Servings, &imagePath, &sourceURL,
+			&rec.CreatedBy, &rec.CreatedAt, &rec.UpdatedAt,
+		); err != nil {
 			jsonError(w, "internal error", http.StatusInternalServerError)
 			return
 		}
-		recipes = append(recipes, r)
+		rec.Description = description.String
+		rec.ImagePath = imagePath.String
+		rec.SourceURL = sourceURL.String
+		recipes = append(recipes, rec)
 	}
 
 	// Attach tags to each recipe

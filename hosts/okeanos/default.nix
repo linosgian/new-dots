@@ -13,6 +13,7 @@ in
     ./hardware-configuration.nix
     ../../blueprints/server.nix
     ../../modules/athinorama
+    ../../modules/cintaye/default.nix
   ];
   sops = {
     defaultSopsFile = ../../secrets/digitalocean/secrets.yaml;
@@ -54,6 +55,12 @@ in
   };
 
   security.acme.certs."cinema.lgian.com" = {
+    dnsProvider = "digitalocean";
+    dnsPropagationCheck = true;
+    environmentFile = config.sops.templates."acme-do-opts".path;
+  };
+
+  security.acme.certs."kitchen.lgian.com" = {
     dnsProvider = "digitalocean";
     dnsPropagationCheck = true;
     environmentFile = config.sops.templates."acme-do-opts".path;

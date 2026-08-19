@@ -12,10 +12,37 @@
   --color-text-muted: #6b7280;
   --color-primary: #2d6a4f;
   --color-primary-hover: #1b4332;
+  --color-on-primary: white;
   --color-danger: #dc2626;
   --color-danger-hover: #b91c1c;
+  --color-subtle: #f7f7f5;
+  --color-chip: #f0f0ec;
+  --color-success-bg: #e8f5e9;
+  --color-success-border: #a5d6a7;
+  --color-error-bg: #fef2f2;
+  --color-error-border: #fca5a5;
   --radius: 6px;
   --shadow: 0 1px 3px rgba(0,0,0,0.08);
+}
+
+[data-theme="dark"] {
+  --color-bg: #1c1c1a;
+  --color-surface: #252523;
+  --color-border: #3a3a38;
+  --color-text: #f0efec;
+  --color-text-muted: #9b9b95;
+  --color-primary: #52b788;
+  --color-primary-hover: #6ecf9f;
+  --color-on-primary: #1a2e22;
+  --color-danger: #f87171;
+  --color-danger-hover: #fca5a5;
+  --color-subtle: #1e1e1c;
+  --color-chip: #363634;
+  --color-success-bg: #192c1f;
+  --color-success-border: #2d6a4f;
+  --color-error-bg: #2c1515;
+  --color-error-border: #b45c5c;
+  --shadow: 0 1px 3px rgba(0,0,0,0.4);
 }
 
 body {
@@ -39,9 +66,11 @@ button {
   cursor: pointer;
   font-family: inherit;
   font-size: inherit;
+  color: inherit;
 }
 
 input, textarea, select {
   font-family: inherit;
   font-size: inherit;
+  color: inherit;
 }

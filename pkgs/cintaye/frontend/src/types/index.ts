@@ -43,6 +43,7 @@ export interface Section {
 export interface Recipe {
   id: number
   household_id: number
+  household_name?: string
   title: string
   description?: string
   prep_time_minutes?: number

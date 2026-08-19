@@ -1,4 +1,4 @@
-import { useState, useEffect, FormEvent, ChangeEvent } from 'react'
+import { useState, useEffect, useRef, FormEvent, ChangeEvent } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { recipesApi } from '../api/recipes'
@@ -59,10 +59,18 @@ export default function RecipeEdit() {
   const [form, setForm] = useState<RecipeRequest>(emptyForm)
   const [imageFile, setImageFile] = useState<File | null>(null)
   const [imagePreview, setImagePreview] = useState<string | null>(null)
+  const descRef = useRef<HTMLTextAreaElement>(null)
 
   useEffect(() => {
     if (existing) setForm(recipeToRequest(existing))
   }, [existing])
+
+  useEffect(() => {
+    const el = descRef.current
+    if (!el) return
+    el.style.height = 'auto'
+    el.style.height = el.scrollHeight + 'px'
+  }, [form.description])
 
   const set = (patch: Partial<RecipeRequest>) => setForm(f => ({ ...f, ...patch }))
 
@@ -126,13 +134,14 @@ export default function RecipeEdit() {
           </label>
 
           <label className={styles.label}>
-            Description
+            Description <span className={styles.hint}>Markdown supported</span>
             <textarea
+              ref={descRef}
               className={styles.textarea}
               value={form.description ?? ''}
               onChange={e => set({ description: e.target.value })}
-              rows={3}
               placeholder="Brief description"
+              rows={3}
             />
           </label>
 

@@ -101,7 +101,54 @@
 .tagActive {
   background: var(--color-primary);
   border-color: var(--color-primary);
-  color: white;
+  color: var(--color-on-primary);
+}
+
+.section {
+  margin-bottom: 2rem;
+}
+
+.sectionHeading {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  width: 100%;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-left: 4px solid var(--color-primary);
+  border-radius: var(--radius);
+  padding: 0.625rem 0.875rem;
+  margin-bottom: 1rem;
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--color-text);
+  text-align: left;
+  cursor: pointer;
+}
+
+.sectionHeading:hover {
+  border-color: var(--color-primary);
+  border-left-color: var(--color-primary);
+  color: var(--color-primary);
+}
+
+.sectionMeta {
+  font-size: 0.8125rem;
+  font-weight: 400;
+  color: var(--color-text-muted);
+}
+
+.chevron {
+  margin-left: auto;
+  font-size: 1.25rem;
+  line-height: 1;
+  transition: transform 0.2s ease;
+  transform: rotate(90deg);
+  color: var(--color-text-muted);
+}
+
+.chevronCollapsed {
+  transform: rotate(0deg);
 }
 
 .grid {

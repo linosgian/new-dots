@@ -16,6 +16,8 @@ export const householdsApi = {
 
   join: (code: string) => api.post<Household>('/api/households/join', { code }),
 
+  delete: (id: number) => api.delete<{ ok: string }>(`/api/households/${id}`),
+
   inviteInfo: (code: string) =>
     api.get<{ household_name: string }>(`/api/invites/${code}`),
 }

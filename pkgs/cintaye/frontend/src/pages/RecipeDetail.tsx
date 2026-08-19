@@ -5,6 +5,7 @@ import { recipesApi } from '../api/recipes'
 import { commentsApi } from '../api/comments'
 import ScaleControl from '../components/ScaleControl'
 import Avatar from '../components/Avatar'
+import Markdown from '../components/Markdown'
 import type { User } from '../types'
 import styles from './RecipeDetail.module.css'
 
@@ -121,7 +122,9 @@ export default function RecipeDetail() {
         )}
       </div>
 
-      {recipe.description && <p className={styles.description}>{recipe.description}</p>}
+      {recipe.description && (
+        <Markdown className={styles.description}>{recipe.description}</Markdown>
+      )}
 
       {(recipe.prep_time_minutes || recipe.cook_time_minutes || recipe.total_time_minutes || recipe.servings) && (
         <div className={styles.meta}>
@@ -181,7 +184,9 @@ export default function RecipeDetail() {
                 {sec.title && <h3 className={styles.subsection}>{sec.title}</h3>}
                 <ol className={styles.instructionList}>
                   {(sec.instructions ?? []).map(inst => (
-                    <li key={inst.id} className={styles.instruction}>{inst.body}</li>
+                    <li key={inst.id} className={styles.instruction}>
+                      <Markdown inline>{inst.body}</Markdown>
+                    </li>
                   ))}
                 </ol>
               </div>
@@ -210,7 +215,7 @@ export default function RecipeDetail() {
                 </button>
               )}
             </div>
-            <p className={styles.commentBody}>{c.body}</p>
+            <Markdown className={styles.commentBody}>{c.body}</Markdown>
           </div>
         ))}
         <form onSubmit={submitComment} className={styles.commentForm}>

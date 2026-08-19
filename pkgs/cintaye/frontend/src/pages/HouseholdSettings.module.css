@@ -59,13 +59,13 @@
 
 .householdBtn.active {
   border-color: var(--color-primary);
-  background: #e8f5e9;
+  background: var(--color-success-bg);
   color: var(--color-primary);
 }
 
 .ownerBadge {
   font-size: 0.75rem;
-  background: #e8f5e9;
+  background: var(--color-success-bg);
   color: var(--color-primary);
   padding: 0.1rem 0.4rem;
   border-radius: 999px;
@@ -97,7 +97,7 @@
   gap: 0.75rem;
   flex-wrap: wrap;
   padding: 0.625rem;
-  background: #f7f7f5;
+  background: var(--color-subtle);
   border-radius: var(--radius);
   border: 1px solid var(--color-border);
 }
@@ -156,7 +156,7 @@
 .btnPrimary {
   padding: 0.5rem 1.125rem;
   background: var(--color-primary);
-  color: white;
+  color: var(--color-on-primary);
   border: none;
   border-radius: var(--radius);
   font-size: 0.9375rem;
@@ -210,6 +210,69 @@
   align-items: center;
   justify-content: space-between;
   gap: 0.75rem;
+}
+
+.headerActions {
+  display: flex;
+  gap: 0.5rem;
+  flex-shrink: 0;
+}
+
+.btnDanger {
+  padding: 0.35rem 0.75rem;
+  border: 1px solid var(--color-danger);
+  border-radius: var(--radius);
+  font-size: 0.875rem;
+  color: var(--color-danger);
+  background: var(--color-surface);
+}
+
+.btnDanger:hover:not(:disabled) {
+  background: var(--color-danger);
+  color: white;
+}
+
+.btnDanger:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btnDangerSm {
+  margin-left: auto;
+  padding: 0.2rem 0.5rem;
+  border: 1px solid var(--color-danger);
+  border-radius: var(--radius);
+  font-size: 0.8125rem;
+  color: var(--color-danger);
+  background: none;
+}
+
+.btnDangerSm:hover:not(:disabled) {
+  background: var(--color-danger);
+  color: white;
+}
+
+.btnDangerSm:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.userList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+}
+
+.userRow {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  padding: 0.375rem 0;
+  font-size: 0.9375rem;
+}
+
+.userName {
+  font-weight: 500;
 }
 
 .renameForm {

@@ -88,7 +88,7 @@
   flex-wrap: wrap;
   margin-bottom: 1rem;
   padding: 0.875rem;
-  background: #f7f7f5;
+  background: var(--color-subtle);
   border-radius: var(--radius);
 }
 
@@ -116,7 +116,7 @@
 }
 
 .tag {
-  background: #f0f0ec;
+  background: var(--color-chip);
   color: var(--color-text-muted);
   padding: 0.2rem 0.625rem;
   border-radius: 999px;
@@ -254,8 +254,6 @@
 
 .commentBody {
   font-size: 0.9375rem;
-  line-height: 1.6;
-  white-space: pre-wrap;
 }
 
 .commentForm {
@@ -282,7 +280,7 @@
   align-self: flex-end;
   padding: 0.4rem 1rem;
   background: var(--color-primary);
-  color: white;
+  color: var(--color-on-primary);
   border: none;
   border-radius: var(--radius);
   font-size: 0.875rem;

@@ -41,7 +41,7 @@ in
     serverName = "kitchen.lgian.com";
     forceSSL = true;
     enableACME = false;
-    useACMEHost = "lgian.com";
+    useACMEHost = "kitchen.lgian.com";
     root = "${cintaye-frontend}";
     locations = {
       "/" = {

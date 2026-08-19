@@ -14,4 +14,8 @@ export const authApi = {
 
   updateMe: (data: Partial<Pick<User, 'show_other_households'>>) =>
     api.patch<User>('/api/users/me', data),
+
+  listUsers: () => api.get<User[]>('/api/users'),
+
+  deleteUser: (id: number) => api.delete<{ ok: string }>(`/api/users/${id}`),
 }

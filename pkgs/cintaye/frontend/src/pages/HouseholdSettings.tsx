@@ -3,6 +3,7 @@ import { useOutletContext } from 'react-router-dom'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { householdsApi } from '../api/households'
 import { authApi } from '../api/auth'
+import Avatar from '../components/Avatar'
 import type { User } from '../types'
 import styles from './HouseholdSettings.module.css'
 
@@ -71,6 +72,25 @@ export default function HouseholdSettings() {
   const toggleOtherHouseholds = useMutation({
     mutationFn: (val: boolean) => authApi.updateMe({ show_other_households: val }),
     onSuccess: updated => qc.setQueryData(['me'], updated),
+  })
+
+  const deleteHousehold = useMutation({
+    mutationFn: (id: number) => householdsApi.delete(id),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['households'] })
+      setSelectedHouseholdId(null)
+    },
+  })
+
+  const { data: allUsers = [] } = useQuery({
+    queryKey: ['users'],
+    queryFn: authApi.listUsers,
+    enabled: user.is_admin,
+  })
+
+  const deleteUser = useMutation({
+    mutationFn: (id: number) => authApi.deleteUser(id),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ['users'] }),
   })
 
   const inviteLink = generatedInvite
@@ -146,14 +166,28 @@ export default function HouseholdSettings() {
             ) : (
               <>
                 <h2 className={styles.cardTitle}>{currentHousehold.name}</h2>
-                {isOwner && (
-                  <button
-                    className={styles.btnGhost}
-                    onClick={() => { setIsRenaming(true); setRenameValue(currentHousehold.name) }}
-                  >
-                    Rename
-                  </button>
-                )}
+                <div className={styles.headerActions}>
+                  {isOwner && (
+                    <button
+                      className={styles.btnGhost}
+                      onClick={() => { setIsRenaming(true); setRenameValue(currentHousehold.name) }}
+                    >
+                      Rename
+                    </button>
+                  )}
+                  {(isOwner || user.is_admin) && (
+                    <button
+                      className={styles.btnDanger}
+                      onClick={() => {
+                        if (confirm(`Delete "${currentHousehold.name}"? This removes all its recipes permanently.`))
+                          deleteHousehold.mutate(currentHousehold.id)
+                      }}
+                      disabled={deleteHousehold.isPending}
+                    >
+                      Delete
+                    </button>
+                  )}
+                </div>
               </>
             )}
           </div>
@@ -240,6 +274,33 @@ export default function HouseholdSettings() {
               {createHousehold.isPending ? 'Creating…' : 'Create'}
             </button>
           </form>
+        </div>
+      )}
+
+      {user.is_admin && (
+        <div className={styles.card}>
+          <h2 className={styles.cardTitle}>Users</h2>
+          <div className={styles.userList}>
+            {allUsers.map(u => (
+              <div key={u.id} className={styles.userRow}>
+                <Avatar username={u.username} size="sm" />
+                <span className={styles.userName}>{u.username}</span>
+                {u.is_admin && <span className={styles.ownerBadge}>admin</span>}
+                {u.id !== user.id && (
+                  <button
+                    className={styles.btnDangerSm}
+                    onClick={() => {
+                      if (confirm(`Delete user "${u.username}"? This removes all their owned households and recipes.`))
+                        deleteUser.mutate(u.id)
+                    }}
+                    disabled={deleteUser.isPending}
+                  >
+                    Delete
+                  </button>
+                )}
+              </div>
+            ))}
+          </div>
         </div>
       )}
 

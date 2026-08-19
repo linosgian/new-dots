@@ -6,10 +6,12 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"net/http"
+	"strconv"
 	"time"
 
 	"cintaye/middleware"
 	"cintaye/models"
+	"github.com/go-chi/chi/v5"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -97,7 +99,7 @@ func (h *AuthHandler) Register(w http.ResponseWriter, r *http.Request) {
 	if isFirstUser {
 		hResult, err := h.db.ExecContext(r.Context(),
 			"INSERT INTO households (name, owner_id) VALUES (?, ?)",
-			req.Username+"'s household", userID,
+			req.Username, userID,
 		)
 		if err != nil {
 			jsonError(w, "internal error", http.StatusInternalServerError)
@@ -221,6 +223,75 @@ func (h *AuthHandler) UpdateMe(w http.ResponseWriter, r *http.Request) {
 		user.ShowOtherHouseholds = *req.ShowOtherHouseholds
 	}
 	jsonOK(w, user)
+}
+
+func (h *AuthHandler) ListUsers(w http.ResponseWriter, r *http.Request) {
+	user := middleware.UserFromCtx(r.Context())
+	if !user.IsAdmin {
+		jsonError(w, "forbidden", http.StatusForbidden)
+		return
+	}
+
+	rows, err := h.db.QueryContext(r.Context(),
+		"SELECT id, username, is_admin, show_other_households, created_at FROM users ORDER BY id",
+	)
+	if err != nil {
+		jsonError(w, "internal error", http.StatusInternalServerError)
+		return
+	}
+	defer rows.Close()
+
+	users := []models.User{}
+	for rows.Next() {
+		var u models.User
+		var isAdmin, showOther int
+		if err := rows.Scan(&u.ID, &u.Username, &isAdmin, &showOther, &u.CreatedAt); err != nil {
+			jsonError(w, "internal error", http.StatusInternalServerError)
+			return
+		}
+		u.IsAdmin = isAdmin == 1
+		u.ShowOtherHouseholds = showOther == 1
+		users = append(users, u)
+	}
+	jsonOK(w, users)
+}
+
+func (h *AuthHandler) DeleteUser(w http.ResponseWriter, r *http.Request) {
+	actor := middleware.UserFromCtx(r.Context())
+	if !actor.IsAdmin {
+		jsonError(w, "forbidden", http.StatusForbidden)
+		return
+	}
+
+	targetID, err := strconv.ParseInt(chi.URLParam(r, "id"), 10, 64)
+	if err != nil {
+		jsonError(w, "invalid id", http.StatusBadRequest)
+		return
+	}
+	if targetID == actor.ID {
+		jsonError(w, "cannot delete yourself", http.StatusBadRequest)
+		return
+	}
+
+	// Cascade: delete owned households (members, invites, recipes cascade from there),
+	// then memberships, sessions, comments, finally the user.
+	for _, q := range []string{
+		"DELETE FROM household_members WHERE household_id IN (SELECT id FROM households WHERE owner_id = ?)",
+		"DELETE FROM household_invites WHERE household_id IN (SELECT id FROM households WHERE owner_id = ?)",
+		"DELETE FROM recipes WHERE household_id IN (SELECT id FROM households WHERE owner_id = ?)",
+		"DELETE FROM households WHERE owner_id = ?",
+		"DELETE FROM household_members WHERE user_id = ?",
+		"DELETE FROM sessions WHERE user_id = ?",
+		"DELETE FROM comments WHERE user_id = ?",
+		"DELETE FROM users WHERE id = ?",
+	} {
+		if _, err := h.db.ExecContext(r.Context(), q, targetID); err != nil {
+			jsonError(w, "internal error", http.StatusInternalServerError)
+			return
+		}
+	}
+
+	jsonOK(w, map[string]string{"ok": "true"})
 }
 
 func newSessionID() (string, error) {

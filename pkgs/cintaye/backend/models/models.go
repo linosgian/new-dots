@@ -33,6 +33,7 @@ type HouseholdInvite struct {
 type Recipe struct {
 	ID               int64      `json:"id"`
 	HouseholdID      int64      `json:"household_id"`
+	HouseholdName    string     `json:"household_name,omitempty"`
 	Title            string     `json:"title"`
 	Description      string     `json:"description"`
 	PrepTimeMinutes  *int       `json:"prep_time_minutes,omitempty"`

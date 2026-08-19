@@ -45,7 +45,7 @@
 }
 
 .tab:hover {
-  background: #f7f7f5;
+  background: var(--color-subtle);
   color: var(--color-text);
 }
 
@@ -104,7 +104,7 @@
   align-self: flex-start;
   padding: 0.5rem 1.25rem;
   background: var(--color-primary);
-  color: white;
+  color: var(--color-on-primary);
   border: none;
   border-radius: var(--radius);
   font-size: 0.9375rem;
@@ -170,7 +170,7 @@
 }
 
 .tag {
-  background: #f0f0ec;
+  background: var(--color-chip);
   color: var(--color-text-muted);
   padding: 0.1rem 0.5rem;
   border-radius: 999px;
@@ -199,13 +199,13 @@
 }
 
 .resultSuccess {
-  border-color: #a5d6a7;
-  background: #f1f8f2;
+  border-color: var(--color-success-border);
+  background: var(--color-success-bg);
 }
 
 .resultError {
-  border-color: #fca5a5;
-  background: #fff8f8;
+  border-color: var(--color-error-border);
+  background: var(--color-error-bg);
 }
 
 .resultIcon {

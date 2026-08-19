@@ -15,7 +15,7 @@
   align-items: center;
   gap: 0.5rem;
   padding: 0.5rem 0.75rem;
-  background: #f7f7f5;
+  background: var(--color-subtle);
   border-bottom: 1px solid var(--color-border);
 }
 
@@ -118,7 +118,7 @@
   height: 24px;
   border-radius: 50%;
   background: var(--color-primary);
-  color: white;
+  color: var(--color-on-primary);
   font-size: 0.75rem;
   font-weight: 600;
   display: flex;

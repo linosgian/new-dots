@@ -14,7 +14,7 @@
   display: inline-flex;
   align-items: center;
   gap: 0.25rem;
-  background: #e8f5e9;
+  background: var(--color-success-bg);
   color: var(--color-primary);
   padding: 0.1rem 0.5rem;
   border-radius: 999px;

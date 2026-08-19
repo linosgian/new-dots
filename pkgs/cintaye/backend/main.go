@@ -64,7 +64,11 @@ func main() {
 			r.Post("/households/{id}/invite", household.GenerateInvite)
 			r.Get("/households/{id}/members", household.Members)
 			r.Patch("/households/{id}", household.Rename)
+			r.Delete("/households/{id}", household.Delete)
 			r.Post("/households/join", household.Join)
+
+			r.Get("/users", auth.ListUsers)
+			r.Delete("/users/{id}", auth.DeleteUser)
 
 			r.Get("/recipes", recipe.List)
 			r.Post("/recipes", recipe.Create)

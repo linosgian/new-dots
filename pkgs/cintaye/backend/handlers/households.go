@@ -259,6 +259,46 @@ func (h *HouseholdHandler) Rename(w http.ResponseWriter, r *http.Request) {
 	jsonOK(w, map[string]any{"id": hhID, "name": req.Name})
 }
 
+func (h *HouseholdHandler) Delete(w http.ResponseWriter, r *http.Request) {
+	user := middleware.UserFromCtx(r.Context())
+	hhID, err := strconv.ParseInt(chi.URLParam(r, "id"), 10, 64)
+	if err != nil {
+		jsonError(w, "invalid id", http.StatusBadRequest)
+		return
+	}
+
+	var ownerID int64
+	if err := h.db.QueryRowContext(r.Context(),
+		"SELECT owner_id FROM households WHERE id = ?", hhID,
+	).Scan(&ownerID); err == sql.ErrNoRows {
+		jsonError(w, "not found", http.StatusNotFound)
+		return
+	} else if err != nil {
+		jsonError(w, "internal error", http.StatusInternalServerError)
+		return
+	}
+
+	if ownerID != user.ID && !user.IsAdmin {
+		jsonError(w, "forbidden", http.StatusForbidden)
+		return
+	}
+
+	// Manually cascade what the schema doesn't cascade.
+	for _, q := range []string{
+		"DELETE FROM household_members WHERE household_id = ?",
+		"DELETE FROM household_invites WHERE household_id = ?",
+		"DELETE FROM recipes WHERE household_id = ?",
+		"DELETE FROM households WHERE id = ?",
+	} {
+		if _, err := h.db.ExecContext(r.Context(), q, hhID); err != nil {
+			jsonError(w, "internal error", http.StatusInternalServerError)
+			return
+		}
+	}
+
+	jsonOK(w, map[string]string{"ok": "true"})
+}
+
 // InviteInfo is a public endpoint — no auth required — so the register page
 // can show the household name before the user creates their account.
 func (h *HouseholdHandler) InviteInfo(w http.ResponseWriter, r *http.Request) {

@@ -7,7 +7,7 @@ pkgs.buildNpmPackage {
 
   # Update this by building once with lib.fakeHash, then substituting the
   # hash printed in the error.
-  npmDepsHash = "sha256-INesVZlda8tTgMzUc2M2yLbi6OoqZz3MAPyDu8rCppo=";
+  npmDepsHash = "sha256-AXKFhV2d+ekL8khxZCFK580p2i0eb16D234rDXNIUnw=";
 
   # npm run build → tsc -b && vite build → dist/
   installPhase = ''
