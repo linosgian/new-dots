@@ -72,6 +72,10 @@
           "okeanos" = {
             hostname = "snf-76883.ok-kno.grnetcloud.net";
           };
+          "lte" = {
+            hostname = "192.168.4.1";
+            user = "root";
+          };
           "ap" = {
             hostname = "ap.lgian.com";
             user = "root";
