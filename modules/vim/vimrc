@@ -140,15 +140,47 @@
 
 	" autocmd BufWritePre * :call TrimWhitespace()
 
-	" Generates a github permalink out of the current file + commit (HEAD)
-	" + current line number
-	" TODO: Make this work for https:// origins also
-	" TODO: Add the ability to mark text in visual mode and create a
-	" block-permalink out of it
-	function! RemoteURL()
-	    let result = execute('GitHubURL')
-	    call system('wl-copy', result)  " Copy to Wayland clipboard
-	    echo "Copied to clipboard: " . result
+	" Generates a permalink for the current file+commit at the cursor line (or
+	" visual selection). Works with SSH and HTTPS remotes; falls back to origin
+	" when no upstream is set.
+	function! RemoteURL() range
+	    let git_root = system('git rev-parse --show-toplevel 2>/dev/null')[:-2]
+	    if v:shell_error | echo "Not in a git repository" | return | endif
+
+	    let commit = system('git rev-parse HEAD 2>/dev/null')[:-2]
+	    if v:shell_error | echo "Could not resolve HEAD" | return | endif
+
+	    " Prefer the tracking branch's remote; fall back to origin.
+	    let remote = 'origin'
+	    let tracking = system('git rev-parse --abbrev-ref --symbolic-full-name @{u} 2>/dev/null')[:-2]
+	    if !v:shell_error && tracking =~# '/'
+	        let remote = split(tracking, '/')[0]
+	    endif
+
+	    let remote_url = system('git remote get-url ' . shellescape(remote) . ' 2>/dev/null')[:-2]
+	    if v:shell_error | echo "No remote URL for " . remote | return | endif
+
+	    " Normalise SSH → HTTPS: git@host:user/repo.git → https://host/user/repo
+	    let remote_url = substitute(remote_url, '\.git$', '', '')
+	    let remote_url = substitute(remote_url, '^git@\([^:]\+\):\(.\+\)$', 'https://\1/\2', '')
+
+	    let filepath = system('git ls-files --full-name ' . shellescape(expand('%:p')) . ' 2>/dev/null')[:-2]
+	    if filepath ==# ''
+	        let filepath = substitute(expand('%:p'), git_root . '/', '', '')
+	    endif
+
+	    let url = remote_url . '/blob/' . commit . '/' . filepath
+
+	    if a:firstline == a:lastline
+	        let url .= '#L' . a:firstline
+	    elseif remote_url =~# 'github\.com'
+	        let url .= '#L' . a:firstline . '-L' . a:lastline
+	    else
+	        let url .= '#L' . a:firstline . '-' . a:lastline
+	    endif
+
+	    call system('wl-copy', url)
+	    echo "Copied: " . url
 	endfunction
 
 
@@ -394,7 +426,8 @@
     map <C-p> :Files <CR>
     map <C-g> :FindF <CR>
     map <C-e> :History<CR>
-    noremap <leader>u :call RemoteURL()<CR>
+    noremap  <leader>u :call RemoteURL()<CR>
+    vnoremap <leader>u :call RemoteURL()<CR>
 
     " Start/End-of-line
     noremap H ^
