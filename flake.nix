@@ -9,6 +9,8 @@
     home-manager.url = "github:nix-community/home-manager/release-26.05";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
     sops-nix.url = "github:Mic92/sops-nix";
+    strovilos.url = "github:linosgian/strovilos";
+    strovilos.flake = false;
     disko.url = "github:nix-community/disko";
     disko.inputs.nixpkgs.follows = "nixpkgs";
     nixvirt = {
@@ -29,6 +31,7 @@
       unstable,
       nixpkgs-master,
       sops-nix,
+      strovilos,
       ...
     }@inputs:
     let
@@ -55,9 +58,13 @@
         };
         headscale = nixpkgs.lib.nixosSystem {
           inherit system;
-          specialArgs = { inherit self unstablePkgs; };
+          specialArgs = {
+            inherit self unstablePkgs;
+            strovilosSrc = strovilos;
+          };
           modules = [
             ./hosts/headscale
+            sops-nix.nixosModules.sops
           ];
         };
         dell = nixpkgs.lib.nixosSystem {

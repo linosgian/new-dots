@@ -5,6 +5,7 @@ keys:
   - &dell age1fa7px4pdcuat3r62dlkxwt5y2ge659sk39fyaxpqxmdtfyzmvgmq9as0gm
   - &xps age1jsef35sd02lahpyhy8pj4h4g5y895jmefpjc6yrkcw5vwzukeavqd63nz9
   - &okeanos age1t6nrlhnxg52ef7pux47flzcqq8uvegmmnzq72dxe3qmd42vzju6qfp37ap
+  - &headscale age1tx6l949gl04pl2tgvkg8dyxckhq20lxll500s3rt4u88qzx8mv3qaheu5h
 creation_rules:
   - path_regex: secrets/ntoulapa/secrets.yaml
     key_groups:
@@ -28,3 +29,10 @@ creation_rules:
       - *dell
       - *xps
       - *okeanos
+  - path_regex: secrets/headscale/secrets.yaml
+    key_groups:
+    - age:
+      - *desktop
+      - *dell
+      - *xps
+      - *headscale
