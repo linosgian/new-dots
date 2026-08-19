@@ -16,6 +16,9 @@
     [credential]
         helper = cache --timeout 21600
         helper = oauth
+    [credential "https://gitlab.dcm.gg"]
+      helper = ""
+      helper = store
   '';
   programs.git = {
     enable = true;
@@ -27,8 +30,8 @@
     settings = {
       credential = {
         helper = [
-          "cache --timeout 21600"
-          "oauth -device"
+          ""
+          "store"
         ];
       };
       core = {
