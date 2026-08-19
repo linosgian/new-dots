@@ -4,3 +4,4 @@
 /**/node_modules
 /pkgs/cintaye/frontend/data/*
 /pkgs/cintaye/data/*
+/**/schedule_cache.json

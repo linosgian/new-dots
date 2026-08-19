@@ -865,6 +865,11 @@
 	    overflow: hidden;
 	    padding: 0;  /* remove padding so image goes edge-to-edge */
         }
+
+	a.movie-item {
+	    color: inherit;
+	    text-decoration: none;
+	}
 	.movie-header,
 	.movie-actions,
 	.showtimes {
@@ -1427,6 +1432,81 @@
                 display: none;
             }
         }
+
+        .hero-header-row {
+            display: flex;
+            gap: 20px;
+            align-items: flex-start;
+            margin-bottom: 20px;
+        }
+
+        .hero-poster-wrapper {
+            width: 160px;
+            flex-shrink: 0;
+            border-radius: 10px;
+            overflow: hidden;
+            background: #0e0d0d;
+        }
+
+        .hero-poster-wrapper img {
+            width: 100%;
+            height: auto;
+            display: block;
+            object-fit: cover;
+            object-position: center top;
+        }
+
+        .hero-poster-placeholder {
+            width: 160px;
+            height: 225px;
+            flex-shrink: 0;
+            background: rgba(102, 126, 234, 0.1);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2em;
+            color: rgba(102, 126, 234, 0.3);
+        }
+
+        @media (max-width: 768px) {
+            .hero-header-row { gap: 14px; }
+            .hero-poster-wrapper { width: 110px; }
+            .hero-poster-placeholder { width: 110px; height: 155px; }
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%) translateY(10px);
+            background: rgba(26, 26, 46, 0.97);
+            border: 1px solid rgba(102, 126, 234, 0.5);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 12px;
+            opacity: 0;
+            transition: opacity 0.3s ease, transform 0.3s ease;
+            z-index: 9999;
+            pointer-events: none;
+            font-size: 0.95em;
+            white-space: nowrap;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+        }
+
+        .toast.visible {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        @keyframes pageFadeIn {
+            from { opacity: 0; }
+            to   { opacity: 1; }
+        }
+
+        body {
+            animation: pageFadeIn 0.25s ease;
+        }
     </style>
 </head>
 <body>
@@ -1533,6 +1613,7 @@
         let selectedAreas = new Set();
 	let movieDataStore = new Map();
 	let movieDataCounter = 0;
+	let lastFetchedDate = null;
 	let currentCinemaFilter = null;
 	let currentScreeningTime = null;
         const AREAS_STORAGE_KEY = 'cinema_selected_areas';
@@ -1566,9 +1647,9 @@
             datePicker.value = formatDateForAPI(currentDate);
         }
 
-        function updateURL() {
+        function updateURL(replace = false) {
             if (isNavigatingHistory) return;
-            
+
             const params = new URLSearchParams();
             params.set('date', formatDateForAPI(currentDate));
             if (currentCinemaFilter) {
@@ -1584,14 +1665,19 @@
             } else {
                 path = '/';
             }
-            
+
             const newURL = path + '?' + params.toString();
-            window.history.pushState({
+            const state = {
                 date: formatDateForAPI(currentDate),
                 movie: currentMovieFilter,
                 cinema: currentCinemaFilter,
                 time: currentScreeningTime
-            }, '', newURL);
+            };
+            if (replace) {
+                window.history.replaceState(state, '', newURL);
+            } else {
+                window.history.pushState(state, '', newURL);
+            }
         }
 
         function loadFromURL() {
@@ -1644,9 +1730,14 @@
             }
             
             updateDateDisplay();
-            fetchSchedule().then(() => {
+            if (allScheduleData && lastFetchedDate === formatDateForAPI(currentDate)) {
+                renderSchedule(allScheduleData);
                 isNavigatingHistory = false;
-            });
+            } else {
+                fetchSchedule().then(() => {
+                    isNavigatingHistory = false;
+                });
+            }
         });
 
         function changeDate(days) {
@@ -1661,6 +1752,7 @@
 
         function goToToday() {
             currentDate = new Date();
+            currentMovieFilter = null;
             currentCinemaFilter = null;
             currentScreeningTime = null;
             updateDateDisplay();
@@ -1963,6 +2055,65 @@
             renderSchedule(allScheduleData);
         }
 
+        function navigateToMovie(event, url) {
+            if (event.ctrlKey || event.metaKey) return;
+            event.preventDefault();
+            window.location.href = url;
+        }
+
+
+        function youtubeEmbedURL(watchURL) {
+            try {
+                const v = new URL(watchURL).searchParams.get('v');
+                return v ? 'https://www.youtube.com/embed/' + v : null;
+            } catch { return null; }
+        }
+
+        function trailerHTML(movie) {
+            if (!movie.trailer_url) return '';
+            const embedURL = youtubeEmbedURL(movie.trailer_url);
+            if (!embedURL) return '';
+            return `
+                <div style="margin-bottom: 20px; border-radius: 12px; overflow: hidden; aspect-ratio: 16/9;">
+                    <iframe
+                        src="${embedURL}"
+                        style="width:100%; height:100%; border:none; display:block;"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        allowfullscreen
+                        loading="lazy"
+                    ></iframe>
+                </div>`;
+        }
+
+        function copyScreeningLink(event, cinema, time, movieTitle, slug) {
+            const params = new URLSearchParams();
+            params.set('date', formatDateForAPI(currentDate));
+            params.set('cinema', cinema);
+            params.set('time', time);
+            const path = '/movie/' + slug + '?' + params.toString();
+            const url = window.location.origin + path;
+            navigator.clipboard.writeText(url).catch(() => {});
+            if (event.ctrlKey || event.metaKey) {
+                window.open(path, '_blank');
+                return;
+            }
+            window.location.href = path;
+        }
+
+        function showToast(message) {
+            const existing = document.querySelector('.toast');
+            if (existing) existing.remove();
+            const toast = document.createElement('div');
+            toast.className = 'toast';
+            toast.textContent = message;
+            document.body.appendChild(toast);
+            requestAnimationFrame(() => requestAnimationFrame(() => toast.classList.add('visible')));
+            setTimeout(() => {
+                toast.classList.remove('visible');
+                setTimeout(() => toast.remove(), 300);
+            }, 2500);
+        }
+
         function updateFilterUI() {
             const filterBanner = document.getElementById('filterBanner');
             const movieHero = document.getElementById('movieHero');
@@ -1995,35 +2146,12 @@
                     // Update filter banner
                     document.getElementById('filterMovieTitle').textContent = movieData.greek_title || movieData.title;
                     document.getElementById('filterMovieSubtitle').textContent = movieData.original_title ? `(${movieData.original_title})` : '';
-                    filterBanner.classList.add('active');
                     
                     let heroHTML = '';
 
                     if (currentCinemaFilter && currentScreeningTime && cinemaInfo) {
                         // Screening detail hero
                         heroHTML = `
-${movieData.image_url ? `
-    <div style="
-        width: 100%;
-        border-radius: 14px;
-        overflow: hidden;
-        margin-bottom: 20px;
-        background: rgba(0,0,0,0.3);
-    ">
-        <img 
-            src="${movieData.image_url}" 
-            alt="${movieData.greek_title || movieData.title}"
-            style="
-                width: 100%;
-                height: auto;
-                display: block;
-                max-height: 400px;
-                object-fit: cover;
-                object-position: center top;
-            "
-        >
-    </div>
-` : ''}
                             <div class="screening-info-bar">
                                 <div class="screening-info-item">
                                     <div class="screening-info-label">Κινηματογράφος</div>
@@ -2041,60 +2169,41 @@ ${movieData.image_url ? `
                                     <div class="screening-info-label">Ώρα</div>
                                     <div class="screening-info-value time">${currentScreeningTime}</div>
                                 </div>
-                            </div>
-                            <div class="movie-hero-title">${movieData.greek_title || movieData.title}</div>
-                            ${movieData.original_title ? `<div class="movie-hero-subtitle">(${movieData.original_title})</div>` : ''}
-                            ${movieData.description ? `<div class="movie-hero-description">${movieData.description}</div>` : ''}
-                            <div class="movie-hero-meta">
-                                ${movieData.year ? `
-                                    <div class="hero-meta-item">
-                                        <div class="hero-meta-label">Έτος</div>
-                                        <div class="hero-meta-value">${movieData.year}</div>
-                                    </div>
-                                ` : ''}
-                                ${movieData.duration ? `
-                                    <div class="hero-meta-item">
-                                        <div class="hero-meta-label">Διάρκεια</div>
-                                        <div class="hero-meta-value">${movieData.duration} λεπτά</div>
-                                    </div>
-                                ` : ''}
-                                ${movieData.rating ? `
-                                    <div class="hero-meta-item">
-                                        <div class="hero-meta-label">Βαθμολογία</div>
-                                        <div class="hero-meta-value">⭐ ${movieData.rating}</div>
-                                    </div>
-                                ` : ''}
-                                ${movieData.genre ? `
-                                    <div class="hero-meta-item">
-                                        <div class="hero-meta-label">Είδος</div>
-                                        <div class="hero-meta-value">${movieData.genre}</div>
-                                    </div>
-                                ` : ''}
-                                ${movieData.director ? `
-                                    <div class="hero-meta-item">
-                                        <div class="hero-meta-label">Σκηνοθεσία</div>
-                                        <div class="hero-meta-value">${movieData.director}</div>
-                                    </div>
-                                ` : ''}
-                                ${movieData.cast && movieData.cast.length > 0 ? `
-                                    <div class="hero-meta-item" style="width: 100%;">
-                                        <div class="hero-meta-label">Ηθοποιοί</div>
-                                        <div class="movie-cast-list" style="margin-top: 6px;">
-                                            ${movieData.cast.map(name => `<span class="cast-chip">${name}</span>`).join('')}
-                                        </div>
-                                    </div>
-                                ` : ''}
                                 ${cinemaInfo.cinema.cinema_address ? `
-                                    <div class="hero-meta-item">
-                                        <div class="hero-meta-label">Διεύθυνση</div>
-                                        <div class="hero-meta-value">
-                                            <a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(cinemaInfo.cinema.cinema_address)}" target="_blank" rel="noopener noreferrer" style="color: #b8c5f0; text-decoration: none;">
-                                                ${cinemaInfo.cinema.cinema_address}
-                                            </a>
-                                        </div>
+                                <div class="screening-info-item">
+                                    <div class="screening-info-label">Διεύθυνση</div>
+                                    <div class="screening-info-value" style="font-size:1em;">
+                                        <a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(cinemaInfo.cinema.cinema_address)}" target="_blank" rel="noopener noreferrer" style="color:#b8c5f0;text-decoration:none;">
+                                            ${cinemaInfo.cinema.cinema_address}
+                                        </a>
                                     </div>
+                                </div>
                                 ` : ''}
                             </div>
+                            <div class="hero-header-row">
+                                ${movieData.image_url
+                                    ? `<div class="hero-poster-wrapper"><img src="${movieData.image_url}" alt="${movieData.greek_title || movieData.title}" loading="lazy"></div>`
+                                    : `<div class="hero-poster-placeholder">🎬</div>`}
+                                <div style="flex:1;min-width:0;">
+                                    <div class="movie-hero-title">${movieData.greek_title || movieData.title}</div>
+                                    ${movieData.original_title ? `<div class="movie-hero-subtitle">(${movieData.original_title})</div>` : ''}
+                                    <div class="movie-hero-meta" style="margin-top:12px;">
+                                        ${movieData.year ? `<div class="hero-meta-item"><div class="hero-meta-label">Έτος</div><div class="hero-meta-value">${movieData.year}</div></div>` : ''}
+                                        ${movieData.duration ? `<div class="hero-meta-item"><div class="hero-meta-label">Διάρκεια</div><div class="hero-meta-value">${movieData.duration} λεπτά</div></div>` : ''}
+                                        ${movieData.rating ? `<div class="hero-meta-item"><div class="hero-meta-label">Βαθμολογία</div><div class="hero-meta-value">⭐ ${movieData.rating}</div></div>` : ''}
+                                        ${movieData.genre ? `<div class="hero-meta-item"><div class="hero-meta-label">Είδος</div><div class="hero-meta-value">${movieData.genre}</div></div>` : ''}
+                                        ${movieData.director ? `<div class="hero-meta-item"><div class="hero-meta-label">Σκηνοθεσία</div><div class="hero-meta-value">${movieData.director}</div></div>` : ''}
+                                    </div>
+                                </div>
+                            </div>
+                            ${movieData.description ? `<div class="movie-hero-description">${movieData.description}</div>` : ''}
+                            ${movieData.cast && movieData.cast.length > 0 ? `
+                                <div class="movie-cast" style="margin-bottom:16px;">
+                                    <div class="movie-cast-label">Ηθοποιοί</div>
+                                    <div class="movie-cast-list">${movieData.cast.map(name => `<span class="cast-chip">${name}</span>`).join('')}</div>
+                                </div>
+                            ` : ''}
+                            ${trailerHTML(movieData)}
                             ${movieData.url ? `
                                 <div class="hero-actions">
                                     <a href="${movieData.url}" target="_blank" rel="noopener noreferrer" class="hero-link">
@@ -2109,74 +2218,31 @@ ${movieData.image_url ? `
                         // Normal movie hero
                         const uniqueTimes = [...new Set(allTimes)].sort();
                         heroHTML = `
-${movieData.image_url ? `
-    <div style="
-        width: 100%;
-        border-radius: 14px;
-        overflow: hidden;
-        margin-bottom: 25px;
-        background: rgba(0,0,0,0.3);
-    ">
-        <img 
-            src="${movieData.image_url}" 
-            alt="${movieData.greek_title || movieData.title}"
-            style="
-                width: 100%;
-                height: auto;
-                display: block;
-            "
-        >
-    </div>
-` : ''}
-                            <div class="movie-hero-title">${movieData.greek_title || movieData.title}</div>
-                            ${movieData.original_title ? `<div class="movie-hero-subtitle">(${movieData.original_title})</div>` : ''}
-                            ${movieData.description ? `<div class="movie-hero-description">${movieData.description}</div>` : ''}
-                            <div class="movie-hero-meta">
-                                ${movieData.year ? `
-                                    <div class="hero-meta-item">
-                                        <div class="hero-meta-label">Έτος</div>
-                                        <div class="hero-meta-value">${movieData.year}</div>
+                            <div class="hero-header-row">
+                                ${movieData.image_url
+                                    ? `<div class="hero-poster-wrapper"><img src="${movieData.image_url}" alt="${movieData.greek_title || movieData.title}" loading="lazy"></div>`
+                                    : `<div class="hero-poster-placeholder">🎬</div>`}
+                                <div style="flex:1;min-width:0;">
+                                    <div class="movie-hero-title">${movieData.greek_title || movieData.title}</div>
+                                    ${movieData.original_title ? `<div class="movie-hero-subtitle">(${movieData.original_title})</div>` : ''}
+                                    <div class="movie-hero-meta" style="margin-top:12px;">
+                                        ${movieData.year ? `<div class="hero-meta-item"><div class="hero-meta-label">Έτος</div><div class="hero-meta-value">${movieData.year}</div></div>` : ''}
+                                        ${movieData.duration ? `<div class="hero-meta-item"><div class="hero-meta-label">Διάρκεια</div><div class="hero-meta-value">${movieData.duration} λεπτά</div></div>` : ''}
+                                        ${movieData.rating ? `<div class="hero-meta-item"><div class="hero-meta-label">Βαθμολογία</div><div class="hero-meta-value">⭐ ${movieData.rating}</div></div>` : ''}
+                                        ${movieData.genre ? `<div class="hero-meta-item"><div class="hero-meta-label">Είδος</div><div class="hero-meta-value">${movieData.genre}</div></div>` : ''}
+                                        ${movieData.director ? `<div class="hero-meta-item"><div class="hero-meta-label">Σκηνοθεσία</div><div class="hero-meta-value">${movieData.director}</div></div>` : ''}
+                                        ${uniqueTimes.length > 0 ? `<div class="hero-meta-item"><div class="hero-meta-label">Προβολές</div><div class="hero-meta-value">${uniqueTimes.length}</div></div>` : ''}
                                     </div>
-                                ` : ''}
-                                ${movieData.duration ? `
-                                    <div class="hero-meta-item">
-                                        <div class="hero-meta-label">Διάρκεια</div>
-                                        <div class="hero-meta-value">${movieData.duration} λεπτά</div>
-                                    </div>
-                                ` : ''}
-                                ${movieData.rating ? `
-                                    <div class="hero-meta-item">
-                                        <div class="hero-meta-label">Βαθμολογία</div>
-                                        <div class="hero-meta-value">⭐ ${movieData.rating}</div>
-                                    </div>
-                                ` : ''}
-                                ${movieData.genre ? `
-                                    <div class="hero-meta-item">
-                                        <div class="hero-meta-label">Είδος</div>
-                                        <div class="hero-meta-value">${movieData.genre}</div>
-                                    </div>
-                                ` : ''}
-                                ${movieData.director ? `
-                                    <div class="hero-meta-item">
-                                        <div class="hero-meta-label">Σκηνοθεσία</div>
-                                        <div class="hero-meta-value">${movieData.director}</div>
-                                    </div>
-                                ` : ''}
-                                ${movieData.cast && movieData.cast.length > 0 ? ` 
-                                    <div class="hero-meta-item" style="width: 100%;">
-                                        <div class="hero-meta-label">Ηθοποιοί</div>
-                                        <div class="movie-cast-list" style="margin-top: 6px;">
-                                            ${movieData.cast.map(name => `<span class="cast-chip">${name}</span>`).join('')}
-                                        </div>
-                                    </div>
-                                ` : ''}     
-                                ${uniqueTimes.length > 0 ? `
-                                    <div class="hero-meta-item">
-                                        <div class="hero-meta-label">Συνολικές Προβολές</div>
-                                        <div class="hero-meta-value">${uniqueTimes.length} προβολές</div>
-                                    </div>
-                                ` : ''}
+                                </div>
                             </div>
+                            ${movieData.description ? `<div class="movie-hero-description">${movieData.description}</div>` : ''}
+                            ${movieData.cast && movieData.cast.length > 0 ? `
+                                <div class="movie-cast" style="margin-bottom:16px;">
+                                    <div class="movie-cast-label">Ηθοποιοί</div>
+                                    <div class="movie-cast-list">${movieData.cast.map(name => `<span class="cast-chip">${name}</span>`).join('')}</div>
+                                </div>
+                            ` : ''}
+                            ${trailerHTML(movieData)}
                             ${movieData.url ? `
                                 <div class="hero-actions">
                                     <a href="${movieData.url}" target="_blank" rel="noopener noreferrer" class="hero-link">
@@ -2392,7 +2458,7 @@ ${movieData.image_url ? `
                                 <div>
                                     <div class="cinema-name">
                                         <a href="${cinemaUrl}" target="_blank" rel="noopener noreferrer">
-                                            ${cinema.cinema_name} →
+                                            ${cinema.cinema_name}${cinema.cinema_summer ? ' ☀️' : ' ❄️'} →
                                         </a>
                                     </div>
                                     ${cinemaAddress ? `
@@ -2418,6 +2484,7 @@ sortedMovies.forEach(movieData => {
     movieDataStore.set(movieId, movieData);
 
     const movieTitleForFilter = displayTitle.replace(/'/g, "\\'");
+    const movieSlug = slugify(displayTitle);
 
     const posterHTML = movie.image_url
         ? `<img class="movie-poster" src="${movie.image_url}" alt="${displayTitle}" loading="lazy" onerror="this.parentElement.innerHTML='<div class=\\'movie-poster-placeholder\\'>🎬</div>'">`
@@ -2433,7 +2500,9 @@ sortedMovies.forEach(movieData => {
         : '';
 
 		areaHTML += `
-		    <div class="movie-item" onclick="event.preventDefault(); filterByMovie('${movieTitleForFilter}')">
+		    <a class="movie-item"
+		       href="/movie/${movieSlug}?date=${formatDateForAPI(currentDate)}"
+		       onclick="navigateToMovie(event, '/movie/${movieSlug}?date=${formatDateForAPI(currentDate)}')">
 			${posterHTML}
 			<div class="movie-header">
 			    <div class="movie-title">${displayTitle}</div>
@@ -2445,17 +2514,17 @@ sortedMovies.forEach(movieData => {
 			    </div>
 			</div>
 			<div class="movie-actions">
-			    <a href="#" class="details-link" onclick="event.stopPropagation(); event.preventDefault(); openMovieDetails(${movieId})">
+			    <button class="details-link" onclick="event.stopPropagation(); event.preventDefault(); openMovieDetails(${movieId})">
 				ℹ️ Λεπτομέρειες
-			    </a>
+			    </button>
 			</div>
 			<div class="showtimes">
 			    ${times.sort().map(time => {
 			        const cinemaEscaped = cinema.cinema_name.replace(/'/g, "\\'");
-			        return `<span class="showtime" onclick="event.stopPropagation(); selectScreening('${cinemaEscaped}', '${time}', '${movieTitleForFilter}')">${time}</span>`;
+			        return `<span class="showtime" title="Αντιγραφή συνδέσμου" onclick="event.stopPropagation(); event.preventDefault(); copyScreeningLink(event, '${cinemaEscaped}', '${time}', '${movieTitleForFilter}', '${movieSlug}')">${time}</span>`;
 			    }).join('')}
 			</div>
-		    </div>
+		    </a>
 		`;
 		});
                     areaHTML += `
@@ -2532,6 +2601,7 @@ sortedMovies.forEach(movieData => {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
                 const data = await response.json();
+                lastFetchedDate = formatDateForAPI(currentDate);
                 renderSchedule(data);
             } catch (error) {
                 console.error('Error fetching schedule:', error);
@@ -2548,7 +2618,7 @@ sortedMovies.forEach(movieData => {
         // Initialize
         loadAreaPreferences();
         loadFromURL();
-        updateURL();
+        updateURL(true);
         fetchSchedule();
         
         // Refresh every 5 minutes

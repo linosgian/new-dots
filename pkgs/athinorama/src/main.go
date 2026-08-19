@@ -3,6 +3,7 @@ package main
 import (
 	"crypto/md5"
 	"encoding/json"
+	"flag"
 	"fmt"
 	"html"
 	"io"
@@ -16,6 +17,9 @@ import (
 	"unicode"
 
 	"github.com/gocolly/colly/v2"
+	"golang.org/x/text/runes"
+	"golang.org/x/text/transform"
+	"golang.org/x/text/unicode/norm"
 )
 
 // ------------------ TYPES ------------------
@@ -32,6 +36,13 @@ const (
 	Saturday  DayOfWeek = "Σαβ"
 	Sunday    DayOfWeek = "Κυρ"
 )
+
+// normalizeGreek strips accents and lowercases a Greek string for fuzzy matching.
+func normalizeGreek(s string) string {
+	t := transform.Chain(norm.NFD, runes.Remove(runes.In(unicode.Mn)), norm.NFC)
+	result, _, _ := transform.String(t, strings.ToLower(s))
+	return result
+}
 
 // Screening represents a single movie screening
 type Screening struct {
@@ -55,6 +66,7 @@ type Movie struct {
 	ImageURL      string      `json:"image_url,omitempty"`
 	Rating        string      `json:"rating,omitempty"`
 	Description   string      `json:"description,omitempty"`
+	TrailerURL    string      `json:"trailer_url,omitempty"`
 	Screenings    []Screening `json:"screenings"`
 }
 
@@ -64,6 +76,7 @@ type Cinema struct {
 	Address string  `json:"address,omitempty"`
 	Phone   string  `json:"phone,omitempty"`
 	URL     string  `json:"url,omitempty"`
+	Summer  bool    `json:"summer"`
 	Movies  []Movie `json:"movies"`
 }
 
@@ -105,6 +118,7 @@ type CinemaTodayMovies struct {
 	CinemaName    string           `json:"cinema_name"`
 	CinemaURL     string           `json:"cinema_url"`
 	CinemaAddress string           `json:"cinema_address"`
+	CinemaSummer  bool             `json:"cinema_summer"`
 	Movies        []MovieWithTimes `json:"movies"`
 }
 
@@ -265,7 +279,7 @@ func normalizeDuration(raw string) string {
 	return num
 }
 
-func CrawlMovieDetails(movieURL string) (description, greekTitle, originalTitle, year, duration, genre, director, rating, imageURL string, cast []string, err error) {
+func CrawlMovieDetails(movieURL string) (description, greekTitle, originalTitle, year, duration, genre, director, rating, imageURL, trailerURL string, cast []string, err error) {
 	c := colly.NewCollector(
 		colly.AllowedDomains("www.athinorama.gr", "athinorama.gr"),
 	)
@@ -294,6 +308,30 @@ func CrawlMovieDetails(movieURL string) (description, greekTitle, originalTitle,
 		imageURL = regexp.MustCompile(`/\d+x\d+/`).ReplaceAllString(src, "/1200x630/")
 		if !strings.HasPrefix(imageURL, "http") {
 			imageURL = "https://www.athinorama.gr" + imageURL
+		}
+	})
+
+	// Static iframe embed (most reliable with colly)
+	c.OnHTML(`iframe[src*="youtube.com/embed/"]`, func(e *colly.HTMLElement) {
+		if trailerURL != "" {
+			return
+		}
+		src := e.Attr("src")
+		if idx := strings.LastIndex(src, "/embed/"); idx >= 0 {
+			vid := src[idx+7:]
+			if q := strings.Index(vid, "?"); q >= 0 {
+				vid = vid[:q]
+			}
+			if vid != "" {
+				trailerURL = "https://www.youtube.com/watch?v=" + vid
+			}
+		}
+	})
+
+	// Fallback: plain anchor link to YouTube watch page
+	c.OnHTML(`a[href*="youtube.com/watch"]`, func(e *colly.HTMLElement) {
+		if trailerURL == "" {
+			trailerURL = e.Attr("href")
 		}
 	})
 
@@ -349,6 +387,7 @@ func (cc *CinemaCrawler) Crawl() (*Schedule, error) {
 			Name:    strings.TrimSpace(e.ChildText("h2.item-title a")),
 			URL:     e.Request.AbsoluteURL(e.ChildAttr("h2.item-title a", "href")),
 			Address: strings.TrimSpace(e.ChildText("address")),
+			Summer:  strings.Contains(normalizeGreek(e.ChildText("div.tags")), "θερινο"),
 			Movies:  []Movie{},
 		}
 
@@ -362,7 +401,7 @@ func (cc *CinemaCrawler) Crawl() (*Schedule, error) {
 			}
 
 			// 🎯 FETCH EXTRA MOVIE DATA HERE
-			description, greekTitle, original, year, duration, genre, director, rating, imageURL, cast, err := CrawlMovieDetails(movieURL)
+			description, greekTitle, original, year, duration, genre, director, rating, imageURL, trailerURL, cast, err := CrawlMovieDetails(movieURL)
 			if err == nil {
 				movie.OriginalTitle = original
 				movie.Year = year
@@ -373,6 +412,7 @@ func (cc *CinemaCrawler) Crawl() (*Schedule, error) {
 				movie.Rating = rating
 				movie.Description = description
 				movie.ImageURL = imageURL
+				movie.TrailerURL = trailerURL
 				movie.Cast = cast
 			} else {
 				log.Println("Failed to fetch movie details:", err)
@@ -634,6 +674,7 @@ func (s *Schedule) GetScheduleForDate(targetDate time.Time) *TodaySchedule {
 			CinemaName:    cinema.Name,
 			CinemaURL:     cinema.URL,
 			CinemaAddress: cinema.Address,
+			CinemaSummer:  cinema.Summer,
 			Movies:        []MovieWithTimes{},
 		}
 
@@ -752,6 +793,7 @@ func runAllAreas(areas []string) {
 				CinemaName:    cinema.Name,
 				CinemaAddress: cinema.Address,
 				CinemaURL:     cinema.URL,
+				CinemaSummer:  cinema.Summer,
 				Movies:        []MovieWithTimes{},
 			}
 
@@ -894,6 +936,9 @@ func handleMoviePage(w http.ResponseWriter, r *http.Request) {
     <meta property="og:type" content="video.movie">
     <meta property="og:url" content="%s">
     <meta name="twitter:card" content="summary_large_image">
+    <style>
+        html, body { margin:0; padding:0; background: linear-gradient(135deg, #1a1a2e 0%%, #16213e 100%%); min-height:100vh; }
+    </style>
     <script>window.location.replace(%s);</script>
 </head>
 <body>
@@ -909,6 +954,32 @@ func handleMoviePage(w http.ResponseWriter, r *http.Request) {
 
 // Global variable to hold the latest schedule
 var latestSchedule *MultiAreaSchedule
+
+const scheduleCacheFile = "./schedule_cache.json"
+
+func saveScheduleCache(s *MultiAreaSchedule) {
+	data, err := json.Marshal(s)
+	if err != nil {
+		log.Printf("Failed to marshal schedule for cache: %v", err)
+		return
+	}
+	if err := os.WriteFile(scheduleCacheFile, data, 0644); err != nil {
+		log.Printf("Failed to write schedule cache: %v", err)
+	}
+}
+
+func loadScheduleCache() *MultiAreaSchedule {
+	data, err := os.ReadFile(scheduleCacheFile)
+	if err != nil {
+		return nil
+	}
+	var s MultiAreaSchedule
+	if err := json.Unmarshal(data, &s); err != nil {
+		log.Printf("Failed to parse schedule cache: %v", err)
+		return nil
+	}
+	return &s
+}
 
 const imageCacheDir = "./image_cache"
 
@@ -963,23 +1034,32 @@ func init() {
 }
 
 func main() {
-	areas, err := FetchCinemaAreas()
-	if err != nil {
-		log.Printf("Failed to fetch cinema areas: %v. Using fallback areas.", err)
-		// Fallback to hardcoded areas if fetch fails
-		areas = []Area{
-			{Slug: "marousi-_kifisia", Name: "ΜΑΡΟΥΣΙ- ΚΗΦΙΣΙΑ"},
-			{Slug: "xalandri", Name: "ΧΑΛΑΝΔΡΙ"},
-			{Slug: "irakleio", Name: "ΗΡΑΚΛΕΙΟ"},
-		}
+	skipCrawl := flag.Bool("skip-crawl", false, "skip crawling and serve cached schedule only (fast dev restart)")
+	flag.Parse()
+
+	if cached := loadScheduleCache(); cached != nil {
+		latestSchedule = cached
+		log.Printf("Loaded schedule from cache (updated %s)", cached.UpdatedAt.Format(time.RFC3339))
 	}
 
-	interval := 6 * time.Hour
-
-	// Start crawler in background
-	go func() {
-		RunMultiAreaCrawlerBackground(areas, interval)
-	}()
+	if *skipCrawl {
+		if latestSchedule == nil {
+			log.Fatal("--skip-crawl requires a schedule_cache.json; run once without the flag first")
+		}
+		log.Println("Skipping crawl, serving cached schedule")
+	} else {
+		areas, err := FetchCinemaAreas()
+		if err != nil {
+			log.Printf("Failed to fetch cinema areas: %v. Using fallback areas.", err)
+			areas = []Area{
+				{Slug: "marousi-_kifisia", Name: "ΜΑΡΟΥΣΙ- ΚΗΦΙΣΙΑ"},
+				{Slug: "xalandri", Name: "ΧΑΛΑΝΔΡΙ"},
+				{Slug: "irakleio", Name: "ΗΡΑΚΛΕΙΟ"},
+			}
+		}
+		interval := 6 * time.Hour
+		go RunMultiAreaCrawlerBackground(areas, interval)
+	}
 
 	// HTTP server
 	http.HandleFunc("/api/schedule", handleScheduleForDate)
@@ -1036,6 +1116,7 @@ func updateSchedule(areas []Area) {
 
 	latestSchedule = allSchedule
 	log.Printf("Schedule updated at %s\n", latestSchedule.UpdatedAt.Format(time.RFC3339))
+	saveScheduleCache(latestSchedule)
 }
 
 // Handler: full multi-area schedule
@@ -1102,6 +1183,7 @@ func handleTodaySchedule(w http.ResponseWriter, r *http.Request) {
 				CinemaName:    cinema.Name,
 				CinemaURL:     cinema.URL,
 				CinemaAddress: cinema.Address,
+				CinemaSummer:  cinema.Summer,
 				Movies:        []MovieWithTimes{},
 			}
 
