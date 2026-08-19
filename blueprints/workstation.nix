@@ -21,6 +21,7 @@
     geeqie
     gnome-keyring
     linuxPackages.cpupower
+    cmake
     wl-clipboard
     wlr-randr
     bluez-tools
