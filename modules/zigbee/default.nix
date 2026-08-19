@@ -103,6 +103,7 @@
     settings = {
       homeassistant = lib.mkForce true;
       permit_join = false;
+      device_options.retain = true;
 
       mqtt = {
         server = "mqtt://localhost:1883";
