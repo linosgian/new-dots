@@ -177,6 +177,11 @@
     enable = true;
 
     ups."eaton" = {
+
+      directives = [
+        "ignorelb"
+        "override.battery.charge.low = 20"
+      ];
       driver = "usbhid-ups";
       port = "auto";
       description = "Eaton UPS";
