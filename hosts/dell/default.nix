@@ -64,7 +64,9 @@
 
   systemd.services.nix-daemon.environment.TMPDIR = "/var/tmp";
   services.irqbalance.enable = true;
+  services.tailscale.enable = true;
   environment.systemPackages = with pkgs; [
+    tailscale
     jellyfin-desktop
     claude-code
     skopeo
