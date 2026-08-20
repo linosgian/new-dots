@@ -76,7 +76,7 @@ in
     config = {
       modifier = "Mod1";
       floating.modifier = "Mod1";
-      workspaceLayout = "stacking";
+      workspaceLayout = "default";
       bindkeysToCode = true;
 
       keybindings = {
@@ -324,6 +324,9 @@ in
       ];
     };
     extraConfig = ''
+      default_border pixel 2
+      default_floating_border pixel 2
+      hide_edge_borders smart
       seat * xcursor_theme WhiteSur-cursors 32
       blur true
       blur_radius 5
@@ -336,13 +339,13 @@ in
           blur enable
           corner_radius 20
       }
-      font pango:monospace 0.01
-      titlebar_border_thickness 1
-      titlebar_padding 1
-      client.focused          #3a3a3a #3a3a3a #3a3a3a #3a3a3a #3a3a3a
-      client.focused_inactive #3a3a3a #3a3a3a #3a3a3a #3a3a3a #3a3a3a
-      client.unfocused        #3a3a3a #3a3a3a #3a3a3a #3a3a3a #3a3a3a
-      client.urgent           #3a3a3a #3a3a3a #3a3a3a #3a3a3a #3a3a3a
+      font pango:Ubuntu Nerd Font 10
+      titlebar_border_thickness 2
+      titlebar_padding 6 4
+      client.focused          #6e6e6e #454545 #ffffff #6e6e6e #6e6e6e
+      client.focused_inactive #4a4a4a #2a2a2a #b5b5b5 #4a4a4a #4a4a4a
+      client.unfocused        #303030 #1f1f1f #7a7a7a #303030 #303030
+      client.urgent           #b33a3a #3a1414 #ffffff #b33a3a #b33a3a
     '';
   };
 }
