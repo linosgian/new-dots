@@ -25,6 +25,17 @@
   ];
 
   boot.zfs.forceImportRoot = false;
+  # Default arc_max is ~all RAM minus 1G; on 31G total with jellyfin/immich/
+  # sonarr/radarr/deluge/transmission all resident, that starved everything
+  # else into swap. Cap it so the rest of the box has headroom.
+  # zfs_arc_sys_free keeps that headroom actually free rather than relying on
+  # ARC to shrink fast enough during a burst (e.g. transmission writing at
+  # high speed) - without it, allocation spikes can outrun ARC reclaim and
+  # trigger the OOM killer even with a lower arc_max.
+  boot.kernelParams = [
+    "zfs.zfs_arc_max=6442450944" # 6G
+    "zfs.zfs_arc_sys_free=2147483648" # keep 2G free at all times
+  ];
 
   networking.hostName = "ntoulapa";
   #https://github.com/NixOS/nixpkgs/pull/526476/changes
