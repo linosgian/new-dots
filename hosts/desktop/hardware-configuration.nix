@@ -55,7 +55,6 @@
     ];
   };
 
-  services.xserver.displayManager.gdm.wayland = false;
   services.xserver.videoDrivers = [ "nvidia" ];
 
   hardware.nvidia = {
@@ -63,7 +62,7 @@
     powerManagement.enable = true;
     open = false; # or true if using newer open kernel module
   };
-
+  hardware.nvidia.package = config.boot.kernelPackages.nvidiaPackages.legacy_580;
   nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
   hardware.cpu.amd.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
 }
