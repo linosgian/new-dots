@@ -1,7 +1,10 @@
 #! /bin/sh
-# Parse command line arguments for sink descriptions to ignore
+# Parse command line arguments for sink descriptions to ignore or alias
 IGNORE_DESCRIPTIONS=()
+ALIAS_DESCRIPTIONS=()
+ALIAS_LABELS=()
 EXACT_MATCH=0
+ONLY_KEPT=0
 DEBUG=0
 
 while [[ $# -gt 0 ]]; do
@@ -14,6 +17,20 @@ while [[ $# -gt 0 ]]; do
             IGNORE_DESCRIPTIONS+=("${1#*=}")
             shift
             ;;
+        --alias)
+            ALIAS_DESCRIPTIONS+=("${2%%=*}")
+            ALIAS_LABELS+=("${2#*=}")
+            shift 2
+            ;;
+        --alias=*)
+            ALIAS_DESCRIPTIONS+=("${1#--alias=}")
+            ALIAS_LABELS+=("${1#*=}")
+            shift
+            ;;
+        --only)
+            ONLY_KEPT=1
+            shift
+            ;;
         --exact)
             EXACT_MATCH=1
             shift
@@ -23,11 +40,13 @@ while [[ $# -gt 0 ]]; do
             shift
             ;;
         -h|--help)
-            echo "Usage: $0 [--ignore 'description'] [--ignore='description'] [--exact] [--debug]"
+            echo "Usage: $0 [--ignore 'desc'] [--exact] [--alias 'real desc'='label'] [--only] [--debug]"
             echo "  --ignore: Ignore sinks with this description"
             echo "  --exact:  Use exact matching instead of substring matching"
+            echo "  --alias:  Display a matching sink under a friendly 'label' instead of its real description"
+            echo "  --only:   Hide every sink that is not matched by an --alias"
             echo "  --debug:  Show debug information"
-            echo "Example: $0 --ignore 'Monitor' --ignore='Echo-Cancel'"
+            echo "Example: $0 --only --alias 'HyperX 7.1 Audio Analog Stereo'='headphones'"
             echo "Example: $0 --exact --ignore 'Built-in Audio Analog Stereo'"
             exit 0
             ;;
@@ -37,6 +56,30 @@ while [[ $# -gt 0 ]]; do
             ;;
     esac
 done
+
+# Does a sink description match a given pattern (respecting --exact)?
+matches() {
+    local description="$1"
+    local pattern="$2"
+    if [ $EXACT_MATCH -eq 1 ]; then
+        [ "$description" = "$pattern" ]
+    else
+        echo "$description" | grep -qi "$pattern"
+    fi
+}
+
+# Return the alias label for a description, or empty if none matches
+alias_for() {
+    local description="$1"
+    local i
+    for i in "${!ALIAS_DESCRIPTIONS[@]}"; do
+        if matches "$description" "${ALIAS_DESCRIPTIONS[$i]}"; then
+            echo "${ALIAS_LABELS[$i]}"
+            return 0
+        fi
+    done
+    return 1
+}
 
 ROFI_OPTIONAL_ARGS=()
 if ! [[ -z "$rofi_theme" ]]; then
@@ -60,84 +103,80 @@ if [ $DEBUG -eq 1 ]; then
     echo "Exact match mode: $EXACT_MATCH" >&2
 fi
 
-# If we have ignore patterns, filter the list
-if [ ${#IGNORE_DESCRIPTIONS[@]} -gt 0 ]; then
+# Iterate the sink list, building parallel arrays of sink IDs and display labels.
+# The displayed label is the alias when one matches, otherwise the real description.
+SINK_IDS=()
+SINK_LABELS=()
+while IFS= read -r line; do
+    [ -n "$line" ] || continue
+
+    # Extract the description (everything after the ID and status indicators) and the ID.
+    # wpctl format is typically: "    * 60. USB Audio Pro                         [vol: 1.00]"
+    description=$(echo "$line" | sed -e 's/^[[:space:]]*\*\?[[:space:]]*//' -e 's/[[:space:]]*\[.*$//')
+    sink_id=$(echo "$description" | sed -e 's/^\([0-9][0-9]*\)\..*/\1/')
+    description=$(echo "$description" | sed -e 's/^[0-9][0-9]*\.[[:space:]]*//')
+
     if [ $DEBUG -eq 1 ]; then
-        echo "Filtering sink list..." >&2
+        echo "Checking line: $line" >&2
+        echo "Extracted description: '$description' (id: $sink_id)" >&2
     fi
-    
-    # Filter the sink list based on descriptions in the wpctl output itself
-    filtered_list=""
-    while IFS= read -r line; do
-        if [ -n "$line" ]; then
-            # Extract the description part (everything after the ID and status indicators)
-            # wpctl format is typically: "    * 60. USB Audio Pro                         [vol: 1.00]"
-            # Remove leading spaces, optional *, spaces, number, dot, spaces, then remove trailing [vol...] part
-            description=$(echo "$line" | sed -e 's/^[[:space:]]*\*\?[[:space:]]*[0-9]\+\.[[:space:]]*//' -e 's/[[:space:]]*\[.*$//')
-            
+
+    # Check if this sink should be ignored
+    ignored=0
+    for ignore_desc in "${IGNORE_DESCRIPTIONS[@]}"; do
+        if matches "$description" "$ignore_desc"; then
+            ignored=1
             if [ $DEBUG -eq 1 ]; then
-                echo "Checking line: $line" >&2
-                echo "Extracted description: '$description'" >&2
+                echo "  -> Ignoring (match '$ignore_desc')" >&2
             fi
-            
-            # Check if this sink should be ignored
-            should_ignore=0
-            for ignore_desc in "${IGNORE_DESCRIPTIONS[@]}"; do
-                if [ $EXACT_MATCH -eq 1 ]; then
-                    # Exact match (case-sensitive)
-                    if [ "$description" = "$ignore_desc" ]; then
-                        should_ignore=1
-                        if [ $DEBUG -eq 1 ]; then
-                            echo "  -> Ignoring (exact match '$ignore_desc')" >&2
-                        fi
-                        break
-                    fi
-                else
-                    # Substring match (case-insensitive)
-                    if echo "$description" | grep -qi "$ignore_desc"; then
-                        should_ignore=1
-                        if [ $DEBUG -eq 1 ]; then
-                            echo "  -> Ignoring (contains '$ignore_desc')" >&2
-                        fi
-                        break
-                    fi
-                fi
-            done
-            
-            if [ $should_ignore -eq 0 ]; then
-                if [ $DEBUG -eq 1 ]; then
-                    echo "  -> Keeping" >&2
-                fi
-                if [ -n "$filtered_list" ]; then
-                    filtered_list="$filtered_list
-$line"
-                else
-                    filtered_list="$line"
-                fi
-            fi
+            break
         fi
-    done <<< "$sink_list"
-    
-    sink_list="$filtered_list"
-fi
+    done
+    [ $ignored -eq 0 ] || continue
+
+    # Determine the display label (alias if one matches)
+    label=""
+    if [ ${#ALIAS_DESCRIPTIONS[@]} -gt 0 ] && label=$(alias_for "$description"); then
+        if [ $DEBUG -eq 1 ]; then
+            echo "  -> Aliasing to '$label'" >&2
+        fi
+    else
+        # No alias; hide unless explicitly kept (--only not set, or it's a keep)
+        if [ $ONLY_KEPT -eq 1 ]; then
+            if [ $DEBUG -eq 1 ]; then
+                echo "  -> Hiding (not aliased, --only set)" >&2
+            fi
+            continue
+        fi
+        label="$description"
+    fi
+
+    SINK_IDS+=("$sink_id")
+    SINK_LABELS+=("$label")
+done <<< "$sink_list"
 
 if [ $DEBUG -eq 1 ]; then
-    echo "Final sink list:" >&2
-    echo "$sink_list" >&2
+    echo "Final sinks (${#SINK_IDS[@]}):" >&2
+    for i in "${!SINK_IDS[@]}"; do
+        echo "  ${SINK_IDS[$i]} -> ${SINK_LABELS[$i]}" >&2
+    done
 fi
 
 # Check if we have any sinks left
-if [ -z "$sink_list" ]; then
+if [ ${#SINK_IDS[@]} -eq 0 ]; then
     echo "No sinks available after filtering" >&2
     exit 1
 fi
 
-CONTENT="$sink_list"
-let "WIDTH = $(wc -L <<< "$CONTENT")"
-OPTION_SELECTED=$(echo "$CONTENT" \
-  | rofi -dmenu -auto-select -matching fuzzy -i "${ROFI_OPTIONAL_ARGS[@]}"  \
-  | sed -e 's/[^0-9]*\([0-9]*\).*/\1/g')
+CONTENT="$(printf '%s\n' "${SINK_LABELS[@]}")"
+SELECTION=$(echo "$CONTENT" | rofi -dmenu -auto-select -matching fuzzy -i "${ROFI_OPTIONAL_ARGS[@]}")
 
-if ! [[ -z "$OPTION_SELECTED" ]]; then
-    wpctl set-default "$OPTION_SELECTED"
+if ! [[ -z "$SELECTION" ]]; then
+    # Map the selected label back to its sink ID
+    for i in "${!SINK_LABELS[@]}"; do
+        if [ "${SINK_LABELS[$i]}" = "$SELECTION" ]; then
+            wpctl set-default "${SINK_IDS[$i]}"
+            break
+        fi
+    done
 fi

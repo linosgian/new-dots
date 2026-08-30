@@ -35,6 +35,8 @@
   networking.hostName = "desktop";
   boot.binfmt.emulatedSystems = [ "aarch64-linux" ];
   services.irqbalance.enable = true;
+  home-manager.users.lgian.wayland.windowManager.sway.config.keybindings."Mod1+o" =
+    lib.mkForce "exec --no-startup-id bash switcher.sh --only --alias 'HyperX 7.1'='🎧 headphones' --alias 'Ryzen HD'='🔊 speakers'";
   home-manager.users.lgian.wayland.windowManager.sway.config.workspaceOutputAssign = [
     {
       output = "HDMI-A-1";
